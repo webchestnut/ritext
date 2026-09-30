@@ -39,6 +39,11 @@ ritext/
 ├── index.html
 ├── style.css
 ├── script.js
+├── favicon.ico
+├── favicon-16.png
+├── favicon-32.png
+├── favicon-48.png
+├── apple-touch-icon.png
 └── README.md
 ```
 
