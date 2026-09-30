@@ -1,0 +1,1382 @@
+/* ==========================================================================
+   ritext — минималистичный интерфейс (тёмная/светлая тема)
+   ========================================================================== */
+
+:root,
+html[data-theme="dark"] {
+  --bg: #0c0c0e;
+  --panel: #17171a;
+  --panel-alt: #1b1b1f;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-soft: rgba(255, 255, 255, 0.06);
+  --text: #e9e9ec;
+  --text-muted: #8d8d95;
+  --text-faint: #5c5c63;
+  --key-bg: #1d1d21;
+  --key-bg-hover: #26262b;
+  --key-border: rgba(255, 255, 255, 0.07);
+  --btn-bg: #1d1d21;
+  --btn-bg-hover: #27272c;
+  --btn-primary-bg: #e9e9ec;
+  --btn-primary-text: #101012;
+  --btn-primary-hover: #d5d5d9;
+  --dropdown-bg: #1c1c20;
+  --dropdown-border: rgba(255, 255, 255, 0.1);
+  --dropdown-hover: #26262b;
+  --toast-bg: #1e1e22;
+  --scrollbar-thumb: rgba(255, 255, 255, 0.1);
+  --guide-line: rgba(255, 255, 255, 0.16);
+  --guide-label: rgba(255, 255, 255, 0.35);
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-sm: 9px;
+  --shadow-panel: 0 12px 30px rgba(0, 0, 0, 0.35);
+  --shadow-float: 0 10px 24px rgba(0, 0, 0, 0.45);
+}
+
+html[data-theme="light"] {
+  --bg: #f2f2f4;
+  --panel: #ffffff;
+  --panel-alt: #f2f2f4;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-soft: rgba(0, 0, 0, 0.06);
+  --text: #17171a;
+  --text-muted: #63636b;
+  --text-faint: #a3a3ab;
+  --key-bg: #f2f2f4;
+  --key-bg-hover: #e6e6ea;
+  --key-border: rgba(0, 0, 0, 0.08);
+  --btn-bg: #f2f2f4;
+  --btn-bg-hover: #e6e6ea;
+  --btn-primary-bg: #17171a;
+  --btn-primary-text: #ffffff;
+  --btn-primary-hover: #333338;
+  --dropdown-bg: #ffffff;
+  --dropdown-border: rgba(0, 0, 0, 0.1);
+  --dropdown-hover: #f0f0f3;
+  --toast-bg: #1f1f23;
+  --scrollbar-thumb: rgba(0, 0, 0, 0.15);
+  --guide-line: rgba(0, 0, 0, 0.14);
+  --guide-label: rgba(0, 0, 0, 0.3);
+  --shadow-panel: 0 12px 30px rgba(0, 0, 0, 0.08);
+  --shadow-float: 0 10px 24px rgba(0, 0, 0, 0.14);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+button {
+  font-family: inherit;
+}
+
+.is-hidden {
+  display: none !important;
+}
+
+/* ---------- layout shell ---------- */
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 10px clamp(8px, 1.2vw, 14px) 10px;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  row-gap: 8px;
+  padding: 2px 2px 10px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.logo {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--text);
+}
+
+.expand-icon {
+  display: inline-block;
+}
+
+.export-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.export-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-right: 2px;
+}
+
+.workspace {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+  gap: 10px;
+  min-height: 0;
+}
+
+@media (min-width: 1400px) {
+  .workspace {
+    grid-template-columns: minmax(0, 1fr) 420px;
+  }
+}
+
+/* ---------- editor column (alphabet + editor) ---------- */
+
+.editor-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.alphabet {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: clamp(1px, 0.5vw, 6px);
+  padding: 10px clamp(8px, 1.5vw, 16px);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-panel);
+}
+
+.letter-key {
+  appearance: none;
+  border: 1px solid var(--key-border);
+  background: var(--key-bg);
+  color: var(--text);
+  flex: 1 1 0;
+  min-width: 0;
+  height: clamp(24px, 3.2vw, 34px);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  font-size: clamp(10px, 1.9vw, 15px);
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.letter-key:hover {
+  background: var(--key-bg-hover);
+  border-color: rgba(128, 128, 128, 0.25);
+}
+
+.letter-key:active {
+  transform: scale(0.94);
+}
+
+.letter-key:focus-visible {
+  outline: 2px solid rgba(128, 128, 128, 0.4);
+  outline-offset: 2px;
+}
+
+/* ---------- shared panel chrome ---------- */
+
+.editor-panel,
+.result-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-panel);
+  overflow: hidden;
+}
+
+.editor-panel {
+  flex: 1;
+  min-height: 420px;
+}
+
+.result-panel {
+  min-height: 420px;
+}
+
+/* полноэкранный режим главного поля — растягивается до самых краёв окна,
+   без отступов и «дыр» */
+.editor-panel.is-expanded {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 500;
+  min-height: 0;
+  border-radius: 0;
+  border: none;
+}
+
+.panel-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  flex-shrink: 0;
+  gap: 10px;
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+
+.panel-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
+}
+
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--key-border);
+  background: var(--btn-bg);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-ghost:hover {
+  background: var(--btn-bg-hover);
+  border-color: rgba(128, 128, 128, 0.25);
+}
+
+.btn-primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border-color: var(--btn-primary-bg);
+}
+
+.btn-primary:hover {
+  background: var(--btn-primary-hover);
+  border-color: var(--btn-primary-hover);
+}
+
+.btn:focus-visible {
+  outline: 2px solid rgba(128, 128, 128, 0.4);
+  outline-offset: 2px;
+}
+
+/* ---------- inline formatting toolbar (всегда видна) ---------- */
+
+.fmt-inline {
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  background: var(--panel-alt);
+}
+
+.fmt-btn {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text);
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.fmt-btn:hover {
+  background: var(--btn-bg-hover);
+}
+
+.fmt-btn:focus-visible {
+  outline: 2px solid rgba(128, 128, 128, 0.4);
+  outline-offset: 1px;
+}
+
+.fmt-btn.active {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+}
+
+.fmt-bold {
+  font-weight: 700;
+}
+
+.fmt-italic {
+  font-style: italic;
+}
+
+.fmt-underline {
+  text-decoration: underline;
+}
+
+.fmt-close {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-right: 4px;
+}
+
+.fmt-close:hover {
+  color: var(--text);
+  background: var(--btn-bg-hover);
+}
+
+.fmt-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  margin: 0 2px;
+  flex-shrink: 0;
+}
+
+.fmt-font-wrap,
+.lang-wrap {
+  position: relative;
+  display: flex;
+}
+
+/* выпадающие меню (шрифты, язык) — позиционируются через JS
+   (position: fixed), поэтому не обрезаются скруглёнными панелями
+   с overflow: hidden */
+
+.dropdown-menu {
+  position: fixed;
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  display: none;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 190px;
+  background: var(--dropdown-bg);
+  border: 1px solid var(--dropdown-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-float);
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 600;
+}
+
+.dropdown-menu.open {
+  display: flex;
+}
+
+.dropdown-menu li {
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+.dropdown-menu li:hover,
+.dropdown-menu li:focus-visible {
+  background: var(--dropdown-hover);
+}
+
+.dropdown-menu li .font-preview-label {
+  display: block;
+}
+
+/* ---------- editor ---------- */
+
+.editor-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.editor {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 18px 20px;
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--text);
+  caret-color: var(--text);
+  outline: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.editor:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-faint);
+  pointer-events: none;
+}
+
+/* тонкие полупрозрачные линии — ориентир, где примерно пройдёт граница
+   страницы при экспорте в PDF/DOCX (формат A4). Это приблизительная
+   отметка, а не гарантия пиксель-в-пиксель: точная разбивка зависит от
+   шрифтов и программы, в которой откроют файл. */
+.page-guides {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.page-guide-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 1px dashed var(--guide-line);
+}
+
+.page-guide-label {
+  position: absolute;
+  right: 10px;
+  top: 4px;
+  font-size: 10px;
+  color: var(--guide-label);
+  background: var(--panel);
+  padding: 0 4px;
+}
+
+/* ---------- result panel ---------- */
+
+.result-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.result {
+  padding: 18px 20px;
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--text-muted);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  min-height: 100%;
+}
+
+.result:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-faint);
+}
+
+/* ---------- toast ---------- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translate(-50%, 12px);
+  background: var(--toast-bg);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--shadow-float);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 999;
+}
+
+.toast.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ---------- scrollbars (subtle) ---------- */
+
+.editor::-webkit-scrollbar,
+.result-wrap::-webkit-scrollbar,
+.dropdown-menu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.editor::-webkit-scrollbar-thumb,
+.result-wrap::-webkit-scrollbar-thumb,
+.dropdown-menu::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 8px;
+}
+
+.editor::-webkit-scrollbar-track,
+.result-wrap::-webkit-scrollbar-track,
+.dropdown-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .workspace {
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+    gap: 14px;
+  }
+
+  .editor,
+  .result {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 760px) {
+  .app {
+    padding: 8px 8px 8px;
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .editor-panel {
+    min-height: 300px;
+    height: 62vh;
+    flex: none;
+  }
+
+  .editor-panel.is-expanded {
+    height: 100vh;
+  }
+
+  .result-panel {
+    min-height: 220px;
+    height: 34vh;
+  }
+}
+
+@media (max-width: 420px) {
+  .logo {
+    font-size: 17px;
+  }
+
+  .panel-title {
+    font-size: 12px;
+  }
+
+  .btn {
+    padding: 6px 11px;
+    font-size: 12.5px;
+  }
+
+  .export-label {
+    width: 100%;
+  }
+}
+
+/* ==========================================================================
+   Выбор тона: кнопка и панель
+   ========================================================================== */
+
+.tone-wrap {
+  position: relative;
+  display: flex;
+}
+
+.tone-dot {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  margin-right: 4px;
+  border-radius: 50%;
+  vertical-align: -1px;
+  background: conic-gradient(#ff9500, #ff2d55, #af52de, #0a84ff, #30d158, #ffd60a, #ff9500);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
+/* панель позиционируется через JS (position: fixed), как и остальные меню */
+.tone-popover {
+  position: fixed;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  width: min(272px, calc(100vw - 16px));
+  padding: 12px;
+  background: var(--dropdown-bg);
+  border: 1px solid var(--dropdown-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-float);
+  z-index: 650;
+}
+
+.tone-popover.open {
+  display: flex;
+}
+
+.tone-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
+}
+
+.tone-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  justify-items: center;
+}
+
+.tone-swatch {
+  appearance: none;
+  position: relative;
+  display: block;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
+  background: var(--swatch, #888);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 2px 6px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.15s ease;
+}
+
+.tone-swatch:hover {
+  transform: scale(1.08);
+}
+
+.tone-swatch:active {
+  transform: scale(0.94);
+}
+
+.tone-swatch:focus-visible,
+.tone-swatch:focus-within {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.tone-swatch.is-selected {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+/* «Без тона» — перечёркнутый нейтральный кружок */
+.tone-swatch.tone-none {
+  background:
+    linear-gradient(135deg, transparent 46%, var(--text-muted) 46%, var(--text-muted) 54%, transparent 54%),
+    var(--key-bg-hover);
+}
+
+.tone-custom-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-soft);
+  cursor: pointer;
+}
+
+.tone-custom-text {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.tone-swatch.tone-custom {
+  flex-shrink: 0;
+  background: conic-gradient(#ff3b30, #ff9500, #ffd60a, #30d158, #32ade6, #0a84ff, #af52de, #ff2d55, #ff3b30);
+}
+
+.tone-swatch.tone-custom input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+}
+
+/* ==========================================================================
+   Прозрачные тона в стиле Apple («жидкое стекло»)
+   Включаются классом html.tone-on. Цвет приходит из JS через переменные
+   --tone-h / --tone-h2 / --tone-h3 (оттенки), --tone-s (насыщенность),
+   --tone-hex (выбранный цвет), --tone-text (цвет текста на нём).
+   Без класса tone-on сайт выглядит как раньше.
+   ========================================================================== */
+
+/* Цветной фон — два слоя мягких пятен. Слои чуть больше экрана
+   (inset: -15%), чтобы «Анимировать» могло двигать их, не открывая краёв.
+   Позиции в процентах пересчитаны под увеличенный слой. */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: -15%;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+  animation-play-state: paused;
+}
+
+body::before {
+  background:
+    radial-gradient(46vmax 40vmax at 18% 16%,
+      hsl(var(--tone-h) var(--tone-s) var(--blob-l) / var(--blob-a1)), transparent 70%),
+    radial-gradient(56vmax 46vmax at 56% 93%,
+      hsl(var(--tone-h3) var(--tone-s) var(--blob-l) / var(--blob-a3)), transparent 70%);
+  animation: driftA 30s ease-in-out infinite alternate;
+  animation-play-state: paused;
+}
+
+body::after {
+  background:
+    radial-gradient(50vmax 42vmax at 86% 26%,
+      hsl(var(--tone-h2) var(--tone-s) var(--blob-l) / var(--blob-a2)), transparent 70%),
+    radial-gradient(34vmax 30vmax at 27% 82%,
+      hsl(var(--tone-h2) var(--tone-s) calc(var(--blob-l) + 8%) / var(--blob-a4)), transparent 70%);
+  animation: driftB 38s ease-in-out infinite alternate;
+  animation-play-state: paused;
+}
+
+html[data-theme="dark"].tone-on {
+  --bg: hsl(var(--tone-h) 45% 5%);
+  --panel: hsl(var(--tone-h) 32% 12% / 0.5);
+  --panel-alt: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.17);
+  --border-soft: rgba(255, 255, 255, 0.1);
+  --key-bg: rgba(255, 255, 255, 0.08);
+  --key-bg-hover: rgba(255, 255, 255, 0.17);
+  --key-border: rgba(255, 255, 255, 0.14);
+  --btn-bg: rgba(255, 255, 255, 0.08);
+  --btn-bg-hover: rgba(255, 255, 255, 0.17);
+  --dropdown-bg: hsl(var(--tone-h) 30% 12% / 0.78);
+  --dropdown-border: rgba(255, 255, 255, 0.18);
+  --dropdown-hover: rgba(255, 255, 255, 0.14);
+  --shadow-panel: 0 14px 36px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+html[data-theme="light"].tone-on {
+  --bg: hsl(var(--tone-h) 60% 96%);
+  --panel: rgba(255, 255, 255, 0.52);
+  --panel-alt: rgba(255, 255, 255, 0.55);
+  --border: rgba(255, 255, 255, 0.75);
+  --border-soft: rgba(0, 0, 0, 0.07);
+  --key-bg: rgba(255, 255, 255, 0.55);
+  --key-bg-hover: rgba(255, 255, 255, 0.85);
+  --key-border: rgba(255, 255, 255, 0.8);
+  --btn-bg: rgba(255, 255, 255, 0.55);
+  --btn-bg-hover: rgba(255, 255, 255, 0.85);
+  --dropdown-bg: rgba(255, 255, 255, 0.8);
+  --dropdown-border: rgba(255, 255, 255, 0.85);
+  --dropdown-hover: rgba(255, 255, 255, 0.9);
+  --shadow-panel: 0 14px 36px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* акцентные элементы окрашиваются в выбранный цвет */
+html.tone-on {
+  --btn-primary-bg: var(--tone-hex);
+  --btn-primary-text: var(--tone-text);
+  --btn-primary-hover: var(--tone-hex-hover);
+}
+
+/* размытие заднего плана у обычных панелей */
+html.tone-on .alphabet,
+html.tone-on .result-panel,
+html.tone-on .dropdown-menu,
+html.tone-on .tone-popover {
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+/* Панель редактора: backdrop-filter на самом элементе создал бы для
+   position: fixed внутри него (меню шрифтов и языка) новый «контейнер» и
+   сломал бы их позиционирование, поэтому стекло рисуется псевдоэлементом. */
+html.tone-on .editor-panel {
+  position: relative;
+  background: transparent;
+}
+
+html.tone-on .editor-panel.is-expanded {
+  position: fixed;
+}
+
+html.tone-on .editor-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--panel);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+html.tone-on .page-guide-label {
+  background: transparent;
+}
+
+html.tone-on .fmt-btn.active {
+  background: var(--tone-hex);
+  color: var(--tone-text);
+}
+
+/* если размытие не поддерживается или пользователь просит меньше
+   прозрачности — делаем панели плотнее, чтобы текст оставался читаемым */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  html[data-theme="dark"].tone-on { --panel: hsl(var(--tone-h) 30% 12% / 0.92); --dropdown-bg: hsl(var(--tone-h) 30% 12% / 0.97); }
+  html[data-theme="light"].tone-on { --panel: rgba(255, 255, 255, 0.92); --dropdown-bg: rgba(255, 255, 255, 0.97); }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  html[data-theme="dark"].tone-on { --panel: hsl(var(--tone-h) 30% 12% / 0.92); --dropdown-bg: hsl(var(--tone-h) 30% 12% / 0.97); }
+  html[data-theme="light"].tone-on { --panel: rgba(255, 255, 255, 0.92); --dropdown-bg: rgba(255, 255, 255, 0.97); }
+}
+
+
+/* ==========================================================================
+   Язык сайта, экспорт и стеклянная шапка
+   ========================================================================== */
+
+.header-right {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  row-gap: 8px;
+}
+
+.site-lang-wrap {
+  position: relative;
+  display: flex;
+}
+
+.site-lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.site-lang-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.site-lang-btn .caret {
+  font-size: 11px;
+  opacity: 0.7;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.site-lang-btn[aria-expanded="true"] .caret {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dropdown-menu li.is-current {
+  font-weight: 600;
+}
+
+.dropdown-menu li.is-current::after {
+  content: '✓';
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+/* панель экспорта: одна «капсула», в стеклянном режиме — как стекло */
+.export-bar {
+  padding: 4px 6px 4px 12px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+html.tone-on .export-bar {
+  background: var(--panel);
+  border-color: var(--border);
+  box-shadow: var(--shadow-panel);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+/* кнопки в шапке — стеклянные «таблетки» с бликом сверху */
+html.tone-on .header-left .btn,
+html.tone-on .site-lang-btn {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+html.tone-on .export-bar .btn {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+/* ==========================================================================
+   Плавные анимации
+   ========================================================================== */
+
+:root {
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* оттенки тона — «настоящие» числовые переменные, поэтому их можно
+   плавно анимировать: цвета фона и панелей перетекают друг в друга */
+@property --tone-h  { syntax: '<number>';     inherits: true; initial-value: 30; }
+@property --tone-h2 { syntax: '<number>';     inherits: true; initial-value: 65; }
+@property --tone-h3 { syntax: '<number>';     inherits: true; initial-value: 0; }
+@property --tone-s  { syntax: '<percentage>'; inherits: true; initial-value: 100%; }
+
+html {
+  transition: --tone-h 0.7s ease, --tone-h2 0.7s ease, --tone-h3 0.7s ease, --tone-s 0.7s ease;
+}
+
+/* параметры пятен фона нужны всегда — чтобы фон мог плавно гаснуть */
+html[data-theme="dark"]  { --blob-l: 46%; --blob-a1: 0.66; --blob-a2: 0.48; --blob-a3: 0.55; --blob-a4: 0.4; }
+html[data-theme="light"] { --blob-l: 62%; --blob-a1: 0.58; --blob-a2: 0.44; --blob-a3: 0.5; --blob-a4: 0.38; }
+
+html.tone-on body::before,
+html.tone-on body::after {
+  opacity: 1;
+}
+
+/* на время первой отрисовки переходы отключены (см. script.js, раздел 0) */
+html.is-booting,
+html.is-booting *,
+html.is-booting *::before,
+html.is-booting *::after {
+  transition: none !important;
+}
+
+/* стеклянные панели и клавиши плавно меняют цвет при смене темы/тона */
+.alphabet,
+.result-panel,
+.editor-panel,
+.letter-key,
+.fmt-inline,
+.tone-popover,
+.dropdown-menu {
+  transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, color 0.3s ease;
+}
+
+.editor-panel {
+  position: relative;
+}
+
+.editor-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: transparent;
+  transition: background-color 0.4s ease;
+}
+
+/* кнопки: лёгкий подъём при наведении и «нажатие» */
+.btn,
+.fmt-btn {
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.2s var(--ease-out);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active,
+.fmt-btn:active {
+  transform: scale(0.95);
+}
+
+.letter-key {
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.2s var(--ease-out);
+}
+
+.letter-key:hover {
+  transform: translateY(-1px);
+}
+
+/* выпадающие меню и панель тона: плавное появление со сдвигом и масштабом.
+   display больше не переключается — иначе не было бы анимации;
+   скрытое меню недоступно ни мышью, ни клавиатурой (visibility: hidden) */
+.dropdown-menu,
+.tone-popover {
+  display: flex;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.96);
+  transform-origin: top left;
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    transform 0.28s var(--ease-out),
+    visibility 0s linear 0.28s,
+    background-color 0.4s ease,
+    border-color 0.4s ease;
+}
+
+.dropdown-menu.open,
+.tone-popover.open {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.dropdown-menu li {
+  transition: background-color 0.15s ease, transform 0.15s var(--ease-out);
+}
+
+.dropdown-menu li:hover {
+  transform: translateX(2px);
+}
+
+/* кружки тонов: пружинистое появление по очереди и плавное выделение */
+.tone-swatch {
+  outline: 2px solid transparent;
+  outline-offset: 0;
+  transition:
+    transform 0.3s var(--ease-spring),
+    outline-color 0.25s ease,
+    outline-offset 0.25s ease,
+    box-shadow 0.2s ease;
+}
+
+.tone-swatch:hover {
+  transform: scale(1.12);
+}
+
+.tone-swatch:active {
+  transform: scale(0.94);
+}
+
+.tone-swatch.is-selected {
+  outline-color: var(--text);
+  outline-offset: 3px;
+  transform: scale(1.08);
+}
+
+.tone-swatch:focus-visible,
+.tone-swatch:focus-within {
+  outline-color: var(--text);
+  outline-offset: 3px;
+}
+
+@keyframes swatchIn {
+  from { opacity: 0; transform: scale(0.4); }
+}
+
+@keyframes rowIn {
+  from { opacity: 0; transform: translateY(6px); }
+}
+
+.tone-popover.open .tone-grid .tone-swatch {
+  animation: swatchIn 0.45s var(--ease-spring) backwards;
+  animation-delay: calc(var(--i, 0) * 24ms + 60ms);
+}
+
+.tone-popover.open .tone-custom-row {
+  animation: rowIn 0.35s var(--ease-out) 0.3s backwards;
+}
+
+/* «Исходный язык» появляется плавно (анимация перезапускается при показе) */
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(4px) scale(0.94); }
+}
+
+#revertLangBtn {
+  animation: popIn 0.3s var(--ease-out) backwards;
+}
+
+/* появление блоков при загрузке: только сдвиг, без прозрачности —
+   прозрачность на время анимации «выключила» бы размытие стекла */
+@keyframes riseIn {
+  from { transform: translateY(14px) scale(0.985); }
+}
+
+.app-header,
+.alphabet,
+.editor-panel,
+.result-panel {
+  animation: riseIn 0.7s var(--ease-out) backwards;
+}
+
+.alphabet     { animation-delay: 0.05s; }
+.editor-panel { animation-delay: 0.12s; }
+.result-panel { animation-delay: 0.18s; }
+
+/* смена языка сайта: тексты плавно проявляются */
+@keyframes textSwap {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+html.lang-changing [data-i18n],
+html.lang-changing .site-lang-name {
+  animation: textSwap 0.45s ease both;
+}
+
+/* для тех, кто отключил анимации в системе */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+}
+
+
+/* ==========================================================================
+   «Анимировать»: цветные пятна фона медленно плывут и меняют оттенок
+   ========================================================================== */
+
+/* Двигаем только transform: слои переносятся видеокартой и не
+   перерисовываются каждый кадр — поэтому анимация лёгкая. */
+@keyframes driftA {
+  50%  { transform: translate3d(4%, 3%, 0) rotate(4deg) scale(1.06); }
+  100% { transform: translate3d(-3%, 5%, 0) rotate(-3deg) scale(1.03); }
+}
+
+@keyframes driftB {
+  50%  { transform: translate3d(-4%, -3%, 0) rotate(-4deg) scale(1.07); }
+  100% { transform: translate3d(3%, -5%, 0) rotate(3deg) scale(1.03); }
+}
+
+html.tone-animate body::before,
+html.tone-animate body::after {
+  animation-play-state: running;
+  will-change: transform;
+}
+
+#animateBtn {
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease,
+    opacity 0.25s ease,
+    transform 0.2s var(--ease-out);
+}
+
+/* без выбранного тона кнопка приглушена (нажатие подскажет, что делать) */
+#animateBtn[aria-disabled="true"] {
+  opacity: 0.55;
+}
+
+/* ==========================================================================
+   Стекло 2.0 — «жидкое стекло»: блики, грани, матовое зерно, свечение
+   ========================================================================== */
+
+html.tone-on {
+  --glass-blur: blur(22px) saturate(170%);
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 11px;
+
+  /* диагональный блик: свет падает сверху-слева */
+  --glass-sheen: linear-gradient(140deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.05) 32%,
+    rgba(255, 255, 255, 0) 56%,
+    rgba(255, 255, 255, 0.07) 100%);
+
+  --btn-gloss: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.04));
+  --btn-gloss-hover: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+}
+
+/* матовое зерно — как у настоящего матового стекла (свой цвет по теме) */
+html[data-theme="dark"].tone-on {
+  --glass-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0 / 160px 160px;
+
+  --rim-top: rgba(255, 255, 255, 0.38);
+  --rim-side: rgba(255, 255, 255, 0.15);
+  --rim-bottom: rgba(255, 255, 255, 0.07);
+
+  --shadow-panel:
+    0 26px 60px -26px hsl(var(--tone-h) var(--tone-s) 50% / 0.5),
+    0 10px 30px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 26px 50px -34px rgba(255, 255, 255, 0.2);
+  --shadow-float:
+    0 18px 44px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+html[data-theme="light"].tone-on {
+  --glass-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0 / 160px 160px;
+
+  --rim-top: rgba(255, 255, 255, 0.95);
+  --rim-side: rgba(255, 255, 255, 0.65);
+  --rim-bottom: rgba(255, 255, 255, 0.35);
+
+  --shadow-panel:
+    0 26px 60px -28px hsl(var(--tone-h) var(--tone-s) 50% / 0.55),
+    0 10px 30px rgba(20, 20, 40, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+    inset 0 26px 50px -34px rgba(255, 255, 255, 0.9);
+  --shadow-float:
+    0 18px 44px rgba(20, 20, 40, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+/* грани стекла: светлее сверху-слева, темнее снизу-справа */
+html.tone-on :is(.alphabet, .editor-panel, .result-panel, .export-bar) {
+  border-color: var(--rim-top) var(--rim-side) var(--rim-bottom) var(--rim-side);
+}
+
+html.tone-on :is(.alphabet, .result-panel, .export-bar) {
+  background: var(--glass-sheen), var(--glass-noise), var(--panel);
+}
+
+html.tone-on .editor-panel::before {
+  background: var(--glass-sheen), var(--glass-noise), var(--panel);
+}
+
+/* меню и панель тона — тоже стекло с бликом и зерном */
+html.tone-on :is(.dropdown-menu, .tone-popover) {
+  background: var(--glass-sheen), var(--glass-noise), var(--dropdown-bg);
+  border-color: var(--rim-top) var(--rim-side) var(--rim-bottom) var(--rim-side);
+}
+
+html.tone-on .dropdown-menu li:hover,
+html.tone-on .dropdown-menu li:focus-visible {
+  background: var(--btn-gloss-hover), var(--dropdown-hover);
+}
+
+/* кнопки, клавиши алфавита и панель форматирования: глянцевые «капли» */
+html.tone-on .btn:not(.btn-primary),
+html.tone-on .letter-key {
+  background: var(--btn-gloss), var(--btn-bg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24), inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+}
+
+html.tone-on .letter-key {
+  background: var(--btn-gloss), var(--key-bg);
+}
+
+html.tone-on .btn:not(.btn-primary):hover {
+  background: var(--btn-gloss-hover), var(--btn-bg-hover);
+}
+
+html.tone-on .letter-key:hover {
+  background: var(--btn-gloss-hover), var(--key-bg-hover);
+}
+
+html.tone-on .btn-primary {
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 62%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 8px 22px -8px var(--tone-hex);
+}
+
+html.tone-on .fmt-inline {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+/* включённая кнопка «Анимировать» — цвет выбранного тона, с мягкой пульсацией */
+html.tone-on .btn[aria-pressed="true"],
+html.tone-on .btn[aria-pressed="true"]:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 62%), var(--tone-hex);
+  color: var(--tone-text);
+  border-color: transparent;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 8px 22px -8px var(--tone-hex);
+}
+
+/* уведомления — тоже стекло */
+html.tone-on .toast {
+  background: rgba(20, 20, 26, 0.55);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: var(--shadow-float);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+/* радиусы плавно меняются вместе с включением стекла */
+.alphabet,
+.editor-panel,
+.result-panel,
+.export-bar {
+  transition-property: background-color, border-color, box-shadow, color, border-radius;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
+}
+
+/* пользователям с «уменьшить движение»: никакой бесконечной анимации */
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none !important;
+  }
+
+  #animateBtn {
+    display: none;
+  }
+}
