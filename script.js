@@ -62,7 +62,12 @@
       toastPdfPreparing: 'Готовим PDF…', toastPdfFail: 'Не удалось создать PDF', toastPdfOffline: 'Экспорт PDF недоступен offline',
       toastDocxFail: 'Не удалось создать DOCX', toastDocxOffline: 'Экспорт DOCX недоступен offline',
       toastTone: 'Тон: {name}', toastToneOff: 'Тон отключён', toastToneCustom: 'Тон: свой цвет',
-      toastSiteLang: 'Язык сайта: {name}'
+      toastSiteLang: 'Язык сайта: {name}',
+      stressBtn: '´ Ударение', stressAria: 'Показать или скрыть ударения',
+      stressOn: 'Ударения включены', stressOff: 'Ударения выключены',
+      stressEmpty: 'Введите текст для расстановки ударений',
+      swapDirAria: 'Кириллица ↔ Латиница', swapToLat: 'Кириллица → Латиница', swapToCyr: 'Латиница → Кириллица',
+      toastSwapEmpty: 'Введите текст для переключения'
     },
     en: {
       docTitle: 'ritext',
@@ -95,7 +100,12 @@
       toastPdfPreparing: 'Preparing PDF…', toastPdfFail: 'Could not create PDF', toastPdfOffline: 'PDF export is unavailable offline',
       toastDocxFail: 'Could not create DOCX', toastDocxOffline: 'DOCX export is unavailable offline',
       toastTone: 'Tone: {name}', toastToneOff: 'Tone turned off', toastToneCustom: 'Tone: custom color',
-      toastSiteLang: 'Site language: {name}'
+      toastSiteLang: 'Site language: {name}',
+      stressBtn: '´ Stress', stressAria: 'Show or hide stress marks',
+      stressOn: 'Stress marks on', stressOff: 'Stress marks off',
+      stressEmpty: 'Enter text to place stress marks',
+      swapDirAria: 'Cyrillic ↔ Latin', swapToLat: 'Cyrillic → Latin', swapToCyr: 'Latin → Cyrillic',
+      toastSwapEmpty: 'Enter text to switch'
     },
     lv: {
       docTitle: 'ritext',
@@ -128,7 +138,12 @@
       toastPdfPreparing: 'Gatavojam PDF…', toastPdfFail: 'Neizdevās izveidot PDF', toastPdfOffline: 'PDF eksports nav pieejams bezsaistē',
       toastDocxFail: 'Neizdevās izveidot DOCX', toastDocxOffline: 'DOCX eksports nav pieejams bezsaistē',
       toastTone: 'Tonis: {name}', toastToneOff: 'Tonis izslēgts', toastToneCustom: 'Tonis: sava krāsa',
-      toastSiteLang: 'Vietnes valoda: {name}'
+      toastSiteLang: 'Vietnes valoda: {name}',
+      stressBtn: '´ Uzsvars', stressAria: 'Rādīt vai paslēpt uzsvarus',
+      stressOn: 'Uzsvari ieslēgti', stressOff: 'Uzsvari izslēgti',
+      stressEmpty: 'Ievadiet tekstu, lai ieliktu uzsvarus',
+      swapDirAria: 'Kirilica ↔ Latīņu', swapToLat: 'Kirilica → Latīņu', swapToCyr: 'Latīņu → Kirilica',
+      toastSwapEmpty: 'Ievadiet tekstu, lai pārslēgtu'
     }
   };
 
@@ -172,6 +187,254 @@
     for (const ch of text) out += transliterateChar(ch);
     return out;
   }
+
+  // Латиница → кириллица (для кнопки ⇄). Обрабатываем длинные сочетания первыми.
+  const LAT_TO_CYR_SEQ = [
+    ['shch', 'щ'], ['Shch', 'Щ'], ['SHCH', 'Щ'],
+    ['sch', 'щ'], ['Sch', 'Щ'], ['SCH', 'Щ'],
+    ['zh', 'ж'], ['Zh', 'Ж'], ['ZH', 'Ж'],
+    ['kh', 'х'], ['Kh', 'Х'], ['KH', 'Х'],
+    ['ts', 'ц'], ['Ts', 'Ц'], ['TS', 'Ц'],
+    ['ch', 'ч'], ['Ch', 'Ч'], ['CH', 'Ч'],
+    ['sh', 'ш'], ['Sh', 'Ш'], ['SH', 'Ш'],
+    ['yu', 'ю'], ['Yu', 'Ю'], ['YU', 'Ю'],
+    ['ya', 'я'], ['Ya', 'Я'], ['YA', 'Я'],
+    ['yo', 'ё'], ['Yo', 'Ё'], ['YO', 'Ё'],
+    ['ye', 'е'], ['Ye', 'Е'], ['YE', 'Е']
+  ];
+  const LAT_TO_CYR_CHAR = {
+    a: 'а', b: 'б', v: 'в', g: 'г', d: 'д', e: 'е', z: 'з', i: 'и',
+    y: 'й', k: 'к', l: 'л', m: 'м', n: 'н', o: 'о', p: 'п', r: 'р',
+    s: 'с', t: 'т', u: 'у', f: 'ф', h: 'х',
+    A: 'А', B: 'Б', V: 'В', G: 'Г', D: 'Д', E: 'Е', Z: 'З', I: 'И',
+    Y: 'Й', K: 'К', L: 'Л', M: 'М', N: 'Н', O: 'О', P: 'П', R: 'Р',
+    S: 'С', T: 'Т', U: 'У', F: 'Ф', H: 'Х'
+  };
+
+  function latinToCyrillic(text) {
+    let out = '';
+    let i = 0;
+    while (i < text.length) {
+      let matched = false;
+      for (const [lat, cyr] of LAT_TO_CYR_SEQ) {
+        if (text.substr(i, lat.length) === lat) {
+          out += cyr;
+          i += lat.length;
+          matched = true;
+          break;
+        }
+      }
+      if (matched) continue;
+      const ch = text[i];
+      out += LAT_TO_CYR_CHAR[ch] !== undefined ? LAT_TO_CYR_CHAR[ch] : ch;
+      i += 1;
+    }
+    return out;
+  }
+
+  function isMostlyCyrillic(text) {
+    const cyr = (text.match(/[а-яёА-ЯЁ]/g) || []).length;
+    const lat = (text.match(/[a-zA-Z]/g) || []).length;
+    return cyr >= lat;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 1b. Ударения (словарь + применение)                                  */
+  /* ------------------------------------------------------------------ */
+
+  // Только знак ударения (combining acute U+0301). Не трогаем й/ё и прочие
+  // диакритики — иначе NFD ломает «й» → «и» и словарь перестаёт находить слова.
+  const STRESS_MARK = '\u0301';
+
+  function removeStressMarks(text) {
+    // Удаляем только акут ударения, оставляя й, ё и т.п. нетронутыми
+    return text.replace(/\u0301/g, '');
+  }
+
+  // Словарь: ключ — слово в нижнем регистре БЕЗ ударения,
+  // значение — индекс ударной гласной (0-based) в этом слове.
+  // Так надёжнее, чем хранить готовые строки с диакритикой.
+  // Индекс указывает на гласную, после которой ставится ́.
+  const VOWELS = new Set('аеёиоуыэюяАЕЁИОУЫЭЮЯ'.split(''));
+
+  // [слово, индекс_ударной_гласной]
+  const STRESS_ENTRIES = [
+    // приветствия
+    ['привет', 4], ['здравствуйте', 3], ['здравствуй', 3],
+    ['спасибо', 4], ['пожалуйста', 3], ['досвидания', 6],
+    ['прощай', 4], ['доброе', 1], ['утро', 0],
+    ['вечер', 1], ['сегодня', 3], ['завтра', 1],
+    ['вчера', 4], ['сейчас', 4], ['всегда', 5], ['никогда', 6],
+    // местоимения / вопросы
+    ['она', 2], ['оно', 2], ['они', 2],
+    ['куда', 3], ['откуда', 3], ['когда', 4], ['почему', 5],
+    ['зачем', 3], ['какой', 3], ['какая', 3], ['какое', 3], ['какие', 3],
+    ['сколько', 2],
+    // существительные
+    ['человек', 5], ['люди', 1], ['мужчина', 1], ['женщина', 1],
+    ['ребёнок', 3], ['ребенок', 3], ['дети', 1],
+    ['друзья', 5], ['семья', 4], ['мама', 1], ['папа', 1],
+    ['отец', 2], ['сестра', 5], ['жена', 3], ['имя', 0],
+    ['город', 1], ['страна', 5], ['россия', 4],
+    ['москва', 5], ['москве', 5], ['москвы', 5], ['москву', 5], ['москвой', 5],
+    ['петербург', 6], ['улица', 0], ['улице', 0], ['улицы', 0], ['улицу', 0],
+    ['квартира', 5], ['школа', 2], ['университет', 9], ['работа', 3],
+    ['время', 2], ['месяц', 1], ['неделя', 3],
+    ['минута', 3], ['секунда', 3], ['книга', 2],
+    ['письмо', 5], ['телефон', 5], ['компьютер', 5],
+    ['интернет', 6], ['язык', 2], ['русский', 1],
+    ['английский', 4], ['любовь', 3], ['счастье', 2],
+    ['вода', 3], ['молоко', 5], ['еда', 2], ['деньги', 1],
+    ['машина', 3], ['автобус', 3], ['поезд', 1],
+    ['самолёт', 5], ['самолет', 5],
+    ['щербаков', 6], ['щербакова', 6], ['щербакову', 6], ['щербаковым', 6],
+    // глаголы
+    ['иметь', 2], ['делать', 1], ['говорить', 5], ['сказать', 4],
+    ['думать', 1], ['хотеть', 3], ['видеть', 1], ['слышать', 2],
+    ['идти', 3], ['ехать', 0], ['живу', 3], ['живёт', 3], ['живет', 3],
+    ['работать', 3], ['учиться', 2], ['читать', 3],
+    ['писать', 3], ['любить', 3], ['нравиться', 2],
+    ['понимать', 5], ['помнить', 1], ['забыть', 3],
+    ['прийти', 5], ['уйти', 3], ['открыть', 4], ['закрыть', 4],
+    ['начать', 3], ['кончить', 1], ['закончить', 3],
+    // прилагательные / наречия
+    ['большой', 5], ['маленький', 1], ['хороший', 3],
+    ['плохой', 4], ['новый', 1], ['старый', 2],
+    ['красивый', 4], ['интересный', 5], ['важный', 1],
+    ['первый', 1], ['последний', 4], ['другой', 4],
+    ['очень', 0], ['много', 2], ['мало', 1], ['хорошо', 5],
+    ['плохо', 2], ['быстро', 1], ['медленно', 1],
+    ['ещё', 2], ['еще', 2], ['уже', 2], ['тоже', 1],
+    ['только', 1], ['почти', 4], ['совсем', 4], ['иногда', 5],
+    // указательные / притяжательные
+    ['это', 0], ['этот', 0], ['эта', 0], ['эти', 0],
+    ['того', 3], ['тому', 3],
+    ['моя', 2], ['моё', 2], ['мое', 2], ['мои', 2],
+    ['твоя', 3], ['твоё', 3], ['твое', 3], ['твои', 3],
+    ['наша', 1], ['наше', 1], ['наши', 1],
+    ['ваша', 1], ['ваше', 1], ['ваши', 1],
+    ['его', 2], ['её', 1], ['ее', 1],
+    ['себя', 3], ['себе', 3], ['собой', 3],
+    // доп. частые
+    ['потому', 5], ['поэтому', 2], ['сейчас', 4],
+    ['можно', 1], ['нужно', 1], ['нельзя', 5],
+    ['здесь', 2], ['теперь', 3], ['потом', 3],
+    ['сначала', 4], ['наконец', 5], ['вдруг', 2],
+    ['пример', 4], ['вопрос', 4], ['ответ', 3],
+    ['слово', 2], 'текст', // handled below
+  ];
+
+  // Собираем Map: слово → индекс гласной
+  const STRESS_DICT = new Map();
+  for (const entry of STRESS_ENTRIES) {
+    if (typeof entry === 'string') continue; // skip accidental
+    const [word, idx] = entry;
+    if (typeof word === 'string' && typeof idx === 'number') {
+      STRESS_DICT.set(word, idx);
+    }
+  }
+  // Дополнения одной строкой
+  STRESS_DICT.set('текст', 1);
+  STRESS_DICT.set('пример', 4);
+  STRESS_DICT.set('день', 1); // single syllable — stress on the vowel
+  STRESS_DICT.set('ночь', 1);
+  STRESS_DICT.set('год', 1);
+  STRESS_DICT.set('час', 1);
+  STRESS_DICT.set('дом', 1);
+  STRESS_DICT.set('друг', 2);
+  STRESS_DICT.set('сын', 1);
+  STRESS_DICT.set('брат', 2);
+  STRESS_DICT.set('муж', 1);
+  STRESS_DICT.set('мать', 1);
+  STRESS_DICT.set('дочь', 1);
+  STRESS_DICT.set('мир', 1);
+  STRESS_DICT.set('жизнь', 1);
+  STRESS_DICT.set('хлеб', 2);
+  STRESS_DICT.set('я', 0);
+  STRESS_DICT.set('ты', 1);
+  STRESS_DICT.set('он', 0);
+  STRESS_DICT.set('мы', 1);
+  STRESS_DICT.set('вы', 1);
+  STRESS_DICT.set('кто', 2);
+  STRESS_DICT.set('что', 2);
+  STRESS_DICT.set('где', 2);
+  STRESS_DICT.set('как', 1);
+  STRESS_DICT.set('чей', 1);
+  STRESS_DICT.set('там', 1);
+  STRESS_DICT.set('тут', 1);
+
+  function vowelIndices(lower) {
+    const idxs = [];
+    for (let i = 0; i < lower.length; i++) {
+      if (VOWELS.has(lower[i])) idxs.push(i);
+    }
+    return idxs;
+  }
+
+  function applyStressToWord(word) {
+    const clean = removeStressMarks(word);
+    const lower = clean.toLowerCase();
+    const vowels = vowelIndices(lower);
+
+    // Односложные — тоже помечаем (пользователь просил ударение на всех словах)
+    let stressIdx;
+    if (STRESS_DICT.has(lower)) {
+      stressIdx = STRESS_DICT.get(lower);
+      if (stressIdx < 0 || stressIdx >= lower.length || !VOWELS.has(lower[stressIdx])) {
+        // битый индекс в словаре — fallback
+        stressIdx = vowels.length ? vowels[vowels.length - 1] : -1;
+      }
+    } else if (vowels.length >= 1) {
+      // Нет в словаре: ставим ударение на последнюю гласную
+      // (частотный дефолт; для известных слов словарь точнее)
+      stressIdx = vowels[vowels.length - 1];
+    } else {
+      return word; // нет гласных
+    }
+
+    let result = '';
+    for (let i = 0; i < clean.length; i++) {
+      result += clean[i];
+      if (i === stressIdx) result += STRESS_MARK;
+    }
+    return result;
+  }
+
+  function applyStressToText(text) {
+    return text.replace(/[а-яёА-ЯЁ]+/g, applyStressToWord);
+  }
+
+  function countStressedWords(text) {
+    const words = text.match(/[а-яёА-ЯЁ]+/g) || [];
+    return words.filter((w) => {
+      const lower = removeStressMarks(w).toLowerCase();
+      return vowelIndices(lower).length >= 1;
+    }).length;
+  }
+
+  // Меняем только текстовые узлы внутри редактора — B/I/U/шрифт/размер не трогаем
+  function transformEditorTextNodes(transformFn) {
+    const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT, null);
+    const nodes = [];
+    let node;
+    while ((node = walker.nextNode())) nodes.push(node);
+    for (const textNode of nodes) {
+      const next = transformFn(textNode.nodeValue);
+      if (next !== textNode.nodeValue) textNode.nodeValue = next;
+    }
+  }
+
+  function applyStressInEditor() {
+    transformEditorTextNodes((value) =>
+      value.replace(/[а-яёА-ЯЁ\u0301]+/g, (word) => applyStressToWord(word))
+    );
+  }
+
+  function removeStressInEditor() {
+    transformEditorTextNodes((value) => removeStressMarks(value));
+  }
+
+  let stressOn = false;
 
   /* ------------------------------------------------------------------ */
   /* 2. Алфавит и вставка букв                                           */
@@ -235,8 +498,19 @@
   const resultEl = document.getElementById('result');
 
   function updateResult() {
-    const sourceText = editor.innerText.replace(/\u00A0/g, ' ');
-    resultEl.textContent = transliterate(sourceText);
+    // Убираем знаки ударения перед транслитом — в латинице они не нужны
+    const sourceText = removeStressMarks(editor.innerText.replace(/\u00A0/g, ' '));
+    if (!sourceText.trim()) {
+      resultEl.textContent = '';
+      return;
+    }
+    // Всегда показываем «другую» сторону:
+    // кириллица в редакторе → латиница справа; латиница в редакторе → кириллица справа
+    if (isMostlyCyrillic(sourceText)) {
+      resultEl.textContent = transliterate(sourceText);
+    } else {
+      resultEl.textContent = latinToCyrillic(sourceText);
+    }
   }
 
   /* ------------------------------------------------------------------ */
@@ -500,6 +774,13 @@
     fontMenu.classList.remove('open');
     langMenuEl.classList.remove('open');
     resetTranslationState();
+    // сброс режима ударений
+    stressOn = false;
+    const sBtn = document.getElementById('stressBtn');
+    if (sBtn) {
+      sBtn.classList.remove('active');
+      sBtn.setAttribute('aria-pressed', 'false');
+    }
   }
 
   clearInputBtn.addEventListener('click', () => {
@@ -546,6 +827,83 @@
       temp.remove();
       showToast(t('toastCopied'));
     }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 6b. Ударение + ⇄ (кириллица ↔ латиница)                              */
+  /* ------------------------------------------------------------------ */
+
+  const stressBtn = document.getElementById('stressBtn');
+  const swapDirBtn = document.getElementById('swapDirBtn');
+
+  if (stressBtn) {
+    stressBtn.addEventListener('mousedown', (e) => e.preventDefault());
+    stressBtn.addEventListener('click', () => {
+      const plain = editor.innerText.replace(/\u00A0/g, ' ').trim();
+      if (!plain) {
+        showToast(t('stressEmpty'));
+        return;
+      }
+
+      // Ударения имеют смысл только для кириллицы
+      if (!isMostlyCyrillic(plain)) {
+        showToast(t('stressEmpty'));
+        return;
+      }
+
+      pushHistory();
+      stressOn = !stressOn;
+      stressBtn.classList.toggle('active', stressOn);
+      stressBtn.setAttribute('aria-pressed', String(stressOn));
+
+      if (stressOn) {
+        // Меняем только текст в текстовых узлах — форматирование (B/I/U/шрифт/размер) сохраняется
+        applyStressInEditor();
+        const found = countStressedWords(removeStressMarks(plain));
+        showToast(found > 0 ? t('stressOn') + ' (' + found + ')' : t('stressOn'));
+      } else {
+        removeStressInEditor();
+        showToast(t('stressOff'));
+      }
+
+      updateResult();
+      updatePageGuides();
+      editor.focus();
+    });
+  }
+
+  if (swapDirBtn) {
+    swapDirBtn.addEventListener('mousedown', (e) => e.preventDefault());
+    swapDirBtn.addEventListener('click', () => {
+      const plain = editor.innerText.replace(/\u00A0/g, ' ');
+      if (!plain.trim()) {
+        showToast(t('toastSwapEmpty'));
+        return;
+      }
+
+      pushHistory();
+      // При переключении направления снимаем ударения (они имеют смысл только в кириллице)
+      const clean = removeStressMarks(plain);
+      stressOn = false;
+      if (stressBtn) {
+        stressBtn.classList.remove('active');
+        stressBtn.setAttribute('aria-pressed', 'false');
+      }
+
+      let result;
+      if (isMostlyCyrillic(clean)) {
+        result = transliterate(clean);
+        showToast(t('swapToLat'));
+      } else {
+        result = latinToCyrillic(clean);
+        showToast(t('swapToCyr'));
+      }
+
+      editor.innerText = result;
+      updateResult();
+      updatePageGuides();
+      editor.focus();
+    });
   }
 
   /* ------------------------------------------------------------------ */
