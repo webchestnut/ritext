@@ -857,6 +857,52 @@ html[data-theme="light"].tone-on {
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
+
+/* Пастельные тона (роза и т.п.): светлый мягкий фон как у кнопки */
+html[data-theme="dark"].tone-soft {
+  --bg: hsl(var(--tone-h) 35% 12%);
+  --panel: hsla(var(--tone-h), 40%, 85%, 0.12);
+  --panel-alt: hsla(var(--tone-h), 35%, 80%, 0.10);
+  --dropdown-bg: hsla(var(--tone-h), 30%, 14%, 0.55);
+  --key-bg: hsla(var(--tone-h), 40%, 88%, 0.12);
+  --key-bg-hover: hsla(var(--tone-h), 45%, 90%, 0.20);
+  --btn-bg: hsla(var(--tone-h), 40%, 88%, 0.12);
+  --btn-bg-hover: hsla(var(--tone-h), 45%, 90%, 0.22);
+  --shadow-panel:
+    0 18px 44px -18px hsla(var(--tone-h), 40%, 70%, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+html[data-theme="light"].tone-soft {
+  --bg: hsl(var(--tone-h) 45% 96%);
+  --panel: hsla(var(--tone-h), 50%, 96%, 0.45);
+  --panel-alt: hsla(var(--tone-h), 45%, 95%, 0.50);
+  --dropdown-bg: hsla(var(--tone-h), 40%, 98%, 0.70);
+  --key-bg: hsla(var(--tone-h), 50%, 97%, 0.55);
+  --key-bg-hover: hsla(var(--tone-h), 55%, 98%, 0.80);
+  --btn-bg: hsla(var(--tone-h), 50%, 97%, 0.50);
+  --btn-bg-hover: hsla(var(--tone-h), 55%, 98%, 0.78);
+  --shadow-panel:
+    0 18px 44px -18px hsla(var(--tone-h), 40%, 60%, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+html.tone-soft body::before {
+  background:
+    radial-gradient(55vmax 45vmax at 18% 16%,
+      hsla(var(--tone-h), 55%, 82%, 0.55), transparent 72%),
+    radial-gradient(50vmax 42vmax at 88% 82%,
+      hsla(var(--tone-h), 50%, 88%, 0.40), transparent 72%);
+}
+
+html.tone-soft body::after {
+  background:
+    radial-gradient(48vmax 40vmax at 78% 22%,
+      hsla(var(--tone-h), 45%, 90%, 0.35), transparent 70%),
+    radial-gradient(36vmax 32vmax at 28% 88%,
+      hsla(var(--tone-h), 50%, 85%, 0.30), transparent 70%);
+}
+
 html.tone-on .fmt-btn.active {
   background: linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0) 60%), var(--tone-hex);
   color: var(--tone-text);

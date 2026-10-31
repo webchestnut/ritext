@@ -172,11 +172,11 @@
 
   const TRANSLIT_MAP = {
     'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd',
-    'е': 'e', 'ё': 'e', 'ж': 'zh', 'з': 'z', 'и': 'i',
+    'е': 'e', 'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i',
     'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n',
     'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't',
-    'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch',
-    'ш': 'sh', 'щ': 'sch', 'ъ': '', 'ы': 'y', 'ь': '',
+    'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch',
+    'ш': 'sh', 'щ': 'shch', 'ъ': '', 'ы': 'y', 'ь': '',
     'э': 'e', 'ю': 'yu', 'я': 'ya'
   };
 
@@ -369,6 +369,171 @@
   STRESS_DICT.set('там', 1);
   STRESS_DICT.set('тут', 1);
 
+  // Расширенный словарь частых слов
+  STRESS_DICT.set('приветствие', 5);
+  STRESS_DICT.set('пожалуйста', 3);
+  STRESS_DICT.set('извините', 3);
+  STRESS_DICT.set('извини', 3);
+  STRESS_DICT.set('спасибо', 4);
+  STRESS_DICT.set('здравствуйте', 3);
+  STRESS_DICT.set('досвидания', 6);
+  STRESS_DICT.set('хорошо', 5);
+  STRESS_DICT.set('плохо', 2);
+  STRESS_DICT.set('понятно', 3);
+  STRESS_DICT.set('конечно', 3);
+  STRESS_DICT.set('наверное', 3);
+  STRESS_DICT.set('возможно', 5);
+  STRESS_DICT.set('действительно', 4);
+  STRESS_DICT.set('обязательно', 5);
+  STRESS_DICT.set('прекрасно', 4);
+  STRESS_DICT.set('замечательно', 4);
+  STRESS_DICT.set('интересно', 5);
+  STRESS_DICT.set('красиво', 4);
+  STRESS_DICT.set('быстро', 1);
+  STRESS_DICT.set('медленно', 1);
+  STRESS_DICT.set('сегодня', 3);
+  STRESS_DICT.set('завтра', 1);
+  STRESS_DICT.set('вчера', 4);
+  STRESS_DICT.set('сейчас', 4);
+  STRESS_DICT.set('потом', 3);
+  STRESS_DICT.set('раньше', 1);
+  STRESS_DICT.set('всегда', 5);
+  STRESS_DICT.set('никогда', 6);
+  STRESS_DICT.set('иногда', 5);
+  STRESS_DICT.set('часто', 1);
+  STRESS_DICT.set('редко', 1);
+  STRESS_DICT.set('человек', 5);
+  STRESS_DICT.set('люди', 1);
+  STRESS_DICT.set('ребёнок', 3);
+  STRESS_DICT.set('ребенок', 3);
+  STRESS_DICT.set('дети', 1);
+  STRESS_DICT.set('семья', 4);
+  STRESS_DICT.set('работа', 3);
+  STRESS_DICT.set('школа', 2);
+  STRESS_DICT.set('университет', 9);
+  STRESS_DICT.set('студент', 4);
+  STRESS_DICT.set('учитель', 2);
+  STRESS_DICT.set('ученик', 3);
+  STRESS_DICT.set('книга', 2);
+  STRESS_DICT.set('письмо', 5);
+  STRESS_DICT.set('слово', 2);
+  STRESS_DICT.set('предложение', 6);
+  STRESS_DICT.set('вопрос', 4);
+  STRESS_DICT.set('ответ', 3);
+  STRESS_DICT.set('проблема', 5);
+  STRESS_DICT.set('решение', 3);
+  STRESS_DICT.set('время', 2);
+  STRESS_DICT.set('день', 1);
+  STRESS_DICT.set('неделя', 3);
+  STRESS_DICT.set('месяц', 1);
+  STRESS_DICT.set('год', 1);
+  STRESS_DICT.set('утро', 0);
+  STRESS_DICT.set('вечер', 1);
+  STRESS_DICT.set('ночь', 1);
+  STRESS_DICT.set('город', 1);
+  STRESS_DICT.set('страна', 5);
+  STRESS_DICT.set('россия', 4);
+  STRESS_DICT.set('москва', 5);
+  STRESS_DICT.set('петербург', 6);
+  STRESS_DICT.set('улица', 0);
+  STRESS_DICT.set('дом', 1);
+  STRESS_DICT.set('квартира', 5);
+  STRESS_DICT.set('машина', 3);
+  STRESS_DICT.set('автобус', 3);
+  STRESS_DICT.set('поезд', 1);
+  STRESS_DICT.set('самолёт', 5);
+  STRESS_DICT.set('самолет', 5);
+  STRESS_DICT.set('телефон', 5);
+  STRESS_DICT.set('компьютер', 5);
+  STRESS_DICT.set('интернет', 6);
+  STRESS_DICT.set('сайт', 1);
+  STRESS_DICT.set('язык', 2);
+  STRESS_DICT.set('русский', 1);
+  STRESS_DICT.set('английский', 4);
+  STRESS_DICT.set('латышский', 3);
+  STRESS_DICT.set('жизнь', 1);
+  STRESS_DICT.set('любовь', 3);
+  STRESS_DICT.set('счастье', 2);
+  STRESS_DICT.set('здоровье', 3);
+  STRESS_DICT.set('деньги', 1);
+  STRESS_DICT.set('работа', 3);
+  STRESS_DICT.set('делать', 1);
+  STRESS_DICT.set('говорить', 5);
+  STRESS_DICT.set('сказать', 4);
+  STRESS_DICT.set('видеть', 1);
+  STRESS_DICT.set('слышать', 2);
+  STRESS_DICT.set('думать', 1);
+  STRESS_DICT.set('знать', 2);
+  STRESS_DICT.set('хотеть', 3);
+  STRESS_DICT.set('мочь', 1);
+  STRESS_DICT.set('нужно', 1);
+  STRESS_DICT.set('можно', 1);
+  STRESS_DICT.set('нельзя', 5);
+  STRESS_DICT.set('должен', 1);
+  STRESS_DICT.set('должна', 3);
+  STRESS_DICT.set('должны', 3);
+  STRESS_DICT.set('жить', 1);
+  STRESS_DICT.set('живу', 3);
+  STRESS_DICT.set('живёт', 3);
+  STRESS_DICT.set('работает', 3);
+  STRESS_DICT.set('работает', 3);
+  STRESS_DICT.set('понимать', 5);
+  STRESS_DICT.set('понимаю', 5);
+  STRESS_DICT.set('помогать', 5);
+  STRESS_DICT.set('помоги', 3);
+  STRESS_DICT.set('пожалуй', 3);
+  STRESS_DICT.set('большой', 5);
+  STRESS_DICT.set('маленький', 1);
+  STRESS_DICT.set('новый', 1);
+  STRESS_DICT.set('старый', 2);
+  STRESS_DICT.set('хороший', 3);
+  STRESS_DICT.set('плохой', 4);
+  STRESS_DICT.set('красивый', 4);
+  STRESS_DICT.set('первый', 1);
+  STRESS_DICT.set('последний', 4);
+  STRESS_DICT.set('другой', 4);
+  STRESS_DICT.set('каждый', 1);
+  STRESS_DICT.set('весь', 1);
+  STRESS_DICT.set('все', 1);
+  STRESS_DICT.set('всё', 1);
+  STRESS_DICT.set('это', 0);
+  STRESS_DICT.set('этот', 0);
+  STRESS_DICT.set('эта', 0);
+  STRESS_DICT.set('эти', 0);
+  STRESS_DICT.set('здесь', 2);
+  STRESS_DICT.set('там', 1);
+  STRESS_DICT.set('сюда', 3);
+  STRESS_DICT.set('туда', 3);
+  STRESS_DICT.set('откуда', 3);
+  STRESS_DICT.set('куда', 3);
+  STRESS_DICT.set('когда', 4);
+  STRESS_DICT.set('почему', 5);
+  STRESS_DICT.set('потому', 5);
+  STRESS_DICT.set('поэтому', 2);
+  STRESS_DICT.set('если', 0);
+  STRESS_DICT.set('чтобы', 1);
+  STRESS_DICT.set('также', 1);
+  STRESS_DICT.set('тоже', 1);
+  STRESS_DICT.set('только', 1);
+  STRESS_DICT.set('ещё', 2);
+  STRESS_DICT.set('еще', 2);
+  STRESS_DICT.set('уже', 2);
+  STRESS_DICT.set('очень', 0);
+  STRESS_DICT.set('совсем', 4);
+  STRESS_DICT.set('почти', 4);
+  STRESS_DICT.set('примерно', 3);
+  STRESS_DICT.set('например', 4);
+  STRESS_DICT.set('документ', 5);
+  STRESS_DICT.set('подпись', 3);
+  STRESS_DICT.set('имя', 0);
+  STRESS_DICT.set('фамилия', 3);
+  STRESS_DICT.set('отчество', 2);
+  STRESS_DICT.set('адрес', 2);
+  STRESS_DICT.set('номер', 1);
+  STRESS_DICT.set('дата', 1);
+  STRESS_DICT.set('транслит', 5);
+  STRESS_DICT.set('ударение', 3);
+
   function vowelIndices(lower) {
     const idxs = [];
     for (let i = 0; i < lower.length; i++) {
@@ -465,7 +630,10 @@
     btn.setAttribute('aria-label', t('insertLetter', { letter }));
 
     btn.addEventListener('mousedown', (e) => e.preventDefault());
-    btn.addEventListener('click', () => insertTextAtCursor(letter));
+    btn.addEventListener('click', (e) => {
+      const ch = e.shiftKey ? letter.toUpperCase() : letter;
+      insertTextAtCursor(ch);
+    });
 
     alphabetEl.appendChild(btn);
   });
@@ -976,17 +1144,40 @@
   }
 
   async function translateText(text, targetLang) {
-    const url =
-      'https://translate.googleapis.com/translate_a/single' +
-      `?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+    // Длинный текст режем на куски — API стабильнее, меньше обрывов
+    const MAX = 4500;
+    const chunks = [];
+    if (text.length <= MAX) {
+      chunks.push(text);
+    } else {
+      let rest = text;
+      while (rest.length) {
+        if (rest.length <= MAX) {
+          chunks.push(rest);
+          break;
+        }
+        let cut = rest.lastIndexOf('\n', MAX);
+        if (cut < MAX * 0.4) cut = rest.lastIndexOf(' ', MAX);
+        if (cut < MAX * 0.4) cut = MAX;
+        chunks.push(rest.slice(0, cut));
+        rest = rest.slice(cut).replace(/^\n/, '');
+      }
+    }
 
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('translate request failed');
-
-    const data = await res.json();
-    if (!Array.isArray(data) || !Array.isArray(data[0])) throw new Error('unexpected response');
-
-    return data[0].map((chunk) => chunk[0]).join('');
+    const parts = [];
+    for (const chunk of chunks) {
+      const url =
+        'https://translate.googleapis.com/translate_a/single' +
+        `?client=gtx&sl=auto&tl=${encodeURIComponent(targetLang)}&dt=t&q=${encodeURIComponent(chunk)}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('translate request failed');
+      const data = await res.json();
+      if (!Array.isArray(data) || !Array.isArray(data[0])) {
+        throw new Error('unexpected response');
+      }
+      parts.push(data[0].map((seg) => seg[0]).join(''));
+    }
+    return parts.join('');
   }
 
   // Заменяет содержимое редактора обычным текстом (переносы строк — <br>),
@@ -1473,8 +1664,9 @@
     currentToneHex = valid;
 
     if (!valid) {
-      htmlEl.classList.remove('tone-on');
+      htmlEl.classList.remove('tone-on', 'tone-soft');
       TONE_ACCENT_VARS.forEach((name) => htmlEl.style.removeProperty(name));
+      htmlEl.style.removeProperty('--blob-l');
       toneDot.style.background = '';
     } else {
       const [r, g, b] = hexToRgb(valid);
@@ -1493,8 +1685,19 @@
       htmlEl.style.setProperty('--tone-hex-hover',
         rgbToHex(r + (255 - r) * 0.18, g + (255 - g) * 0.18, b + (255 - b) * 0.18));
       // тёмный или белый текст на акцентных кнопках — что контрастнее
+      const lum = relativeLuminance(r, g, b);
       htmlEl.style.setProperty('--tone-text',
-        relativeLuminance(r, g, b) > 0.3 ? '#111114' : '#ffffff');
+        lum > 0.3 ? '#111114' : '#ffffff');
+
+      // Мягкие пастельные тона (роза и т.п.): светлее и нежнее фон
+      if (lum > 0.55) {
+        htmlEl.classList.add('tone-soft');
+        htmlEl.style.setProperty('--blob-l', '72%');
+        htmlEl.style.setProperty('--tone-s', `${Math.round(Math.min(45, Math.max(18, s * 0.55)))}%`);
+      } else {
+        htmlEl.classList.remove('tone-soft');
+        htmlEl.style.removeProperty('--blob-l');
+      }
 
       htmlEl.classList.add('tone-on');
       toneDot.style.background = valid;
