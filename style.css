@@ -1,100 +1,235 @@
 /* ==========================================================================
-   ritext — минималистичный интерфейс (тёмная/светлая тема)
+   ritext — Liquid Glass
    ========================================================================== */
 
 :root,
 html[data-theme="dark"] {
-  --bg: #0c0c0e;
-  --panel: #17171a;
-  --panel-alt: #1b1b1f;
-  --border: rgba(255, 255, 255, 0.08);
-  --border-soft: rgba(255, 255, 255, 0.06);
-  --text: #e9e9ec;
-  --text-muted: #8d8d95;
-  --text-faint: #5c5c63;
-  --key-bg: #1d1d21;
-  --key-bg-hover: #26262b;
-  --key-border: rgba(255, 255, 255, 0.07);
-  --btn-bg: #1d1d21;
-  --btn-bg-hover: #27272c;
-  --btn-primary-bg: #e9e9ec;
-  --btn-primary-text: #101012;
-  --btn-primary-hover: #d5d5d9;
-  --dropdown-bg: #1c1c20;
-  --dropdown-border: rgba(255, 255, 255, 0.1);
-  --dropdown-hover: #26262b;
-  --toast-bg: #1e1e22;
-  --scrollbar-thumb: rgba(255, 255, 255, 0.1);
-  --guide-line: rgba(255, 255, 255, 0.16);
+  --bg: #0a0c12;
+  --bg-grad-1: #12162a;
+  --bg-grad-2: #0e1a28;
+  --bg-grad-3: #1a1230;
+  --panel: rgba(255, 255, 255, 0.04);
+  --panel-alt: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.18);
+  --border-soft: rgba(255, 255, 255, 0.10);
+  --rim-top: rgba(255, 255, 255, 0.42);
+  --rim-side: rgba(255, 255, 255, 0.16);
+  --rim-bottom: rgba(255, 255, 255, 0.06);
+  --text: #f2f3f7;
+  --text-muted: rgba(242, 243, 247, 0.62);
+  --text-faint: rgba(242, 243, 247, 0.38);
+  --key-bg: rgba(255, 255, 255, 0.05);
+  --key-bg-hover: rgba(255, 255, 255, 0.12);
+  --key-border: rgba(255, 255, 255, 0.16);
+  --btn-bg: rgba(255, 255, 255, 0.05);
+  --btn-bg-hover: rgba(255, 255, 255, 0.12);
+  --btn-primary-bg: rgba(255, 255, 255, 0.92);
+  --btn-primary-text: #0c0e14;
+  --btn-primary-hover: #ffffff;
+  --dropdown-bg: rgba(18, 20, 30, 0.55);
+  --dropdown-border: rgba(255, 255, 255, 0.16);
+  --dropdown-hover: rgba(255, 255, 255, 0.10);
+  --toast-bg: rgba(16, 18, 28, 0.78);
+  --scrollbar-thumb: rgba(255, 255, 255, 0.14);
+  --guide-line: rgba(255, 255, 255, 0.14);
   --guide-label: rgba(255, 255, 255, 0.35);
-  --radius-lg: 18px;
-  --radius-md: 12px;
-  --radius-sm: 9px;
-  --shadow-panel: 0 12px 30px rgba(0, 0, 0, 0.35);
-  --shadow-float: 0 10px 24px rgba(0, 0, 0, 0.45);
+  --radius-lg: 28px;
+  --radius-md: 20px;
+  --radius-sm: 999px;
+  --radius-key: 14px;
+  --shadow-panel:
+    0 16px 40px -16px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  --shadow-float:
+    0 18px 48px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  --shadow-btn:
+    0 6px 18px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12);
+  --glass-blur: blur(16px) saturate(140%);
+  --sheen: linear-gradient(145deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.06) 28%, rgba(255,255,255,0) 52%, rgba(255,255,255,0.08) 100%);
+  --btn-gloss: linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.02) 100%);
+  --btn-gloss-hover: linear-gradient(180deg, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.04) 100%);
+  --blob-l: 48%;
+  --blob-a1: 0.32;
+  --blob-a2: 0.20;
+  --blob-a3: 0.24;
+  --blob-a4: 0.16;
+  --tone-h: 220;
+  --tone-h2: 260;
+  --tone-h3: 190;
+  --tone-s: 55%;
 }
 
 html[data-theme="light"] {
-  --bg: #f2f2f4;
-  --panel: #ffffff;
-  --panel-alt: #f2f2f4;
-  --border: rgba(0, 0, 0, 0.08);
+  --bg: #e8ecf4;
+  --bg-grad-1: #dfe8f8;
+  --bg-grad-2: #e8e4f4;
+  --bg-grad-3: #f0e8ee;
+  --panel: rgba(255, 255, 255, 0.36);
+  --panel-alt: rgba(255, 255, 255, 0.42);
+  --border: rgba(255, 255, 255, 0.72);
   --border-soft: rgba(0, 0, 0, 0.06);
-  --text: #17171a;
-  --text-muted: #63636b;
-  --text-faint: #a3a3ab;
-  --key-bg: #f2f2f4;
-  --key-bg-hover: #e6e6ea;
-  --key-border: rgba(0, 0, 0, 0.08);
-  --btn-bg: #f2f2f4;
-  --btn-bg-hover: #e6e6ea;
-  --btn-primary-bg: #17171a;
+  --rim-top: rgba(255, 255, 255, 0.98);
+  --rim-side: rgba(255, 255, 255, 0.65);
+  --rim-bottom: rgba(255, 255, 255, 0.40);
+  --text: #12141c;
+  --text-muted: rgba(18, 20, 28, 0.55);
+  --text-faint: rgba(18, 20, 28, 0.38);
+  --key-bg: rgba(255, 255, 255, 0.40);
+  --key-bg-hover: rgba(255, 255, 255, 0.70);
+  --key-border: rgba(255, 255, 255, 0.8);
+  --btn-bg: rgba(255, 255, 255, 0.38);
+  --btn-bg-hover: rgba(255, 255, 255, 0.72);
+  --btn-primary-bg: #12141c;
   --btn-primary-text: #ffffff;
-  --btn-primary-hover: #333338;
-  --dropdown-bg: #ffffff;
-  --dropdown-border: rgba(0, 0, 0, 0.1);
-  --dropdown-hover: #f0f0f3;
-  --toast-bg: #1f1f23;
-  --scrollbar-thumb: rgba(0, 0, 0, 0.15);
-  --guide-line: rgba(0, 0, 0, 0.14);
-  --guide-label: rgba(0, 0, 0, 0.3);
-  --shadow-panel: 0 12px 30px rgba(0, 0, 0, 0.08);
-  --shadow-float: 0 10px 24px rgba(0, 0, 0, 0.14);
+  --btn-primary-hover: #2a2e3a;
+  --dropdown-bg: rgba(255, 255, 255, 0.58);
+  --dropdown-border: rgba(255, 255, 255, 0.9);
+  --dropdown-hover: rgba(255, 255, 255, 0.95);
+  --toast-bg: rgba(20, 22, 32, 0.82);
+  --scrollbar-thumb: rgba(0, 0, 0, 0.14);
+  --guide-line: rgba(0, 0, 0, 0.12);
+  --guide-label: rgba(0, 0, 0, 0.35);
+  --shadow-panel:
+    0 16px 40px -18px rgba(30, 40, 80, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --shadow-float:
+    0 18px 48px rgba(30, 40, 80, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --shadow-btn:
+    0 8px 22px rgba(30, 40, 80, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+  --blob-l: 62%;
+  --blob-a1: 0.36;
+  --blob-a2: 0.26;
+  --blob-a3: 0.30;
+  --blob-a4: 0.20;
 }
 
-* {
-  box-sizing: border-box;
+@property --tone-h  { syntax: '<number>'; inherits: true; initial-value: 220; }
+@property --tone-h2 { syntax: '<number>'; inherits: true; initial-value: 260; }
+@property --tone-h3 { syntax: '<number>'; inherits: true; initial-value: 190; }
+@property --tone-s  { syntax: '<percentage>'; inherits: true; initial-value: 55%; }
+
+html {
+  transition: --tone-h 0.8s ease, --tone-h2 0.8s ease, --tone-h3 0.8s ease, --tone-s 0.8s ease;
 }
 
-html, body {
-  height: 100%;
-}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
 
 body {
   margin: 0;
-  background: var(--bg);
   color: var(--text);
   font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  background: var(--bg);
+  transition: background-color 0.45s ease, color 0.35s ease;
+  overflow-x: hidden;
 }
 
-button {
-  font-family: inherit;
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: -20%;
+  z-index: -1;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
 }
 
-.is-hidden {
-  display: none !important;
+body::before {
+  /* Без тона: почти незаметный нейтральный свет — чистый тёмный liquid glass */
+  background:
+    radial-gradient(55vmax 45vmax at 20% 15%, rgba(255, 255, 255, 0.04), transparent 70%),
+    radial-gradient(50vmax 42vmax at 85% 80%, rgba(255, 255, 255, 0.03), transparent 72%);
+  animation: driftA 32s ease-in-out infinite alternate;
+  animation-play-state: paused;
+  opacity: 1;
 }
 
-/* ---------- layout shell ---------- */
+body::after {
+  background:
+    radial-gradient(45vmax 38vmax at 70% 25%, rgba(255, 255, 255, 0.025), transparent 70%),
+    radial-gradient(40vmax 35vmax at 25% 85%, rgba(255, 255, 255, 0.02), transparent 70%);
+  animation: driftB 40s ease-in-out infinite alternate;
+  animation-play-state: paused;
+  opacity: 1;
+}
+
+/* С выбранным тоном — один цвет (монохром), без радуги */
+html.tone-on body::before {
+  background:
+    radial-gradient(55vmax 45vmax at 18% 16%,
+      hsl(var(--tone-h) var(--tone-s) var(--blob-l) / var(--blob-a1)), transparent 72%),
+    radial-gradient(50vmax 42vmax at 88% 82%,
+      hsl(var(--tone-h) var(--tone-s) calc(var(--blob-l) - 4%) / var(--blob-a3)), transparent 72%);
+}
+
+html.tone-on body::after {
+  background:
+    radial-gradient(48vmax 40vmax at 78% 22%,
+      hsl(var(--tone-h) var(--tone-s) calc(var(--blob-l) + 2%) / var(--blob-a2)), transparent 70%),
+    radial-gradient(36vmax 32vmax at 28% 88%,
+      hsl(var(--tone-h) var(--tone-s) calc(var(--blob-l) - 2%) / var(--blob-a4)), transparent 70%);
+}
+
+html[data-theme="dark"] body {
+  /* Простой тёмный liquid glass: нейтральный, без цветных пятен */
+  background:
+    radial-gradient(100% 70% at 50% -20%, #161821, transparent 55%),
+    radial-gradient(80% 50% at 100% 100%, #101218, transparent 50%),
+    #0a0b10;
+}
+
+html[data-theme="light"] body {
+  background:
+    radial-gradient(100% 70% at 50% -15%, #eef2fa, transparent 55%),
+    radial-gradient(80% 50% at 100% 100%, #e8eef8, transparent 50%),
+    #e6eaf2;
+}
+
+@keyframes driftA {
+  50%  { transform: translate3d(5%, 4%, 0) rotate(5deg) scale(1.07); }
+  100% { transform: translate3d(-4%, 6%, 0) rotate(-4deg) scale(1.04); }
+}
+@keyframes driftB {
+  50%  { transform: translate3d(-5%, -4%, 0) rotate(-5deg) scale(1.08); }
+  100% { transform: translate3d(4%, -6%, 0) rotate(4deg) scale(1.03); }
+}
+
+html.tone-animate body::before,
+html.tone-animate body::after {
+  animation-play-state: running;
+}
+
+/* will-change только во время анимации — экономит память GPU */
+html.tone-animate body::before,
+html.tone-animate body::after {
+  will-change: transform;
+}
+
+button { font-family: inherit; }
+.is-hidden { display: none !important; }
+
+html.is-booting,
+html.is-booting *,
+html.is-booting *::before,
+html.is-booting *::after {
+  transition: none !important;
+  animation: none !important;
+}
 
 .app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 10px clamp(8px, 1.2vw, 14px) 10px;
+  padding: 12px clamp(10px, 1.4vw, 18px) 14px;
+  gap: 10px;
 }
 
 .app-header {
@@ -102,135 +237,146 @@ button {
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  row-gap: 8px;
-  padding: 2px 2px 10px;
+  row-gap: 10px;
+  padding: 4px 2px 6px;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  row-gap: 8px;
 }
 
 .logo {
   margin: 0;
-  font-size: 19px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  font-size: 20px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
   color: var(--text);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.expand-icon {
-  display: inline-block;
-}
-
-.export-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.export-label {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-right: 2px;
-}
+.expand-icon { display: inline-block; }
 
 .workspace {
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
+  gap: 12px;
   min-height: 0;
 }
 
 @media (min-width: 1400px) {
-  .workspace {
-    grid-template-columns: minmax(0, 1fr) 420px;
-  }
+  .workspace { grid-template-columns: minmax(0, 1fr) 440px; }
 }
-
-/* ---------- editor column (alphabet + editor) ---------- */
 
 .editor-column {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   min-height: 0;
+}
+
+.alphabet,
+.result-panel,
+.export-bar,
+.dropdown-menu,
+.tone-popover,
+.toast {
+  border-style: solid;
+  border-width: 1px;
+  border-color: var(--rim-top) var(--rim-side) var(--rim-bottom) var(--rim-side);
+  background: var(--sheen), var(--panel);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-panel);
 }
 
 .alphabet {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  gap: clamp(1px, 0.5vw, 6px);
-  padding: 10px clamp(8px, 1.5vw, 16px);
-  background: var(--panel);
-  border: 1px solid var(--border);
+  gap: clamp(2px, 0.45vw, 6px);
+  padding: 12px clamp(10px, 1.4vw, 16px);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-panel);
 }
 
 .letter-key {
   appearance: none;
   border: 1px solid var(--key-border);
-  background: var(--key-bg);
+  background: var(--btn-gloss), var(--key-bg);
   color: var(--text);
   flex: 1 1 0;
   min-width: 0;
-  height: clamp(24px, 3.2vw, 34px);
+  height: clamp(28px, 3.4vw, 38px);
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-sm);
-  font-size: clamp(10px, 1.9vw, 15px);
-  font-weight: 500;
+  border-radius: var(--radius-key);
+  font-size: clamp(11px, 1.85vw, 15px);
+  font-weight: 550;
   line-height: 1;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), 0 2px 8px rgba(0,0,0,0.12);
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.18s cubic-bezier(0.2,0.8,0.2,1), box-shadow 0.2s ease;
 }
 
 .letter-key:hover {
-  background: var(--key-bg-hover);
-  border-color: rgba(128, 128, 128, 0.25);
+  background: var(--btn-gloss-hover), var(--key-bg-hover);
+  border-color: rgba(255,255,255,0.28);
+  transform: translateY(-1px);
 }
 
-.letter-key:active {
-  transform: scale(0.94);
-}
-
-.letter-key:focus-visible {
-  outline: 2px solid rgba(128, 128, 128, 0.4);
-  outline-offset: 2px;
-}
-
-/* ---------- shared panel chrome ---------- */
+.letter-key:active { transform: scale(0.94); }
+.letter-key:focus-visible { outline: 2px solid rgba(255,255,255,0.45); outline-offset: 2px; }
 
 .editor-panel,
 .result-panel {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  background: var(--panel);
-  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-panel);
   overflow: hidden;
+  position: relative;
+  contain: layout style;
 }
 
 .editor-panel {
   flex: 1;
   min-height: 420px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
-.result-panel {
-  min-height: 420px;
+.editor-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  border: 1px solid;
+  border-color: var(--rim-top) var(--rim-side) var(--rim-bottom) var(--rim-side);
+  background: var(--sheen), var(--panel);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-panel);
 }
 
-/* полноэкранный режим главного поля — растягивается до самых краёв окна,
-   без отступов и «дыр» */
 .editor-panel.is-expanded {
   position: fixed;
   inset: 0;
@@ -239,26 +385,30 @@ button {
   z-index: 500;
   min-height: 0;
   border-radius: 0;
-  border: none;
 }
+.editor-panel.is-expanded::before { border-radius: 0; }
+
+.result-panel { min-height: 420px; }
 
 .panel-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--border-soft);
   flex-shrink: 0;
   gap: 10px;
   flex-wrap: wrap;
   row-gap: 8px;
+  background: rgba(255,255,255,0.03);
 }
 
 .panel-title {
   font-size: 13px;
   font-weight: 600;
   color: var(--text-muted);
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .panel-actions {
@@ -271,43 +421,59 @@ button {
 .btn {
   appearance: none;
   border: 1px solid var(--key-border);
-  background: var(--btn-bg);
+  background: var(--btn-gloss), var(--btn-bg);
   color: var(--text);
   font-size: 13px;
-  font-weight: 500;
-  padding: 7px 14px;
+  font-weight: 550;
+  padding: 8px 16px;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  box-shadow: var(--shadow-btn);
+  transition: background 0.22s ease, border-color 0.22s ease, color 0.2s ease, box-shadow 0.22s ease, transform 0.18s cubic-bezier(0.2,0.8,0.2,1);
 }
 
 .btn-ghost:hover {
-  background: var(--btn-bg-hover);
-  border-color: rgba(128, 128, 128, 0.25);
+  background: var(--btn-gloss-hover), var(--btn-bg-hover);
+  border-color: rgba(255,255,255,0.28);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.4);
 }
 
 .btn-primary {
-  background: var(--btn-primary-bg);
+  background: linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%), var(--btn-primary-bg);
   color: var(--btn-primary-text);
-  border-color: var(--btn-primary-bg);
+  border-color: transparent;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 8px 22px -6px rgba(0,0,0,0.35);
 }
 
 .btn-primary:hover {
-  background: var(--btn-primary-hover);
-  border-color: var(--btn-primary-hover);
+  background: linear-gradient(180deg, rgba(255,255,255,0.42), rgba(255,255,255,0) 55%), var(--btn-primary-hover);
+  transform: translateY(-1px);
 }
 
-.btn:focus-visible {
-  outline: 2px solid rgba(128, 128, 128, 0.4);
-  outline-offset: 2px;
+.btn:active, .fmt-btn:active { transform: scale(0.96); }
+.btn:focus-visible { outline: 2px solid rgba(255,255,255,0.4); outline-offset: 2px; }
+
+.btn[aria-pressed="true"],
+.btn[aria-pressed="true"]:hover {
+  background: linear-gradient(180deg, rgba(255,255,255,0.34), rgba(255,255,255,0) 60%), var(--tone-hex, #6ea8ff);
+  color: var(--tone-text, #0c0e14);
+  border-color: transparent;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 8px 24px -8px var(--tone-hex, #6ea8ff);
 }
 
-/* ---------- inline formatting toolbar (всегда видна) ---------- */
+#animateBtn[aria-disabled="true"] { opacity: 0.5; }
 
 .fmt-inline {
-  padding: 2px;
-  border-radius: var(--radius-sm);
+  padding: 4px;
+  border-radius: 16px;
   background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: wrap;
 }
 
 .fmt-btn {
@@ -315,120 +481,105 @@ button {
   border: 1px solid transparent;
   background: transparent;
   color: var(--text);
-  min-width: 30px;
-  height: 30px;
-  padding: 0 8px;
-  border-radius: var(--radius-sm);
+  min-width: 32px;
+  height: 32px;
+  padding: 0 9px;
+  border-radius: 12px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 550;
   cursor: pointer;
   white-space: nowrap;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease;
 }
 
 .fmt-btn:hover {
-  background: var(--btn-bg-hover);
+  background: var(--btn-gloss), var(--btn-bg-hover);
+  border-color: var(--key-border);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.25);
 }
 
-.fmt-btn:focus-visible {
-  outline: 2px solid rgba(128, 128, 128, 0.4);
-  outline-offset: 1px;
-}
+.fmt-btn:focus-visible { outline: 2px solid rgba(255,255,255,0.35); outline-offset: 1px; }
 
 .fmt-btn.active {
-  background: var(--btn-primary-bg);
+  background: linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0) 60%), var(--btn-primary-bg);
   color: var(--btn-primary-text);
+  border-color: transparent;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 4px 14px rgba(0,0,0,0.2);
 }
 
-.fmt-bold {
-  font-weight: 700;
-}
-
-.fmt-italic {
-  font-style: italic;
-}
-
-.fmt-underline {
-  text-decoration: underline;
-}
-
-.fmt-close {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-muted);
-  margin-right: 4px;
-}
-
-.fmt-close:hover {
-  color: var(--text);
-  background: var(--btn-bg-hover);
-}
+.fmt-bold { font-weight: 700; }
+.fmt-italic { font-style: italic; }
+.fmt-underline { text-decoration: underline; }
+.fmt-close { font-size: 15px; font-weight: 600; color: var(--text-muted); margin-right: 2px; }
+.fmt-close:hover { color: var(--text); }
 
 .fmt-divider {
   width: 1px;
   height: 18px;
   background: var(--border);
-  margin: 0 2px;
+  margin: 0 4px;
   flex-shrink: 0;
+  opacity: 0.7;
 }
 
-.fmt-font-wrap,
-.lang-wrap {
+.fmt-font-wrap, .lang-wrap, .tone-wrap, .site-lang-wrap {
   position: relative;
   display: flex;
 }
-
-/* выпадающие меню (шрифты, язык) — позиционируются через JS
-   (position: fixed), поэтому не обрезаются скруглёнными панелями
-   с overflow: hidden */
 
 .dropdown-menu {
   position: fixed;
   list-style: none;
   margin: 0;
-  padding: 6px;
-  display: none;
+  padding: 8px;
+  display: flex;
   flex-direction: column;
-  gap: 1px;
-  min-width: 190px;
-  background: var(--dropdown-bg);
-  border: 1px solid var(--dropdown-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-float);
-  max-height: 260px;
+  gap: 2px;
+  min-width: 200px;
+  max-height: 280px;
   overflow-y: auto;
+  border-radius: var(--radius-md);
   z-index: 600;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-10px) scale(0.96);
+  transform-origin: top left;
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.3s cubic-bezier(0.2,0.8,0.2,1), visibility 0s linear 0.28s;
 }
 
-.dropdown-menu.open {
-  display: flex;
+.dropdown-menu.open, .tone-popover.open {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  transition-delay: 0s;
 }
 
 .dropdown-menu li {
-  padding: 8px 10px;
-  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  border-radius: 12px;
   color: var(--text);
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.12s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: background 0.15s ease, transform 0.15s ease;
 }
 
 .dropdown-menu li:hover,
 .dropdown-menu li:focus-visible {
   background: var(--dropdown-hover);
+  transform: translateX(2px);
 }
 
-.dropdown-menu li .font-preview-label {
-  display: block;
-}
+.dropdown-menu li.is-current { font-weight: 600; }
+.dropdown-menu li.is-current::after { content: '✓'; font-size: 13px; opacity: 0.75; }
+.dropdown-menu li .font-preview-label { display: block; }
 
-/* ---------- editor ---------- */
-
-.editor-wrap {
-  position: relative;
-  flex: 1;
-  min-height: 0;
-}
+.editor-wrap { position: relative; flex: 1; min-height: 0; }
 
 .editor {
   position: relative;
@@ -436,7 +587,7 @@ button {
   width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 18px 20px;
+  padding: 20px 22px;
   font-size: 17px;
   line-height: 1.65;
   color: var(--text);
@@ -452,10 +603,6 @@ button {
   pointer-events: none;
 }
 
-/* тонкие полупрозрачные линии — ориентир, где примерно пройдёт граница
-   страницы при экспорте в PDF/DOCX (формат A4). Это приблизительная
-   отметка, а не гарантия пиксель-в-пиксель: точная разбивка зависит от
-   шрифтов и программы, в которой откроют файл. */
 .page-guides {
   position: absolute;
   inset: 0;
@@ -466,32 +613,23 @@ button {
 
 .page-guide-line {
   position: absolute;
-  left: 0;
-  right: 0;
-  height: 0;
+  left: 0; right: 0; height: 0;
   border-top: 1px dashed var(--guide-line);
 }
 
 .page-guide-label {
   position: absolute;
-  right: 10px;
-  top: 4px;
+  right: 12px; top: 4px;
   font-size: 10px;
   color: var(--guide-label);
-  background: var(--panel);
+  background: transparent;
   padding: 0 4px;
 }
 
-/* ---------- result panel ---------- */
-
-.result-wrap {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-}
+.result-wrap { flex: 1; min-height: 0; overflow-y: auto; }
 
 .result {
-  padding: 18px 20px;
+  padding: 20px 22px;
   font-size: 17px;
   line-height: 1.65;
   color: var(--text-muted);
@@ -505,25 +643,23 @@ button {
   color: var(--text-faint);
 }
 
-/* ---------- toast ---------- */
-
 .toast {
   position: fixed;
   left: 50%;
   bottom: 28px;
-  transform: translate(-50%, 12px);
-  background: var(--toast-bg);
+  transform: translate(-50%, 14px);
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 9px 16px;
-  border-radius: var(--radius-sm);
+  padding: 11px 18px;
+  border-radius: 999px;
   font-size: 13px;
-  font-weight: 500;
-  box-shadow: var(--shadow-float);
+  font-weight: 550;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.18s ease, transform 0.18s ease;
+  transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.2,0.8,0.2,1);
   z-index: 999;
+  background: var(--sheen), var(--toast-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
 }
 
 .toast.visible {
@@ -531,13 +667,9 @@ button {
   transform: translate(-50%, 0);
 }
 
-/* ---------- scrollbars (subtle) ---------- */
-
 .editor::-webkit-scrollbar,
 .result-wrap::-webkit-scrollbar,
-.dropdown-menu::-webkit-scrollbar {
-  width: 8px;
-}
+.dropdown-menu::-webkit-scrollbar { width: 8px; }
 
 .editor::-webkit-scrollbar-thumb,
 .result-wrap::-webkit-scrollbar-thumb,
@@ -548,121 +680,86 @@ button {
 
 .editor::-webkit-scrollbar-track,
 .result-wrap::-webkit-scrollbar-track,
-.dropdown-menu::-webkit-scrollbar-track {
-  background: transparent;
-}
+.dropdown-menu::-webkit-scrollbar-track { background: transparent; }
 
-/* ==========================================================================
-   Responsive
-   ========================================================================== */
-
-@media (max-width: 1024px) {
-  .workspace {
-    grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
-    gap: 14px;
-  }
-
-  .editor,
-  .result {
-    font-size: 16px;
-  }
-}
-
-@media (max-width: 760px) {
-  .app {
-    padding: 8px 8px 8px;
-  }
-
-  .workspace {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .editor-panel {
-    min-height: 300px;
-    height: 62vh;
-    flex: none;
-  }
-
-  .editor-panel.is-expanded {
-    height: 100vh;
-  }
-
-  .result-panel {
-    min-height: 220px;
-    height: 34vh;
-  }
-}
-
-@media (max-width: 420px) {
-  .logo {
-    font-size: 17px;
-  }
-
-  .panel-title {
-    font-size: 12px;
-  }
-
-  .btn {
-    padding: 6px 11px;
-    font-size: 12.5px;
-  }
-
-  .export-label {
-    width: 100%;
-  }
-}
-
-/* ==========================================================================
-   Выбор тона: кнопка и панель
-   ========================================================================== */
-
-.tone-wrap {
-  position: relative;
+.export-bar {
   display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px 5px 14px;
+  border-radius: 999px;
 }
+
+.export-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-right: 4px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.export-bar .btn { padding: 6px 12px; font-size: 12.5px; }
+
+.site-lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.site-lang-icon {
+  width: 15px; height: 15px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.site-lang-btn .caret {
+  font-size: 11px;
+  opacity: 0.65;
+  transition: transform 0.28s cubic-bezier(0.2,0.8,0.2,1);
+}
+
+.site-lang-btn[aria-expanded="true"] .caret { transform: rotate(180deg); }
 
 .tone-dot {
   display: inline-block;
-  width: 11px;
-  height: 11px;
-  margin-right: 4px;
+  width: 11px; height: 11px;
+  margin-right: 5px;
   border-radius: 50%;
   vertical-align: -1px;
   background: conic-gradient(#ff9500, #ff2d55, #af52de, #0a84ff, #30d158, #ffd60a, #ff9500);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.3), 0 0 8px rgba(255,255,255,0.15);
 }
 
-/* панель позиционируется через JS (position: fixed), как и остальные меню */
 .tone-popover {
   position: fixed;
-  display: none;
-  flex-direction: column;
-  gap: 10px;
-  width: min(272px, calc(100vw - 16px));
-  padding: 12px;
-  background: var(--dropdown-bg);
-  border: 1px solid var(--dropdown-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-float);
-  z-index: 650;
-}
-
-.tone-popover.open {
   display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(320px, calc(100vw - 16px));
+  padding: 14px;
+  border-radius: var(--radius-md);
+  z-index: 650;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-10px) scale(0.96);
+  transform-origin: top left;
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.3s cubic-bezier(0.2,0.8,0.2,1), visibility 0s linear 0.28s;
 }
 
 .tone-title {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 650;
   color: var(--text-muted);
-  letter-spacing: 0.01em;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 .tone-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 8px;
   justify-items: center;
 }
 
@@ -670,37 +767,23 @@ button {
   appearance: none;
   position: relative;
   display: block;
-  width: 30px;
-  height: 30px;
+  width: 28px; height: 28px;
   padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  border: 1px solid rgba(255,255,255,0.35);
   border-radius: 50%;
   background: var(--swatch, #888);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 2px 6px rgba(0, 0, 0, 0.25);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 3px 10px rgba(0,0,0,0.25);
   cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.15s ease;
+  outline: 2px solid transparent;
+  outline-offset: 0;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), outline-color 0.25s ease, outline-offset 0.25s ease, box-shadow 0.2s ease;
 }
 
-.tone-swatch:hover {
-  transform: scale(1.08);
-}
+.tone-swatch:hover { transform: scale(1.14); }
+.tone-swatch:active { transform: scale(0.92); }
+.tone-swatch.is-selected { outline-color: var(--text); outline-offset: 3px; transform: scale(1.08); }
+.tone-swatch:focus-visible, .tone-swatch:focus-within { outline-color: var(--text); outline-offset: 3px; }
 
-.tone-swatch:active {
-  transform: scale(0.94);
-}
-
-.tone-swatch:focus-visible,
-.tone-swatch:focus-within {
-  outline: 2px solid var(--text);
-  outline-offset: 2px;
-}
-
-.tone-swatch.is-selected {
-  outline: 2px solid var(--text);
-  outline-offset: 2px;
-}
-
-/* «Без тона» — перечёркнутый нейтральный кружок */
 .tone-swatch.tone-none {
   background:
     linear-gradient(135deg, transparent 46%, var(--text-muted) 46%, var(--text-muted) 54%, transparent 54%),
@@ -716,10 +799,7 @@ button {
   cursor: pointer;
 }
 
-.tone-custom-text {
-  font-size: 13px;
-  color: var(--text);
-}
+.tone-custom-text { font-size: 13px; color: var(--text); }
 
 .tone-swatch.tone-custom {
   flex-shrink: 0;
@@ -729,654 +809,125 @@ button {
 .tone-swatch.tone-custom input {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   opacity: 0;
   cursor: pointer;
-  border: 0;
-  padding: 0;
+  border: 0; padding: 0;
 }
 
-/* ==========================================================================
-   Прозрачные тона в стиле Apple («жидкое стекло»)
-   Включаются классом html.tone-on. Цвет приходит из JS через переменные
-   --tone-h / --tone-h2 / --tone-h3 (оттенки), --tone-s (насыщенность),
-   --tone-hex (выбранный цвет), --tone-text (цвет текста на нём).
-   Без класса tone-on сайт выглядит как раньше.
-   ========================================================================== */
+@keyframes swatchIn { from { opacity: 0; transform: scale(0.35); } }
+@keyframes rowIn { from { opacity: 0; transform: translateY(8px); } }
 
-/* Цветной фон — два слоя мягких пятен. Слои чуть больше экрана
-   (inset: -15%), чтобы «Анимировать» могло двигать их, не открывая краёв.
-   Позиции в процентах пересчитаны под увеличенный слой. */
-body::before,
-body::after {
-  content: '';
-  position: fixed;
-  inset: -15%;
-  z-index: -1;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.7s ease;
-  animation-play-state: paused;
+.tone-popover.open .tone-grid .tone-swatch {
+  animation: swatchIn 0.45s cubic-bezier(0.34,1.56,0.64,1) backwards;
+  animation-delay: calc(var(--i, 0) * 26ms + 50ms);
+}
+.tone-popover.open .tone-custom-row {
+  animation: rowIn 0.35s ease 0.28s backwards;
 }
 
-body::before {
-  background:
-    radial-gradient(46vmax 40vmax at 18% 16%,
-      hsl(var(--tone-h) var(--tone-s) var(--blob-l) / var(--blob-a1)), transparent 70%),
-    radial-gradient(56vmax 46vmax at 56% 93%,
-      hsl(var(--tone-h3) var(--tone-s) var(--blob-l) / var(--blob-a3)), transparent 70%);
-  animation: driftA 30s ease-in-out infinite alternate;
-  animation-play-state: paused;
-}
-
-body::after {
-  background:
-    radial-gradient(50vmax 42vmax at 86% 26%,
-      hsl(var(--tone-h2) var(--tone-s) var(--blob-l) / var(--blob-a2)), transparent 70%),
-    radial-gradient(34vmax 30vmax at 27% 82%,
-      hsl(var(--tone-h2) var(--tone-s) calc(var(--blob-l) + 8%) / var(--blob-a4)), transparent 70%);
-  animation: driftB 38s ease-in-out infinite alternate;
-  animation-play-state: paused;
-}
-
-html[data-theme="dark"].tone-on {
-  --bg: hsl(var(--tone-h) 45% 5%);
-  --panel: hsl(var(--tone-h) 32% 12% / 0.5);
-  --panel-alt: rgba(255, 255, 255, 0.08);
-  --border: rgba(255, 255, 255, 0.17);
-  --border-soft: rgba(255, 255, 255, 0.1);
-  --key-bg: rgba(255, 255, 255, 0.08);
-  --key-bg-hover: rgba(255, 255, 255, 0.17);
-  --key-border: rgba(255, 255, 255, 0.14);
-  --btn-bg: rgba(255, 255, 255, 0.08);
-  --btn-bg-hover: rgba(255, 255, 255, 0.17);
-  --dropdown-bg: hsl(var(--tone-h) 30% 12% / 0.78);
-  --dropdown-border: rgba(255, 255, 255, 0.18);
-  --dropdown-hover: rgba(255, 255, 255, 0.14);
-  --shadow-panel: 0 14px 36px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.16);
-}
-
-html[data-theme="light"].tone-on {
-  --bg: hsl(var(--tone-h) 60% 96%);
-  --panel: rgba(255, 255, 255, 0.52);
-  --panel-alt: rgba(255, 255, 255, 0.55);
-  --border: rgba(255, 255, 255, 0.75);
-  --border-soft: rgba(0, 0, 0, 0.07);
-  --key-bg: rgba(255, 255, 255, 0.55);
-  --key-bg-hover: rgba(255, 255, 255, 0.85);
-  --key-border: rgba(255, 255, 255, 0.8);
-  --btn-bg: rgba(255, 255, 255, 0.55);
-  --btn-bg-hover: rgba(255, 255, 255, 0.85);
-  --dropdown-bg: rgba(255, 255, 255, 0.8);
-  --dropdown-border: rgba(255, 255, 255, 0.85);
-  --dropdown-hover: rgba(255, 255, 255, 0.9);
-  --shadow-panel: 0 14px 36px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-}
-
-/* акцентные элементы окрашиваются в выбранный цвет */
 html.tone-on {
   --btn-primary-bg: var(--tone-hex);
   --btn-primary-text: var(--tone-text);
   --btn-primary-hover: var(--tone-hex-hover);
+  --glass-blur: blur(18px) saturate(150%);
 }
 
-/* размытие заднего плана у обычных панелей */
-html.tone-on .alphabet,
-html.tone-on .result-panel,
-html.tone-on .dropdown-menu,
-html.tone-on .tone-popover {
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
+html.tone-on body::before,
+html.tone-on body::after { opacity: 1; }
+
+html[data-theme="dark"].tone-on {
+  --bg: hsl(var(--tone-h) 28% 7%);
+  --panel: hsl(var(--tone-h) 18% 16% / 0.28);
+  --panel-alt: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.16);
+  --dropdown-bg: hsl(var(--tone-h) 20% 12% / 0.55);
+  --shadow-panel:
+    0 18px 44px -18px hsl(var(--tone-h) var(--tone-s) 40% / 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
-/* Панель редактора: backdrop-filter на самом элементе создал бы для
-   position: fixed внутри него (меню шрифтов и языка) новый «контейнер» и
-   сломал бы их позиционирование, поэтому стекло рисуется псевдоэлементом. */
-html.tone-on .editor-panel {
-  position: relative;
-  background: transparent;
-}
-
-html.tone-on .editor-panel.is-expanded {
-  position: fixed;
-}
-
-html.tone-on .editor-panel::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: var(--panel);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-}
-
-html.tone-on .page-guide-label {
-  background: transparent;
+html[data-theme="light"].tone-on {
+  --bg: hsl(var(--tone-h) 35% 94%);
+  --panel: rgba(255, 255, 255, 0.38);
+  --panel-alt: rgba(255, 255, 255, 0.45);
+  --dropdown-bg: rgba(255, 255, 255, 0.62);
+  --shadow-panel:
+    0 18px 44px -18px hsl(var(--tone-h) var(--tone-s) 45% / 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 html.tone-on .fmt-btn.active {
-  background: var(--tone-hex);
+  background: linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0) 60%), var(--tone-hex);
   color: var(--tone-text);
 }
 
-/* если размытие не поддерживается или пользователь просит меньше
-   прозрачности — делаем панели плотнее, чтобы текст оставался читаемым */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  html[data-theme="dark"].tone-on { --panel: hsl(var(--tone-h) 30% 12% / 0.92); --dropdown-bg: hsl(var(--tone-h) 30% 12% / 0.97); }
-  html[data-theme="light"].tone-on { --panel: rgba(255, 255, 255, 0.92); --dropdown-bg: rgba(255, 255, 255, 0.97); }
-}
-
-@media (prefers-reduced-transparency: reduce) {
-  html[data-theme="dark"].tone-on { --panel: hsl(var(--tone-h) 30% 12% / 0.92); --dropdown-bg: hsl(var(--tone-h) 30% 12% / 0.97); }
-  html[data-theme="light"].tone-on { --panel: rgba(255, 255, 255, 0.92); --dropdown-bg: rgba(255, 255, 255, 0.97); }
-}
-
-
-/* ==========================================================================
-   Язык сайта, экспорт и стеклянная шапка
-   ========================================================================== */
-
-.header-right {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 10px;
-  row-gap: 8px;
-}
-
-.site-lang-wrap {
-  position: relative;
-  display: flex;
-}
-
-.site-lang-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.site-lang-icon {
-  width: 15px;
-  height: 15px;
-  flex-shrink: 0;
-}
-
-.site-lang-btn .caret {
-  font-size: 11px;
-  opacity: 0.7;
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.site-lang-btn[aria-expanded="true"] .caret {
-  transform: rotate(180deg);
-}
-
-.dropdown-menu li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.dropdown-menu li.is-current {
-  font-weight: 600;
-}
-
-.dropdown-menu li.is-current::after {
-  content: '✓';
-  font-size: 13px;
-  opacity: 0.8;
-}
-
-/* панель экспорта: одна «капсула», в стеклянном режиме — как стекло */
-.export-bar {
-  padding: 4px 6px 4px 12px;
-  border: 1px solid transparent;
-  border-radius: 14px;
-  transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-}
-
-html.tone-on .export-bar {
-  background: var(--panel);
-  border-color: var(--border);
-  box-shadow: var(--shadow-panel);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-}
-
-/* кнопки в шапке — стеклянные «таблетки» с бликом сверху */
-html.tone-on .header-left .btn,
-html.tone-on .site-lang-btn {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-html.tone-on .export-bar .btn {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
-}
-
-/* ==========================================================================
-   Плавные анимации
-   ========================================================================== */
-
-:root {
-  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* оттенки тона — «настоящие» числовые переменные, поэтому их можно
-   плавно анимировать: цвета фона и панелей перетекают друг в друга */
-@property --tone-h  { syntax: '<number>';     inherits: true; initial-value: 30; }
-@property --tone-h2 { syntax: '<number>';     inherits: true; initial-value: 65; }
-@property --tone-h3 { syntax: '<number>';     inherits: true; initial-value: 0; }
-@property --tone-s  { syntax: '<percentage>'; inherits: true; initial-value: 100%; }
-
-html {
-  transition: --tone-h 0.7s ease, --tone-h2 0.7s ease, --tone-h3 0.7s ease, --tone-s 0.7s ease;
-}
-
-/* параметры пятен фона нужны всегда — чтобы фон мог плавно гаснуть */
-html[data-theme="dark"]  { --blob-l: 46%; --blob-a1: 0.66; --blob-a2: 0.48; --blob-a3: 0.55; --blob-a4: 0.4; }
-html[data-theme="light"] { --blob-l: 62%; --blob-a1: 0.58; --blob-a2: 0.44; --blob-a3: 0.5; --blob-a4: 0.38; }
-
-html.tone-on body::before,
-html.tone-on body::after {
-  opacity: 1;
-}
-
-/* на время первой отрисовки переходы отключены (см. script.js, раздел 0) */
-html.is-booting,
-html.is-booting *,
-html.is-booting *::before,
-html.is-booting *::after {
-  transition: none !important;
-}
-
-/* стеклянные панели и клавиши плавно меняют цвет при смене темы/тона */
-.alphabet,
-.result-panel,
-.editor-panel,
-.letter-key,
-.fmt-inline,
-.tone-popover,
-.dropdown-menu {
-  transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, color 0.3s ease;
-}
-
-.editor-panel {
-  position: relative;
-}
-
-.editor-panel::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: transparent;
-  transition: background-color 0.4s ease;
-}
-
-/* кнопки: лёгкий подъём при наведении и «нажатие» */
-.btn,
-.fmt-btn {
-  transition:
-    background-color 0.25s ease,
-    border-color 0.25s ease,
-    color 0.25s ease,
-    box-shadow 0.25s ease,
-    transform 0.2s var(--ease-out);
-}
-
-.btn:hover {
-  transform: translateY(-1px);
-}
-
-.btn:active,
-.fmt-btn:active {
-  transform: scale(0.95);
-}
-
-.letter-key {
-  transition:
-    background-color 0.25s ease,
-    border-color 0.25s ease,
-    color 0.25s ease,
-    transform 0.2s var(--ease-out);
-}
-
-.letter-key:hover {
-  transform: translateY(-1px);
-}
-
-/* выпадающие меню и панель тона: плавное появление со сдвигом и масштабом.
-   display больше не переключается — иначе не было бы анимации;
-   скрытое меню недоступно ни мышью, ни клавиатурой (visibility: hidden) */
-.dropdown-menu,
-.tone-popover {
-  display: flex;
-  visibility: hidden;
-  opacity: 0;
-  transform: translateY(-8px) scale(0.96);
-  transform-origin: top left;
-  pointer-events: none;
-  transition:
-    opacity 0.2s ease,
-    transform 0.28s var(--ease-out),
-    visibility 0s linear 0.28s,
-    background-color 0.4s ease,
-    border-color 0.4s ease;
-}
-
-.dropdown-menu.open,
-.tone-popover.open {
-  visibility: visible;
-  opacity: 1;
-  transform: none;
-  pointer-events: auto;
-  transition-delay: 0s;
-}
-
-.dropdown-menu li {
-  transition: background-color 0.15s ease, transform 0.15s var(--ease-out);
-}
-
-.dropdown-menu li:hover {
-  transform: translateX(2px);
-}
-
-/* кружки тонов: пружинистое появление по очереди и плавное выделение */
-.tone-swatch {
-  outline: 2px solid transparent;
-  outline-offset: 0;
-  transition:
-    transform 0.3s var(--ease-spring),
-    outline-color 0.25s ease,
-    outline-offset 0.25s ease,
-    box-shadow 0.2s ease;
-}
-
-.tone-swatch:hover {
-  transform: scale(1.12);
-}
-
-.tone-swatch:active {
-  transform: scale(0.94);
-}
-
-.tone-swatch.is-selected {
-  outline-color: var(--text);
-  outline-offset: 3px;
-  transform: scale(1.08);
-}
-
-.tone-swatch:focus-visible,
-.tone-swatch:focus-within {
-  outline-color: var(--text);
-  outline-offset: 3px;
-}
-
-@keyframes swatchIn {
-  from { opacity: 0; transform: scale(0.4); }
-}
-
-@keyframes rowIn {
-  from { opacity: 0; transform: translateY(6px); }
-}
-
-.tone-popover.open .tone-grid .tone-swatch {
-  animation: swatchIn 0.45s var(--ease-spring) backwards;
-  animation-delay: calc(var(--i, 0) * 24ms + 60ms);
-}
-
-.tone-popover.open .tone-custom-row {
-  animation: rowIn 0.35s var(--ease-out) 0.3s backwards;
-}
-
-/* «Исходный язык» появляется плавно (анимация перезапускается при показе) */
-@keyframes popIn {
-  from { opacity: 0; transform: translateY(4px) scale(0.94); }
-}
-
-#revertLangBtn {
-  animation: popIn 0.3s var(--ease-out) backwards;
-}
-
-/* появление блоков при загрузке: только сдвиг, без прозрачности —
-   прозрачность на время анимации «выключила» бы размытие стекла */
 @keyframes riseIn {
-  from { transform: translateY(14px) scale(0.985); }
+  from { transform: translateY(16px) scale(0.98); opacity: 0.6; }
+  to { transform: none; opacity: 1; }
 }
 
-.app-header,
-.alphabet,
-.editor-panel,
-.result-panel {
-  animation: riseIn 0.7s var(--ease-out) backwards;
+.app-header, .alphabet, .editor-panel, .result-panel {
+  animation: riseIn 0.75s cubic-bezier(0.2,0.8,0.2,1) backwards;
 }
-
-.alphabet     { animation-delay: 0.05s; }
+.alphabet { animation-delay: 0.05s; }
 .editor-panel { animation-delay: 0.12s; }
 .result-panel { animation-delay: 0.18s; }
 
-/* смена языка сайта: тексты плавно проявляются */
-@keyframes textSwap {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
+@keyframes popIn { from { opacity: 0; transform: translateY(5px) scale(0.94); } }
+#revertLangBtn { animation: popIn 0.3s ease backwards; }
 
+@keyframes textSwap { from { opacity: 0; } to { opacity: 1; } }
 html.lang-changing [data-i18n],
 html.lang-changing .site-lang-name {
   animation: textSwap 0.45s ease both;
 }
 
-/* для тех, кто отключил анимации в системе */
+.alphabet, .result-panel, .editor-panel::before, .letter-key, .fmt-inline,
+.tone-popover, .dropdown-menu, .export-bar, .btn {
+  transition-property: background-color, border-color, color, transform, opacity;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  html[data-theme="dark"] { --panel: rgba(22,24,34,0.92); --dropdown-bg: rgba(18,20,30,0.96); }
+  html[data-theme="light"] { --panel: rgba(255,255,255,0.94); --dropdown-bg: rgba(255,255,255,0.97); }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  html[data-theme="dark"] { --panel: rgba(22,24,34,0.94); --dropdown-bg: rgba(18,20,30,0.97); }
+  html[data-theme="light"] { --panel: rgba(255,255,255,0.96); --dropdown-bg: rgba(255,255,255,0.98); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-delay: 0s !important;
     transition-duration: 0.01ms !important;
     transition-delay: 0s !important;
   }
+  body::before, body::after { animation: none !important; }
+  #animateBtn { display: none; }
 }
 
-
-/* ==========================================================================
-   «Анимировать»: цветные пятна фона медленно плывут и меняют оттенок
-   ========================================================================== */
-
-/* Двигаем только transform: слои переносятся видеокартой и не
-   перерисовываются каждый кадр — поэтому анимация лёгкая. */
-@keyframes driftA {
-  50%  { transform: translate3d(4%, 3%, 0) rotate(4deg) scale(1.06); }
-  100% { transform: translate3d(-3%, 5%, 0) rotate(-3deg) scale(1.03); }
+@media (max-width: 1024px) {
+  .workspace { grid-template-columns: minmax(0,1fr) minmax(260px,320px); gap: 12px; }
+  .editor, .result { font-size: 16px; }
 }
 
-@keyframes driftB {
-  50%  { transform: translate3d(-4%, -3%, 0) rotate(-4deg) scale(1.07); }
-  100% { transform: translate3d(3%, -5%, 0) rotate(3deg) scale(1.03); }
+@media (max-width: 760px) {
+  .app { padding: 8px; gap: 8px; }
+  .workspace { grid-template-columns: 1fr; gap: 10px; }
+  .editor-panel { min-height: 300px; height: 58vh; flex: none; }
+  .editor-panel.is-expanded { height: 100vh; }
+  .result-panel { min-height: 200px; height: 32vh; }
+  .alphabet { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 }
 
-html.tone-animate body::before,
-html.tone-animate body::after {
-  animation-play-state: running;
-  will-change: transform;
-}
-
-#animateBtn {
-  transition:
-    background-color 0.25s ease,
-    border-color 0.25s ease,
-    color 0.25s ease,
-    box-shadow 0.25s ease,
-    opacity 0.25s ease,
-    transform 0.2s var(--ease-out);
-}
-
-/* без выбранного тона кнопка приглушена (нажатие подскажет, что делать) */
-#animateBtn[aria-disabled="true"] {
-  opacity: 0.55;
-}
-
-/* ==========================================================================
-   Стекло 2.0 — «жидкое стекло»: блики, грани, матовое зерно, свечение
-   ========================================================================== */
-
-html.tone-on {
-  --glass-blur: blur(22px) saturate(170%);
-  --radius-lg: 24px;
-  --radius-md: 16px;
-  --radius-sm: 11px;
-
-  /* диагональный блик: свет падает сверху-слева */
-  --glass-sheen: linear-gradient(140deg,
-    rgba(255, 255, 255, 0.2) 0%,
-    rgba(255, 255, 255, 0.05) 32%,
-    rgba(255, 255, 255, 0) 56%,
-    rgba(255, 255, 255, 0.07) 100%);
-
-  --btn-gloss: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.04));
-  --btn-gloss-hover: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
-}
-
-/* матовое зерно — как у настоящего матового стекла (свой цвет по теме) */
-html[data-theme="dark"].tone-on {
-  --glass-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0 / 160px 160px;
-
-  --rim-top: rgba(255, 255, 255, 0.38);
-  --rim-side: rgba(255, 255, 255, 0.15);
-  --rim-bottom: rgba(255, 255, 255, 0.07);
-
-  --shadow-panel:
-    0 26px 60px -26px hsl(var(--tone-h) var(--tone-s) 50% / 0.5),
-    0 10px 30px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.34),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.06),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
-    inset 0 26px 50px -34px rgba(255, 255, 255, 0.2);
-  --shadow-float:
-    0 18px 44px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-}
-
-html[data-theme="light"].tone-on {
-  --glass-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0 / 160px 160px;
-
-  --rim-top: rgba(255, 255, 255, 0.95);
-  --rim-side: rgba(255, 255, 255, 0.65);
-  --rim-bottom: rgba(255, 255, 255, 0.35);
-
-  --shadow-panel:
-    0 26px 60px -28px hsl(var(--tone-h) var(--tone-s) 50% / 0.55),
-    0 10px 30px rgba(20, 20, 40, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
-    inset 0 26px 50px -34px rgba(255, 255, 255, 0.9);
-  --shadow-float:
-    0 18px 44px rgba(20, 20, 40, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
-}
-
-/* грани стекла: светлее сверху-слева, темнее снизу-справа */
-html.tone-on :is(.alphabet, .editor-panel, .result-panel, .export-bar) {
-  border-color: var(--rim-top) var(--rim-side) var(--rim-bottom) var(--rim-side);
-}
-
-html.tone-on :is(.alphabet, .result-panel, .export-bar) {
-  background: var(--glass-sheen), var(--glass-noise), var(--panel);
-}
-
-html.tone-on .editor-panel::before {
-  background: var(--glass-sheen), var(--glass-noise), var(--panel);
-}
-
-/* меню и панель тона — тоже стекло с бликом и зерном */
-html.tone-on :is(.dropdown-menu, .tone-popover) {
-  background: var(--glass-sheen), var(--glass-noise), var(--dropdown-bg);
-  border-color: var(--rim-top) var(--rim-side) var(--rim-bottom) var(--rim-side);
-}
-
-html.tone-on .dropdown-menu li:hover,
-html.tone-on .dropdown-menu li:focus-visible {
-  background: var(--btn-gloss-hover), var(--dropdown-hover);
-}
-
-/* кнопки, клавиши алфавита и панель форматирования: глянцевые «капли» */
-html.tone-on .btn:not(.btn-primary),
-html.tone-on .letter-key {
-  background: var(--btn-gloss), var(--btn-bg);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24), inset 0 -1px 0 rgba(255, 255, 255, 0.04);
-}
-
-html.tone-on .letter-key {
-  background: var(--btn-gloss), var(--key-bg);
-}
-
-html.tone-on .btn:not(.btn-primary):hover {
-  background: var(--btn-gloss-hover), var(--btn-bg-hover);
-}
-
-html.tone-on .letter-key:hover {
-  background: var(--btn-gloss-hover), var(--key-bg-hover);
-}
-
-html.tone-on .btn-primary {
-  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 62%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    0 8px 22px -8px var(--tone-hex);
-}
-
-html.tone-on .fmt-inline {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
-}
-
-/* включённая кнопка «Анимировать» — цвет выбранного тона, с мягкой пульсацией */
-html.tone-on .btn[aria-pressed="true"],
-html.tone-on .btn[aria-pressed="true"]:hover {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 62%), var(--tone-hex);
-  color: var(--tone-text);
-  border-color: transparent;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 8px 22px -8px var(--tone-hex);
-}
-
-/* уведомления — тоже стекло */
-html.tone-on .toast {
-  background: rgba(20, 20, 26, 0.55);
-  border-color: rgba(255, 255, 255, 0.22);
-  box-shadow: var(--shadow-float);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-}
-
-/* радиусы плавно меняются вместе с включением стекла */
-.alphabet,
-.editor-panel,
-.result-panel,
-.export-bar {
-  transition-property: background-color, border-color, box-shadow, color, border-radius;
-  transition-duration: 0.4s;
-  transition-timing-function: ease;
-}
-
-/* пользователям с «уменьшить движение»: никакой бесконечной анимации */
-@media (prefers-reduced-motion: reduce) {
-  body::before,
-  body::after {
-    animation: none !important;
-  }
-
-  #animateBtn {
-    display: none;
-  }
+@media (max-width: 420px) {
+  .logo { font-size: 17px; }
+  .panel-title { font-size: 11px; }
+  .btn { padding: 7px 12px; font-size: 12.5px; }
+  .export-label { display: none; }
 }

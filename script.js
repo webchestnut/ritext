@@ -39,9 +39,11 @@
       themeLight: 'Светлая тема', themeDark: 'Тёмная тема', themeAria: 'Переключить тему',
       toneBtn: 'Выбрать тон', toneTitle: 'Тон интерфейса', tonePopAria: 'Выбор тона интерфейса',
       toneGridAria: 'Готовые тона', toneCustom: 'Свой цвет',
-      tone_none: 'Без тона', tone_orange: 'Оранжевый', tone_red: 'Красный', tone_pink: 'Розовый',
-      tone_purple: 'Фиолетовый', tone_blue: 'Синий', tone_teal: 'Бирюзовый', tone_green: 'Зелёный',
-      tone_yellow: 'Жёлтый', tone_graphite: 'Графит',
+      tone_none: 'Без тона', tone_graphite: 'Графит', tone_silver: 'Серебро',
+      tone_blue: 'Синий', tone_indigo: 'Индиго', tone_purple: 'Фиолетовый',
+      tone_pink: 'Розовый', tone_red: 'Красный', tone_orange: 'Оранжевый',
+      tone_yellow: 'Жёлтый', tone_mint: 'Мята', tone_teal: 'Бирюза',
+      tone_green: 'Зелёный', tone_lime: 'Лайм', tone_brown: 'Коричневый', tone_rose: 'Роза',
       siteLangAria: 'Язык сайта',
       exportLabel: 'Экспорт', exportAria: 'Экспорт документа',
       alphabetAria: 'Русский алфавит', insertLetter: 'Вставить букву {letter}',
@@ -77,9 +79,11 @@
       themeLight: 'Light theme', themeDark: 'Dark theme', themeAria: 'Switch theme',
       toneBtn: 'Choose tone', toneTitle: 'Interface tone', tonePopAria: 'Interface tone picker',
       toneGridAria: 'Preset tones', toneCustom: 'Custom color',
-      tone_none: 'No tone', tone_orange: 'Orange', tone_red: 'Red', tone_pink: 'Pink',
-      tone_purple: 'Purple', tone_blue: 'Blue', tone_teal: 'Teal', tone_green: 'Green',
-      tone_yellow: 'Yellow', tone_graphite: 'Graphite',
+      tone_none: 'No tone', tone_graphite: 'Graphite', tone_silver: 'Silver',
+      tone_blue: 'Blue', tone_indigo: 'Indigo', tone_purple: 'Purple',
+      tone_pink: 'Pink', tone_red: 'Red', tone_orange: 'Orange',
+      tone_yellow: 'Yellow', tone_mint: 'Mint', tone_teal: 'Teal',
+      tone_green: 'Green', tone_lime: 'Lime', tone_brown: 'Brown', tone_rose: 'Rose',
       siteLangAria: 'Site language',
       exportLabel: 'Export', exportAria: 'Export document',
       alphabetAria: 'Russian alphabet', insertLetter: 'Insert letter {letter}',
@@ -115,9 +119,11 @@
       themeLight: 'Gaišā tēma', themeDark: 'Tumšā tēma', themeAria: 'Pārslēgt tēmu',
       toneBtn: 'Izvēlēties toni', toneTitle: 'Saskarnes tonis', tonePopAria: 'Saskarnes toņa izvēle',
       toneGridAria: 'Gatavie toņi', toneCustom: 'Sava krāsa',
-      tone_none: 'Bez toņa', tone_orange: 'Oranžs', tone_red: 'Sarkans', tone_pink: 'Rozā',
-      tone_purple: 'Violets', tone_blue: 'Zils', tone_teal: 'Tirkīzs', tone_green: 'Zaļš',
-      tone_yellow: 'Dzeltens', tone_graphite: 'Grafīts',
+      tone_none: 'Bez toņa', tone_graphite: 'Grafīts', tone_silver: 'Sudrabs',
+      tone_blue: 'Zils', tone_indigo: 'Indigo', tone_purple: 'Violets',
+      tone_pink: 'Rozā', tone_red: 'Sarkans', tone_orange: 'Oranžs',
+      tone_yellow: 'Dzeltens', tone_mint: 'Mētra', tone_teal: 'Tirkīzs',
+      tone_green: 'Zaļš', tone_lime: 'Laims', tone_brown: 'Brūns', tone_rose: 'Roze',
       siteLangAria: 'Vietnes valoda',
       exportLabel: 'Eksports', exportAria: 'Dokumenta eksports',
       alphabetAria: 'Krievu alfabēts', insertLetter: 'Ievietot burtu {letter}',
@@ -1343,15 +1349,21 @@
 
   const TONES = [
     { key: 'tone_none',     hex: null },
-    { key: 'tone_orange',   hex: '#ff9500' },
-    { key: 'tone_red',      hex: '#ff3b30' },
-    { key: 'tone_pink',     hex: '#ff2d55' },
-    { key: 'tone_purple',   hex: '#af52de' },
+    { key: 'tone_graphite', hex: '#8e8e93' },
+    { key: 'tone_silver',   hex: '#c7c7cc' },
     { key: 'tone_blue',     hex: '#0a84ff' },
-    { key: 'tone_teal',     hex: '#30b0c7' },
-    { key: 'tone_green',    hex: '#30d158' },
+    { key: 'tone_indigo',   hex: '#5e5ce6' },
+    { key: 'tone_purple',   hex: '#bf5af2' },
+    { key: 'tone_pink',     hex: '#ff2d87' },
+    { key: 'tone_red',      hex: '#ff2d1f' },
+    { key: 'tone_orange',   hex: '#ff8500' },
     { key: 'tone_yellow',   hex: '#ffd60a' },
-    { key: 'tone_graphite', hex: '#8e8e93' }
+    { key: 'tone_mint',     hex: '#66d4cf' },
+    { key: 'tone_teal',     hex: '#64d2ff' },
+    { key: 'tone_green',    hex: '#30d158' },
+    { key: 'tone_lime',     hex: '#a8ff60' },
+    { key: 'tone_brown',    hex: '#ac8e68' },
+    { key: 'tone_rose',     hex: '#f5c6d0' }
   ];
 
   const TONE_STORAGE_KEY = 'translit-tone';
@@ -1471,10 +1483,12 @@
       toneHue = toneHue === null ? h : nearestHue(toneHue, h);
       const hue = Math.round(toneHue * 10) / 10;
 
+      // Один оттенок (монохром): без «радуги» соседних цветов
       htmlEl.style.setProperty('--tone-h', String(hue));
-      htmlEl.style.setProperty('--tone-h2', String(hue + 35));
-      htmlEl.style.setProperty('--tone-h3', String(hue - 30));
-      htmlEl.style.setProperty('--tone-s', `${Math.round(Math.min(100, s))}%`);
+      htmlEl.style.setProperty('--tone-h2', String(hue + 6));
+      htmlEl.style.setProperty('--tone-h3', String(hue - 6));
+      // Слегка приглушаем насыщенность для чистого liquid glass
+      htmlEl.style.setProperty('--tone-s', `${Math.round(Math.min(72, Math.max(28, s * 0.85)))}%`);
       htmlEl.style.setProperty('--tone-hex', valid);
       htmlEl.style.setProperty('--tone-hex-hover',
         rgbToHex(r + (255 - r) * 0.18, g + (255 - g) * 0.18, b + (255 - b) * 0.18));
