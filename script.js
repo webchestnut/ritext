@@ -69,6 +69,17 @@
       stressOn: 'Ударения включены', stressOff: 'Ударения выключены',
       stressEmpty: 'Введите текст для расстановки ударений',
       swapDirAria: 'Кириллица ↔ Латиница', swapToLat: 'Кириллица → Латиница', swapToCyr: 'Латиница → Кириллица',
+            statChars: 'Символы', statWords: 'Слова', statPages: 'Стр.',
+      autosaveIdle: 'Черновик', autosaveSaving: 'Сохранение…', autosaveSaved: 'Сохранено',
+      autosaveRestored: 'Черновик восстановлен',
+      qrLabel: 'QR', qrBtn: 'Код', qrTitle: 'QR-код текста', qrHint: 'Отсканируйте камерой — откроется текст',
+      qrDownload: 'Скачать PNG', qrEmpty: 'Сначала введите текст', qrTooLong: 'Текст слишком длинный для QR (макс. ~1200 символов)',
+      ocrLabel: 'OCR', ocrBtn: 'OCR', ocrTitle: 'Текст из PDF или файла', ocrDrop: 'Перетащите PDF или текстовый файл сюда',
+      ocrDropSub: 'PDF · TXT · MD · CSV · HTML — читаем сам текст',
+      ocrWorking: 'Распознаём текст…', ocrLangHint: 'Из PDF берётся текстовый слой — максимально точно',
+      ocrDone: 'Текст из файла вставлен', ocrFail: 'Не удалось прочитать текст из файла', ocrNoLib: 'OCR-библиотека не загрузилась',
+      exportStressTitle: 'Экспорт TXT с ударениями',
+      toastExportStress: 'TXT с ударениями сохранён',
       toastSwapEmpty: 'Введите текст для переключения'
     },
     en: {
@@ -109,6 +120,17 @@
       stressOn: 'Stress marks on', stressOff: 'Stress marks off',
       stressEmpty: 'Enter text to place stress marks',
       swapDirAria: 'Cyrillic ↔ Latin', swapToLat: 'Cyrillic → Latin', swapToCyr: 'Latin → Cyrillic',
+            statChars: 'Chars', statWords: 'Words', statPages: 'Pages',
+      autosaveIdle: 'Draft', autosaveSaving: 'Saving…', autosaveSaved: 'Saved',
+      autosaveRestored: 'Draft restored',
+      qrLabel: 'QR', qrBtn: 'Code', qrTitle: 'Text QR code', qrHint: 'Scan with a camera to open the text',
+      qrDownload: 'Download PNG', qrEmpty: 'Enter some text first', qrTooLong: 'Text is too long for QR (max ~1200 chars)',
+      ocrLabel: 'OCR', ocrBtn: 'OCR', ocrTitle: 'Text from PDF or file', ocrDrop: 'Drop a PDF or text file here',
+      ocrDropSub: 'PDF · TXT · MD · CSV · HTML — exact text extract',
+      ocrWorking: 'Recognizing text…', ocrLangHint: 'PDF text layer is extracted exactly',
+      ocrDone: 'Text inserted', ocrFail: 'Could not recognize text', ocrNoLib: 'OCR library failed to load',
+      exportStressTitle: 'Export TXT with stress marks',
+      toastExportStress: 'TXT with stress marks saved',
       toastSwapEmpty: 'Enter text to switch'
     },
     lv: {
@@ -149,6 +171,17 @@
       stressOn: 'Uzsvari ieslēgti', stressOff: 'Uzsvari izslēgti',
       stressEmpty: 'Ievadiet tekstu, lai ieliktu uzsvarus',
       swapDirAria: 'Kirilica ↔ Latīņu', swapToLat: 'Kirilica → Latīņu', swapToCyr: 'Latīņu → Kirilica',
+            statChars: 'Simboli', statWords: 'Vārdi', statPages: 'Lpp.',
+      autosaveIdle: 'Melnraksts', autosaveSaving: 'Saglabā…', autosaveSaved: 'Saglabāts',
+      autosaveRestored: 'Melnraksts atjaunots',
+      qrLabel: 'QR', qrBtn: 'Kods', qrTitle: 'Teksta QR kods', qrHint: 'Noskenējiet ar kameru, lai atvērtu tekstu',
+      qrDownload: 'Lejupielādēt PNG', qrEmpty: 'Vispirms ievadiet tekstu', qrTooLong: 'Teksts pārāk garš QR (maks. ~1200)',
+      ocrLabel: 'OCR', ocrBtn: 'OCR', ocrTitle: 'Teksts no PDF vai faila', ocrDrop: 'Ievelciet PDF vai teksta failu šeit',
+      ocrDropSub: 'vai noklikšķiniet, lai izvēlētos · JPG, PNG, PDF',
+      ocrWorking: 'Atpazīst tekstu…', ocrLangHint: 'Labāk darbojas ar krievu un latīņu tekstu',
+      ocrDone: 'Teksts ievietots', ocrFail: 'Neizdevās atpazīt tekstu', ocrNoLib: 'OCR bibliotēka neielādējās',
+      exportStressTitle: 'Eksportēt TXT ar uzsvariem',
+      toastExportStress: 'TXT ar uzsvariem saglabāts',
       toastSwapEmpty: 'Ievadiet tekstu, lai pārslēgtu'
     }
   };
@@ -534,6 +567,60 @@
   STRESS_DICT.set('транслит', 5);
   STRESS_DICT.set('ударение', 3);
 
+
+
+  // Частотный словарь ударений (дополнение)
+  const FREQ_STRESS = [
+    ['который', 4], ['которая', 4], ['которое', 4], ['которые', 4],
+    ['этот', 0], ['эта', 0], ['это', 0], ['эти', 0],
+    ['быть', 1], ['есть', 0], ['был', 1], ['была', 3], ['было', 1], ['были', 1],
+    ['сказать', 4], ['говорить', 5], ['сказал', 4], ['говорит', 5],
+    ['мочь', 1], ['может', 1], ['можно', 1], ['нужно', 1],
+    ['знать', 2], ['хотеть', 3], ['хочу', 3], ['хочет', 1],
+    ['видеть', 1], ['видеть', 1], ['видел', 1],
+    ['идти', 2], ['пойти', 3], ['прийти', 4],
+    ['делать', 1], ['сделать', 2], ['работает', 3],
+    ['думать', 1], ['понимать', 5], ['помнить', 1],
+    ['жить', 1], ['люблю', 3], ['любит', 1],
+    ['новый', 1], ['новая', 1], ['новое', 1], ['новые', 1],
+    ['большой', 5], ['маленький', 1], ['хороший', 3], ['плохой', 4],
+    ['первый', 1], ['второй', 4], ['последний', 4],
+    ['русский', 1], ['российский', 4],
+    ['человек', 5], ['люди', 1], ['мужчина', 3], ['женщина', 1],
+    ['ребёнок', 3], ['ребенок', 3], ['дети', 1],
+    ['друг', 2], ['подруга', 4], ['семья', 4],
+    ['дом', 1], ['город', 1], ['страна', 5], ['мир', 1],
+    ['время', 2], ['день', 1], ['год', 1], ['жизнь', 1],
+    ['работа', 3], ['дело', 1], ['вопрос', 4], ['ответ', 3],
+    ['слово', 2], ['язык', 2], ['книга', 2], ['письмо', 5],
+    ['вода', 3], ['земля', 4], ['огонь', 2], ['воздух', 1],
+    ['сегодня', 3], ['завтра', 1], ['вчера', 4], ['сейчас', 4],
+    ['здесь', 2], ['там', 1], ['сюда', 3], ['туда', 3],
+    ['когда', 4], ['почему', 5], ['потому', 5], ['если', 0],
+    ['также', 1], ['тоже', 1], ['только', 1], ['уже', 2], ['ещё', 2], ['еще', 2],
+    ['очень', 0], ['снова', 2], ['опять', 2], ['почти', 4],
+    ['спасибо', 4], ['пожалуйста', 3], ['здравствуйте', 3], ['привет', 4],
+    ['хорошо', 5], ['плохо', 2], ['конечно', 3], ['ладно', 1],
+    ['москва', 5], ['россия', 4], ['петербург', 6],
+    ['документ', 5], ['подпись', 3], ['фамилия', 3], ['отчество', 2],
+    ['телефон', 5], ['компьютер', 5], ['интернет', 6],
+    ['школа', 2], ['университет', 9], ['студент', 4],
+    ['машина', 3], ['дорога', 3], ['улица', 0],
+    ['утро', 0], ['вечер', 1], ['ночь', 1], ['неделя', 3], ['месяц', 1],
+    ['деньги', 1], ['рубль', 1], ['цена', 3],
+    ['проблема', 5], ['решение', 3], ['помощь', 1],
+    ['правда', 1], ['ложь', 1], ['история', 2],
+    ['музыка', 1], ['фильм', 1], ['игра', 2],
+    ['счастье', 2], ['любовь', 3], ['здоровье', 3],
+    ['важно', 1], ['интересно', 5], ['понятно', 3],
+    ['вместе', 1], ['один', 2], ['одна', 2], ['одно', 2],
+    ['всегда', 5], ['никогда', 6], ['иногда', 5],
+    ['каждый', 1], ['весь', 1], ['все', 1], ['всё', 1],
+    ['надо', 1], ['должен', 1], ['должна', 3],
+    ['через', 1], ['между', 1], ['после', 1], ['перед', 1],
+    ['около', 1], ['против', 1], ['вместо', 2]
+  ];
+  FREQ_STRESS.forEach(([w, i]) => { if (!STRESS_DICT.has(w)) STRESS_DICT.set(w, i); });
   function vowelIndices(lower) {
     const idxs = [];
     for (let i = 0; i < lower.length; i++) {
@@ -555,10 +642,14 @@
         // битый индекс в словаре — fallback
         stressIdx = vowels.length ? vowels[vowels.length - 1] : -1;
       }
-    } else if (vowels.length >= 1) {
-      // Нет в словаре: ставим ударение на последнюю гласную
-      // (частотный дефолт; для известных слов словарь точнее)
-      stressIdx = vowels[vowels.length - 1];
+    } else if (vowels.length === 1) {
+      stressIdx = vowels[0];
+    } else if (vowels.length === 2) {
+      // двусложные: чаще ударение на первой гласной
+      stressIdx = vowels[0];
+    } else if (vowels.length >= 3) {
+      // многосложные без словаря: предпоследняя гласная (часто ближе к норме)
+      stressIdx = vowels[vowels.length - 2];
     } else {
       return word; // нет гласных
     }
@@ -927,8 +1018,10 @@
         inputFrame = null;
         updateResult();
         updatePageGuides();
+        if (typeof updateStats === 'function') updateStats();
       });
     }
+    if (typeof scheduleAutosave === 'function') scheduleAutosave();
     clearTimeout(typingIdleTimer);
     typingIdleTimer = setTimeout(() => { isTypingBurst = false; }, 900);
   });
@@ -962,6 +1055,8 @@
     editor.innerHTML = '';
     resetEditorState();
     updateResult();
+    updateStats();
+    scheduleAutosave && scheduleAutosave();
     updatePageGuides();
     editor.focus();
   });
@@ -971,6 +1066,7 @@
     editor.innerHTML = '';
     resetEditorState();
     updateResult();
+    if (typeof updateStats === 'function') updateStats();
     updatePageGuides();
   });
 
@@ -1137,6 +1233,8 @@
       revertLangBtn.classList.remove('is-hidden');
       updateResult();
       updatePageGuides();
+      if (typeof updateStats === 'function') updateStats();
+      if (typeof scheduleAutosave === 'function') scheduleAutosave();
       showToast(t('toastTranslated', { lang: t('lang_' + langCode) }));
     } catch (err) {
       showToast(t('toastTranslateFail'));
@@ -1169,7 +1267,10 @@
       const url =
         'https://translate.googleapis.com/translate_a/single' +
         `?client=gtx&sl=auto&tl=${encodeURIComponent(targetLang)}&dt=t&q=${encodeURIComponent(chunk)}`;
-      const res = await fetch(url);
+      const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timer = ctrl ? setTimeout(() => ctrl.abort(), 20000) : null;
+      const res = await fetch(url, ctrl ? { signal: ctrl.signal } : undefined);
+      if (timer) clearTimeout(timer);
       if (!res.ok) throw new Error('translate request failed');
       const data = await res.json();
       if (!Array.isArray(data) || !Array.isArray(data[0])) {
@@ -1240,10 +1341,17 @@
     const a = document.createElement('a');
     a.href = url;
     a.download = filename;
+    a.rel = 'noopener';
     document.body.appendChild(a);
     a.click();
     a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+
+  function downloadTextFile(text, filename) {
+    // BOM помогает Notepad/Windows корректно открыть кириллицу
+    const blob = new Blob(['\uFEFF' + text], { type: 'text/plain;charset=utf-8' });
+    downloadBlob(blob, filename);
   }
 
   exportTxtBtn.addEventListener('click', () => {
@@ -1680,7 +1788,7 @@
       htmlEl.style.setProperty('--tone-h2', String(hue + 6));
       htmlEl.style.setProperty('--tone-h3', String(hue - 6));
       // Слегка приглушаем насыщенность для чистого liquid glass
-      htmlEl.style.setProperty('--tone-s', `${Math.round(Math.min(72, Math.max(28, s * 0.85)))}%`);
+      htmlEl.style.setProperty('--tone-s', `${Math.round(Math.min(85, Math.max(40, s * 0.95)))}%`);
       htmlEl.style.setProperty('--tone-hex', valid);
       htmlEl.style.setProperty('--tone-hex-hover',
         rgbToHex(r + (255 - r) * 0.18, g + (255 - g) * 0.18, b + (255 - b) * 0.18));
@@ -1895,6 +2003,354 @@
   }
 
   applyLanguage(false);
+
+
+
+  /* ------------------------------------------------------------------ */
+  /* 15. Счётчик · автосохранение · QR · OCR · экспорт с ударениями      */
+  /* ------------------------------------------------------------------ */
+
+  const DRAFT_KEY = 'ritext-draft-v1';
+  const PAGE_CHARS_APPROX = 1800; // ~страница A4 при текущем кегле
+  const statCharsEl = document.getElementById('statChars');
+  const statWordsEl = document.getElementById('statWords');
+  const statPagesEl = document.getElementById('statPages');
+  const statusSaveEl = document.getElementById('statusSave');
+
+  function getEditorPlain() {
+    return (editor.innerText || '').replace(/\u00A0/g, ' ');
+  }
+
+  function updateStats() {
+    const text = getEditorPlain();
+    // Убираем «пустые» переводы строк-остатки contenteditable
+    const normalized = text.replace(/\r/g, '');
+    const isEmpty = !normalized.replace(/[\s\u200B\uFEFF]/g, '');
+    const chars = isEmpty ? 0 : normalized.length;
+    const trimmed = normalized.trim();
+    const words = (!isEmpty && trimmed) ? trimmed.split(/\s+/).filter(Boolean).length : 0;
+    const pages = isEmpty ? 0 : Math.max(1, Math.ceil(chars / PAGE_CHARS_APPROX));
+    if (statCharsEl) statCharsEl.textContent = String(chars);
+    if (statWordsEl) statWordsEl.textContent = String(words);
+    if (statPagesEl) statPagesEl.textContent = String(pages);
+  }
+
+  function setSaveStatus(mode) {
+    if (!statusSaveEl) return;
+    statusSaveEl.classList.remove('is-saving', 'is-saved');
+    if (mode === 'saving') {
+      statusSaveEl.classList.add('is-saving');
+      statusSaveEl.textContent = t('autosaveSaving');
+    } else if (mode === 'saved') {
+      statusSaveEl.classList.add('is-saved');
+      statusSaveEl.textContent = t('autosaveSaved');
+    } else {
+      statusSaveEl.textContent = t('autosaveIdle');
+    }
+  }
+
+  let saveTimer = null;
+  function scheduleAutosave() {
+    setSaveStatus('saving');
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      try {
+        const plain = getEditorPlain().replace(/[\s\u200B\uFEFF]/g, '');
+        if (!plain) {
+          localStorage.removeItem(DRAFT_KEY);
+          setSaveStatus('idle');
+          return;
+        }
+        const payload = {
+          html: editor.innerHTML,
+          ts: Date.now()
+        };
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(payload));
+        setSaveStatus('saved');
+      } catch (e) {
+        setSaveStatus('idle');
+      }
+    }, 700);
+  }
+
+  function restoreDraft() {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (!data || !data.html) return;
+      const cur = getEditorPlain().trim();
+      if (cur) return;
+      // пустой/мусорный черновик — удаляем
+      const tmp = document.createElement('div');
+      tmp.innerHTML = data.html;
+      const draftText = (tmp.innerText || '').replace(/[\s\u200B\uFEFF]/g, '');
+      if (!draftText) {
+        localStorage.removeItem(DRAFT_KEY);
+        return;
+      }
+      editor.innerHTML = data.html;
+      updateResult();
+      updatePageGuides();
+      updateStats();
+      setSaveStatus('saved');
+      showToast(t('autosaveRestored'));
+    } catch (e) { /* */ }
+  }
+
+
+  // --- Экспорт TXT с ударениями ---
+  const exportTxtStressBtn = document.getElementById('exportTxtStress');
+  if (exportTxtStressBtn) {
+    exportTxtStressBtn.addEventListener('click', () => {
+      const plain = getEditorPlain();
+      if (!plain.trim()) {
+        showToast(t('toastNothingExport'));
+        return;
+      }
+      let out = plain;
+      if (isMostlyCyrillic(plain)) {
+        out = applyStressToText(removeStressMarks(plain));
+      }
+      downloadTextFile(out, 'ritext-stress.txt');
+      showToast(t('toastExportStress'));
+    });
+  }
+
+  // --- QR ---
+  const qrBtn = document.getElementById('qrBtn');
+  const qrModal = document.getElementById('qrModal');
+  const qrBox = document.getElementById('qrBox');
+  const qrModalClose = document.getElementById('qrModalClose');
+  const qrDownload = document.getElementById('qrDownload');
+
+  function openModal(el) {
+    if (!el) return;
+    el.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(el) {
+    if (!el) return;
+    el.hidden = true;
+    const anyOpen = document.querySelector('.modal-overlay:not([hidden])');
+    if (!anyOpen) document.body.style.overflow = '';
+  }
+
+  function buildQr(text) {
+    if (!qrBox) return;
+    qrBox.innerHTML = '';
+    if (typeof QRCode === 'undefined') {
+      qrBox.textContent = 'QR';
+      return;
+    }
+    // qrcodejs draws into container
+    // eslint-disable-next-line no-new
+    new QRCode(qrBox, {
+      text: text,
+      width: 220,
+      height: 220,
+      colorDark: '#111111',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+
+  if (qrBtn) {
+    qrBtn.addEventListener('click', () => {
+      const text = getEditorPlain().trim();
+      if (!text) {
+        showToast(t('qrEmpty'));
+        return;
+      }
+      if (text.length > 1200) {
+        showToast(t('qrTooLong'));
+        return;
+      }
+      buildQr(text);
+      openModal(qrModal);
+    });
+  }
+  if (qrModalClose) qrModalClose.addEventListener('click', () => closeModal(qrModal));
+  if (qrModal) qrModal.addEventListener('click', (e) => { if (e.target === qrModal) closeModal(qrModal); });
+  if (qrDownload) {
+    qrDownload.addEventListener('click', () => {
+      const canvas = qrBox && qrBox.querySelector('canvas');
+      const img = qrBox && qrBox.querySelector('img');
+      let url = null;
+      if (canvas) url = canvas.toDataURL('image/png');
+      else if (img) url = img.src;
+      if (!url) return;
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'ritext-qr.png';
+      a.click();
+    });
+  }
+
+  // --- OCR (изображение / PDF) ---
+  const ocrBtn = document.getElementById('ocrBtn');
+  const ocrFile = document.getElementById('ocrFile');
+  const ocrModal = document.getElementById('ocrModal');
+  const ocrModalClose = document.getElementById('ocrModalClose');
+  const ocrDrop = document.getElementById('ocrDrop');
+  const ocrProgress = document.getElementById('ocrProgress');
+  const ocrBarFill = document.getElementById('ocrBarFill');
+  const ocrProgressText = document.getElementById('ocrProgressText');
+
+  function setOcrProgress(p, label) {
+    if (ocrProgress) ocrProgress.classList.remove('is-hidden');
+    if (ocrBarFill) ocrBarFill.style.width = Math.round(p * 100) + '%';
+    if (ocrProgressText && label) ocrProgressText.textContent = label;
+  }
+
+
+  async function extractTextFromPdf(file) {
+    if (typeof pdfjsLib === 'undefined') throw new Error('pdf.js missing');
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    const buf = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+    const parts = [];
+    for (let i = 1; i <= pdf.numPages; i++) {
+      setOcrProgress(i / pdf.numPages, t('ocrWorking') + ' (' + i + '/' + pdf.numPages + ')');
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      // Собираем текст с учётом позиций — точнее, чем join через пробел вслепую
+      let line = '';
+      let lastY = null;
+      const lines = [];
+      content.items.forEach((item) => {
+        const str = item.str || '';
+        const y = item.transform ? item.transform[5] : 0;
+        if (lastY !== null && Math.abs(y - lastY) > 6) {
+          lines.push(line.trimEnd());
+          line = '';
+        }
+        line += str + (str.endsWith('-') ? '' : ' ');
+        lastY = y;
+      });
+      if (line.trim()) lines.push(line.trimEnd());
+      parts.push(lines.join('\n').replace(/[ \t]+\n/g, '\n').trim());
+    }
+    return parts.filter(Boolean).join('\n\n');
+  }
+
+  function extractTextFromTextFile(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        let text = String(reader.result || '');
+        // грубый HTML → text
+        if (/\.html?$/i.test(file.name) || file.type === 'text/html') {
+          const doc = new DOMParser().parseFromString(text, 'text/html');
+          text = doc.body ? doc.body.innerText : text;
+        }
+        resolve(text);
+      };
+      reader.onerror = () => reject(reader.error || new Error('read fail'));
+      reader.readAsText(file);
+    });
+  }
+
+  function isSupportedTextFile(file) {
+    const name = (file.name || '').toLowerCase();
+    const type = (file.type || '').toLowerCase();
+    if (type === 'application/pdf' || name.endsWith('.pdf')) return 'pdf';
+    if (
+      type.startsWith('text/') ||
+      name.endsWith('.txt') || name.endsWith('.text') ||
+      name.endsWith('.md') || name.endsWith('.csv') ||
+      name.endsWith('.html') || name.endsWith('.htm') ||
+      name.endsWith('.rtf') || name.endsWith('.json') ||
+      name.endsWith('.log') || name.endsWith('.tsv')
+    ) return 'text';
+    return null;
+  }
+
+  async function runOcrOnFile(file) {
+    if (!file) return;
+    const kind = isSupportedTextFile(file);
+    if (!kind) {
+      showToast(t('ocrFail'));
+      return;
+    }
+    openModal(ocrModal);
+    setOcrProgress(0.08, t('ocrWorking'));
+    try {
+      let text = '';
+      if (kind === 'pdf') {
+        text = await extractTextFromPdf(file);
+      } else {
+        setOcrProgress(0.5, t('ocrWorking'));
+        text = await extractTextFromTextFile(file);
+      }
+      text = (text || '').replace(/\r\n/g, '\n').replace(/[ \t]+\n/g, '\n').trim();
+      if (!text) {
+        showToast(t('ocrFail'));
+        return;
+      }
+      pushHistory();
+      const holder = document.createElement('div');
+      text.split('\n').forEach((line, i, arr) => {
+        holder.appendChild(document.createTextNode(line));
+        if (i < arr.length - 1) holder.appendChild(document.createElement('br'));
+      });
+      editor.innerHTML = holder.innerHTML;
+      updateResult();
+      updatePageGuides();
+      updateStats();
+      scheduleAutosave();
+      closeModal(ocrModal);
+      showToast(t('ocrDone'));
+    } catch (err) {
+      console.error(err);
+      showToast(err && String(err.message || err).includes('missing') ? t('ocrNoLib') : t('ocrFail'));
+    } finally {
+      if (ocrProgress) ocrProgress.classList.add('is-hidden');
+      if (ocrBarFill) ocrBarFill.style.width = '0%';
+      if (ocrFile) ocrFile.value = '';
+    }
+  }
+
+  if (ocrBtn) ocrBtn.addEventListener('click', () => openModal(ocrModal));
+  if (ocrModalClose) ocrModalClose.addEventListener('click', () => closeModal(ocrModal));
+  if (ocrModal) ocrModal.addEventListener('click', (e) => { if (e.target === ocrModal) closeModal(ocrModal); });
+  if (ocrDrop && ocrFile) {
+    ocrDrop.addEventListener('click', () => ocrFile.click());
+    ocrFile.addEventListener('change', () => {
+      const f = ocrFile.files && ocrFile.files[0];
+      if (f) runOcrOnFile(f);
+    });
+    ['dragenter', 'dragover'].forEach((ev) => {
+      ocrDrop.addEventListener(ev, (e) => {
+        e.preventDefault();
+        ocrDrop.classList.add('is-dragover');
+      });
+    });
+    ['dragleave', 'drop'].forEach((ev) => {
+      ocrDrop.addEventListener(ev, (e) => {
+        e.preventDefault();
+        ocrDrop.classList.remove('is-dragover');
+      });
+    });
+    ocrDrop.addEventListener('drop', (e) => {
+      const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (f) runOcrOnFile(f);
+    });
+  }
+
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    document.querySelectorAll('.modal-overlay').forEach((m) => {
+      if (!m.hidden) closeModal(m);
+    });
+  });
+
+  // Инициализация
+  updateStats();
+  restoreDraft();
+
 
   // включаем плавные переходы только после первой отрисовки
   requestAnimationFrame(() => requestAnimationFrame(() => {

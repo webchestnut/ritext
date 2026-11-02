@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ritext</title>
 
+<!-- Иконки вкладки / адресной строки / iOS -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0a0c12">
+
+
 <!-- Современные веб-шрифты для форматирования выделенного текста -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,28 +58,43 @@
       <button class="btn btn-ghost" id="animateBtn" type="button" aria-pressed="false" aria-disabled="true">
         <span id="animateLabel" data-i18n="animate">Анимировать</span>
       </button>
+
     </div>
 
     <div class="header-right">
-      <!-- Язык интерфейса сайта (не путать с переводом текста в редакторе) -->
-      <div class="site-lang-wrap">
-        <button class="btn btn-ghost site-lang-btn" id="siteLangBtn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="siteLangMenu" data-i18n-aria="siteLangAria" aria-label="Язык сайта">
-          <svg class="site-lang-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="9"></circle>
-            <path d="M3 12h18"></path>
-            <path d="M12 3c2.6 2.5 3.9 5.5 3.9 9s-1.3 6.5-3.9 9c-2.6-2.5-3.9-5.5-3.9-9S9.4 5.5 12 3z"></path>
-          </svg>
-          <span class="site-lang-name" id="siteLangName">Русский</span>
-          <span class="caret" aria-hidden="true">▾</span>
-        </button>
-        <ul class="dropdown-menu" id="siteLangMenu" role="listbox" data-i18n-aria="siteLangAria" aria-label="Язык сайта"></ul>
-      </div>
+      <!-- Одна линия справа: Язык → OCR → QR → Экспорт -->
+      <div class="header-tools">
+        <div class="site-lang-wrap">
+          <button class="btn btn-ghost site-lang-btn" id="siteLangBtn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="siteLangMenu" data-i18n-aria="siteLangAria" aria-label="Язык сайта">
+            <svg class="site-lang-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M3 12h18"></path>
+              <path d="M12 3c2.6 2.5 3.9 5.5 3.9 9s-1.3 6.5-3.9 9c-2.6-2.5-3.9-5.5-3.9-9S9.4 5.5 12 3z"></path>
+            </svg>
+            <span class="site-lang-name" id="siteLangName">Русский</span>
+            <span class="caret" aria-hidden="true">▾</span>
+          </button>
+          <ul class="dropdown-menu" id="siteLangMenu" role="listbox" data-i18n-aria="siteLangAria" aria-label="Язык сайта"></ul>
+        </div>
 
-      <div class="export-bar" data-i18n-aria="exportAria" aria-label="Экспорт документа">
-        <span class="export-label" data-i18n="exportLabel">Экспорт</span>
-        <button class="btn btn-ghost" id="exportTxt" type="button">TXT</button>
-        <button class="btn btn-ghost" id="exportPdf" type="button">PDF</button>
-        <button class="btn btn-ghost" id="exportDocx" type="button">DOCX</button>
+        <div class="tool-bar tool-bar-sm" id="ocrToolBar" aria-label="OCR">
+          <span class="tool-label" data-i18n="ocrLabel">OCR</span>
+          <button class="btn btn-ghost" id="ocrBtn" type="button" data-i18n="ocrBtn" title="Текст из PDF или файла">OCR</button>
+          <input type="file" id="ocrFile" accept=".pdf,.txt,.text,.md,.csv,.html,.htm,.rtf,application/pdf,text/plain,text/markdown,text/csv,text/html" hidden>
+        </div>
+
+        <div class="tool-bar tool-bar-sm qr-bar" aria-label="QR code">
+          <span class="tool-label" data-i18n="qrLabel">QR</span>
+          <button class="btn btn-ghost" id="qrBtn" type="button" data-i18n="qrBtn" title="QR-код текста">Код</button>
+        </div>
+
+        <div class="tool-bar export-bar" data-i18n-aria="exportAria" aria-label="Экспорт документа">
+          <span class="tool-label export-label" data-i18n="exportLabel">Экспорт</span>
+          <button class="btn btn-ghost" id="exportTxt" type="button">TXT</button>
+          <button class="btn btn-ghost" id="exportTxtStress" type="button" data-i18n-title="exportStressTitle" title="TXT с ударениями">TXT ´</button>
+          <button class="btn btn-ghost" id="exportPdf" type="button">PDF</button>
+          <button class="btn btn-ghost" id="exportDocx" type="button">DOCX</button>
+        </div>
       </div>
     </div>
   </header>
@@ -140,12 +165,23 @@
           ></div>
           <div class="page-guides" id="pageGuides" aria-hidden="true"></div>
         </div>
+
+        <div class="editor-status" id="editorStatus" aria-live="polite">
+          <div class="status-stats">
+            <span class="status-chip"><span data-i18n="statChars">Символы</span> <strong id="statChars">0</strong></span>
+            <span class="status-chip"><span data-i18n="statWords">Слова</span> <strong id="statWords">0</strong></span>
+            <span class="status-chip"><span data-i18n="statPages">Стр.</span> <strong id="statPages">1</strong></span>
+          </div>
+          <div class="status-meta">
+            <span class="status-save" id="statusSave" data-i18n="autosaveIdle">Черновик</span>
+          </div>
+        </div>
       </div>
 
     </section>
 
     <!-- Правая панель результата -->
-    <section class="result-panel">
+    <section class="result-panel" id="resultPanel">
       <div class="panel-toolbar">
         <span class="panel-title" data-i18n="resultTitle">Транслит</span>
         <div class="panel-actions">
@@ -161,6 +197,41 @@
 
   </main>
 
+  <div class="modal-overlay" id="qrModal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="qrModalTitle">
+      <div class="modal-head">
+        <h2 class="modal-title" id="qrModalTitle" data-i18n="qrTitle">QR-код текста</h2>
+        <button type="button" class="btn btn-ghost modal-close" id="qrModalClose" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="qr-box" id="qrBox"></div>
+        <p class="modal-hint" data-i18n="qrHint">Отсканируйте камерой — откроется текст</p>
+        <button type="button" class="btn btn-primary" id="qrDownload" data-i18n="qrDownload">Скачать PNG</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="ocrModal" hidden>
+    <div class="modal-card modal-card-wide" role="dialog" aria-modal="true" aria-labelledby="ocrModalTitle">
+      <div class="modal-head">
+        <h2 class="modal-title" id="ocrModalTitle" data-i18n="ocrTitle">Текст из PDF или файла</h2>
+        <button type="button" class="btn btn-ghost modal-close" id="ocrModalClose" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="ocr-drop" id="ocrDrop">
+          <div class="ocr-drop-icon">⤒</div>
+          <p data-i18n="ocrDrop">Перетащите PDF или текстовый файл сюда</p>
+          <p class="modal-hint" data-i18n="ocrDropSub">PDF · TXT · MD · CSV · HTML — читаем сам текст, без «угадывания»</p>
+        </div>
+        <div class="ocr-progress is-hidden" id="ocrProgress">
+          <div class="ocr-progress-track"><div class="ocr-progress-fill" id="ocrBarFill"></div></div>
+          <span id="ocrProgressText" data-i18n="ocrWorking">Распознаём текст…</span>
+        </div>
+        <p class="modal-hint" data-i18n="ocrLangHint">Из PDF берётся текстовый слой — максимально точно</p>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 </div>
@@ -170,6 +241,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
