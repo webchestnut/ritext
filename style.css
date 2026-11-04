@@ -8,7 +8,7 @@ html[data-theme="dark"] {
   --bg-grad-1: #12162a;
   --bg-grad-2: #0e1a28;
   --bg-grad-3: #1a1230;
-  --panel: rgba(255, 255, 255, 0.04);
+  --panel: rgba(255, 255, 255, 0.05);
   --panel-alt: rgba(255, 255, 255, 0.06);
   --border: rgba(255, 255, 255, 0.18);
   --border-soft: rgba(255, 255, 255, 0.10);
@@ -18,11 +18,11 @@ html[data-theme="dark"] {
   --text: #f2f3f7;
   --text-muted: rgba(242, 243, 247, 0.62);
   --text-faint: rgba(242, 243, 247, 0.38);
-  --key-bg: rgba(255, 255, 255, 0.05);
-  --key-bg-hover: rgba(255, 255, 255, 0.12);
+  --key-bg: rgba(255, 255, 255, 0.06);
+  --key-bg-hover: rgba(255, 255, 255, 0.14);
   --key-border: rgba(255, 255, 255, 0.16);
-  --btn-bg: rgba(255, 255, 255, 0.05);
-  --btn-bg-hover: rgba(255, 255, 255, 0.12);
+  --btn-bg: rgba(255, 255, 255, 0.06);
+  --btn-bg-hover: rgba(255, 255, 255, 0.14);
   --btn-primary-bg: rgba(255, 255, 255, 0.92);
   --btn-primary-text: #0c0e14;
   --btn-primary-hover: #ffffff;
@@ -67,27 +67,27 @@ html[data-theme="light"] {
   --bg-grad-1: #dfe8f8;
   --bg-grad-2: #e8e4f4;
   --bg-grad-3: #f0e8ee;
-  --panel: rgba(255, 255, 255, 0.36);
-  --panel-alt: rgba(255, 255, 255, 0.42);
-  --border: rgba(255, 255, 255, 0.72);
-  --border-soft: rgba(0, 0, 0, 0.06);
-  --rim-top: rgba(255, 255, 255, 0.98);
-  --rim-side: rgba(255, 255, 255, 0.65);
-  --rim-bottom: rgba(255, 255, 255, 0.40);
+  --panel: rgba(255, 255, 255, 0.22);
+  --panel-alt: rgba(255, 255, 255, 0.26);
+  --border: rgba(255, 255, 255, 0.55);
+  --border-soft: rgba(0, 0, 0, 0.07);
+  --rim-top: rgba(255, 255, 255, 0.9);
+  --rim-side: rgba(255, 255, 255, 0.5);
+  --rim-bottom: rgba(255, 255, 255, 0.28);
   --text: #12141c;
   --text-muted: rgba(18, 20, 28, 0.55);
   --text-faint: rgba(18, 20, 28, 0.38);
-  --key-bg: rgba(255, 255, 255, 0.40);
-  --key-bg-hover: rgba(255, 255, 255, 0.70);
-  --key-border: rgba(255, 255, 255, 0.8);
-  --btn-bg: rgba(255, 255, 255, 0.38);
-  --btn-bg-hover: rgba(255, 255, 255, 0.72);
+  --key-bg: rgba(255, 255, 255, 0.28);
+  --key-bg-hover: rgba(255, 255, 255, 0.52);
+  --key-border: rgba(255, 255, 255, 0.65);
+  --btn-bg: rgba(255, 255, 255, 0.28);
+  --btn-bg-hover: rgba(255, 255, 255, 0.52);
   --btn-primary-bg: #12141c;
   --btn-primary-text: #ffffff;
   --btn-primary-hover: #2a2e3a;
-  --dropdown-bg: rgba(255, 255, 255, 0.58);
-  --dropdown-border: rgba(255, 255, 255, 0.9);
-  --dropdown-hover: rgba(255, 255, 255, 0.95);
+  --dropdown-bg: rgba(255, 255, 255, 0.48);
+  --dropdown-border: rgba(255, 255, 255, 0.75);
+  --dropdown-hover: rgba(255, 255, 255, 0.72);
   --toast-bg: rgba(20, 22, 32, 0.82);
   --scrollbar-thumb: rgba(0, 0, 0, 0.14);
   --guide-line: rgba(0, 0, 0, 0.12);
@@ -407,7 +407,7 @@ html.is-booting *::after {
   gap: 10px;
   flex-wrap: wrap;
   row-gap: 8px;
-  background: rgba(255,255,255,0.03);
+  background: transparent;
 }
 
 .panel-title {
@@ -472,15 +472,27 @@ html.is-booting *::after {
 #animateBtn[aria-disabled="true"] { opacity: 0.5; }
 
 .fmt-inline {
-  padding: 4px;
-  border-radius: 16px;
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+  padding: 3px;
+  border-radius: 999px;
+  /* как прозрачные кнопки справа (Язык / Обратно…) */
+  background: transparent;
+  border: none;
+  box-shadow: none;
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   flex-wrap: wrap;
+}
+
+/* каждая кнопка форматирования — отдельная стеклянная капсула */
+.fmt-inline .fmt-btn {
+  background: var(--btn-gloss), var(--btn-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.16);
+  min-height: 32px;
 }
 
 .fmt-btn {
@@ -1393,4 +1405,449 @@ html.tone-on .tool-bar {
     flex-wrap: wrap;
     max-width: 100%;
   }
+}
+
+
+/* ==========================================================================
+   Style panel — custom background + optional no blur
+   ========================================================================== */
+
+.style-wrap {
+  position: relative;
+}
+
+.style-popover {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: 80;
+  width: min(300px, 86vw);
+  padding: 14px 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(18, 20, 28, 0.82);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  color: var(--text);
+}
+
+html[data-theme="light"] .style-popover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.12);
+}
+
+.style-popover[hidden] {
+  display: none !important;
+}
+
+.style-title {
+  font-size: 14px;
+  font-weight: 650;
+  margin: 0 0 12px;
+}
+
+.style-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.style-section:last-child {
+  margin-bottom: 0;
+}
+
+.style-section-label {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.style-hint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--text-muted);
+}
+
+.style-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.style-row .btn {
+  font-size: 12.5px;
+  padding: 6px 12px;
+}
+
+.style-bg-preview {
+  height: 72px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.style-bg-preview.is-empty {
+  display: none;
+}
+
+.style-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.style-toggle-title {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+/* Отдельный слой фона — не перекрывается theme/tone background */
+.user-bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  overflow: hidden;
+}
+
+html.has-user-bg .user-bg-layer {
+  opacity: 1;
+}
+
+/* Размытая подложка — закрывает пустые края */
+.user-bg-blur {
+  position: absolute;
+  inset: -8%;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  filter: blur(28px) saturate(1.05);
+  transform: scale(1.12);
+  opacity: 0.92;
+}
+
+/* Основное фото: позиция и масштаб */
+.user-bg-photo {
+  position: absolute;
+  inset: 0;
+  background-size: var(--user-bg-size, cover);
+  background-position: var(--user-bg-pos, 50% 50%);
+  background-repeat: no-repeat;
+}
+
+/* Верх затемнён, низ чуть свободнее — шапка не «выгорает» */
+html.has-user-bg body::before {
+  opacity: 1 !important;
+  z-index: -1;
+  animation: none !important;
+  background:
+    linear-gradient(180deg,
+      rgba(6, 8, 14, 0.72) 0%,
+      rgba(6, 8, 14, 0.45) 28%,
+      rgba(6, 8, 14, 0.22) 55%,
+      rgba(6, 8, 14, 0.12) 100%) !important;
+}
+
+html.has-user-bg body::after {
+  opacity: 0.35 !important;
+  z-index: -1;
+  animation: none !important;
+}
+
+html.has-user-bg[data-theme="dark"] body {
+  background-color: rgba(8, 10, 16, 0.35) !important;
+  background-image: none !important;
+}
+
+html.has-user-bg[data-theme="light"] body {
+  background-color: rgba(230, 234, 242, 0.25) !important;
+  background-image: none !important;
+}
+
+html.has-user-bg[data-theme="light"] body::before {
+  background:
+    linear-gradient(180deg,
+      rgba(248, 250, 255, 0.55) 0%,
+      rgba(248, 250, 255, 0.28) 40%,
+      rgba(248, 250, 255, 0.1) 100%) !important;
+}
+
+html.has-user-bg.tone-on body {
+  background-image: none !important;
+}
+
+/* На фото — прозрачное стекло, фон просвечивает */
+html.has-user-bg[data-theme="dark"] {
+  --panel: rgba(255, 255, 255, 0.07);
+  --panel-alt: rgba(255, 255, 255, 0.08);
+  --btn-bg: rgba(255, 255, 255, 0.08);
+  --btn-bg-hover: rgba(255, 255, 255, 0.16);
+  --key-bg: rgba(255, 255, 255, 0.08);
+  --key-bg-hover: rgba(255, 255, 255, 0.16);
+  --dropdown-bg: rgba(16, 18, 26, 0.55);
+  --border: rgba(255, 255, 255, 0.16);
+}
+
+html.has-user-bg[data-theme="dark"] .app-header .btn,
+html.has-user-bg[data-theme="dark"] .tool-bar,
+html.has-user-bg[data-theme="dark"] .site-lang-btn,
+html.has-user-bg[data-theme="dark"] .fmt-inline .fmt-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+html.has-user-bg[data-theme="dark"] .alphabet,
+html.has-user-bg[data-theme="dark"] .result-panel,
+html.has-user-bg[data-theme="dark"] .editor-panel::before {
+  background: linear-gradient(145deg, rgba(255,255,255,0.1), transparent 42%),
+              rgba(16, 18, 26, 0.32);
+}
+
+html.has-user-bg[data-theme="light"] {
+  --panel: rgba(255, 255, 255, 0.28);
+  --panel-alt: rgba(255, 255, 255, 0.32);
+  --btn-bg: rgba(255, 255, 255, 0.32);
+  --btn-bg-hover: rgba(255, 255, 255, 0.55);
+  --key-bg: rgba(255, 255, 255, 0.32);
+  --key-bg-hover: rgba(255, 255, 255, 0.55);
+  --dropdown-bg: rgba(255, 255, 255, 0.55);
+  --border: rgba(255, 255, 255, 0.5);
+  --border-soft: rgba(0, 0, 0, 0.08);
+}
+
+html.has-user-bg[data-theme="light"] .app-header .btn,
+html.has-user-bg[data-theme="light"] .tool-bar,
+html.has-user-bg[data-theme="light"] .site-lang-btn,
+html.has-user-bg[data-theme="light"] .fmt-inline .fmt-btn {
+  background: rgba(255, 255, 255, 0.32);
+  border-color: rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+html.has-user-bg[data-theme="light"] .alphabet,
+html.has-user-bg[data-theme="light"] .result-panel,
+html.has-user-bg[data-theme="light"] .editor-panel::before {
+  background: linear-gradient(145deg, rgba(255,255,255,0.45), transparent 42%),
+              rgba(255, 255, 255, 0.28);
+}
+
+html.has-user-bg[data-theme="light"] .tool-bar {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* светлая: fmt-кнопки как остальные капсулы */
+html[data-theme="light"] .fmt-inline {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+html[data-theme="light"] .fmt-inline .fmt-btn {
+  background: var(--btn-gloss), var(--btn-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+}
+
+
+
+/* Убрать размытие блоков — фото фона читается чётче */
+html.no-glass-blur {
+  --glass-blur: blur(0px) saturate(100%);
+}
+
+html.no-glass-blur .alphabet,
+html.no-glass-blur .result-panel,
+html.no-glass-blur .editor-panel::before,
+html.no-glass-blur .export-bar,
+html.no-glass-blur .tool-bar,
+html.no-glass-blur .dropdown-menu,
+html.no-glass-blur .tone-popover,
+html.no-glass-blur .style-popover,
+html.no-glass-blur .fmt-inline,
+html.no-glass-blur .toast,
+html.no-glass-blur .modal-card {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+html.no-glass-blur[data-theme="dark"] {
+  --panel: rgba(16, 18, 26, 0.82);
+  --panel-alt: rgba(22, 24, 34, 0.88);
+  --btn-bg: rgba(255, 255, 255, 0.1);
+  --key-bg: rgba(255, 255, 255, 0.1);
+  --dropdown-bg: rgba(18, 20, 30, 0.94);
+}
+
+html.no-glass-blur[data-theme="light"] {
+  --panel: rgba(255, 255, 255, 0.72);
+  --panel-alt: rgba(255, 255, 255, 0.78);
+  --btn-bg: rgba(255, 255, 255, 0.62);
+  --key-bg: rgba(255, 255, 255, 0.62);
+  --dropdown-bg: rgba(255, 255, 255, 0.88);
+}
+
+/* Switch (style panel) */
+.layout-switch {
+  width: 48px;
+  height: 28px;
+  border-radius: 999px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.15);
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.25s ease;
+}
+.layout-switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.layout-switch[aria-checked="true"] {
+  background: #0a84ff;
+}
+.layout-switch[aria-checked="true"]::after {
+  transform: translateX(20px);
+}
+html[data-theme="light"] .layout-switch {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+
+/* --- Performance: user background + lighter composites --- */
+.user-bg-layer {
+  will-change: auto;
+  transform: translateZ(0);
+}
+
+html.has-user-bg body::before,
+html.has-user-bg body::after {
+  /* without photo animation costs less; with photo keep static */
+  animation: none !important;
+  will-change: auto !important;
+}
+
+html.has-user-bg .alphabet,
+html.has-user-bg .result-panel,
+html.has-user-bg .editor-panel::before,
+html.has-user-bg .tool-bar,
+html.has-user-bg .export-bar {
+  /* softer blur = less GPU when photo is behind */
+  --glass-blur: blur(10px) saturate(120%);
+}
+
+html.has-user-bg.no-glass-blur .alphabet,
+html.has-user-bg.no-glass-blur .result-panel,
+html.has-user-bg.no-glass-blur .editor-panel::before {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.editor-panel,
+.result-panel,
+.alphabet {
+  contain: layout style;
+}
+
+.letter-key {
+  will-change: auto;
+}
+
+/* shorter transitions while typing feels snappier */
+html.has-user-bg .btn,
+html.has-user-bg .letter-key,
+html.has-user-bg .fmt-btn {
+  transition-duration: 0.15s;
+}
+
+.style-sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+.style-sliders.is-disabled {
+  opacity: 0.5;
+}
+.style-slider-row {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.style-slider-row input[type="range"] {
+  width: 100%;
+  accent-color: #0a84ff;
+}
+
+.style-fit-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+.style-fit-btn {
+  font-size: 12px !important;
+  padding: 5px 10px !important;
+}
+.style-fit-btn.is-active {
+  background: rgba(10, 132, 255, 0.28) !important;
+  border-color: rgba(10, 132, 255, 0.45);
+}
+.user-bg-photo.is-fit-width {
+  background-size: 100% auto !important;
+}
+.user-bg-photo.is-fit-height {
+  background-size: auto 100% !important;
+}
+.user-bg-photo.is-fit-cover {
+  background-size: cover !important;
+}
+
+/* global transparent glass */
+.btn-ghost,
+.panel-actions .btn {
+  background: var(--btn-gloss), var(--btn-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.letter-key {
+  background: var(--btn-gloss), var(--key-bg);
+}
+.editor-status {
+  background: transparent !important;
+  border-top-color: var(--border-soft);
+}
+.status-chip {
+  background: rgba(255, 255, 255, 0.06);
 }

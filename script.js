@@ -80,6 +80,17 @@
       ocrDone: 'Текст из файла вставлен', ocrFail: 'Не удалось прочитать текст из файла', ocrNoLib: 'OCR-библиотека не загрузилась',
       exportStressTitle: 'Экспорт TXT с ударениями',
       toastExportStress: 'TXT с ударениями сохранён',
+      styleBtn: 'Стиль', styleTitle: 'Стиль интерфейса', styleBg: 'Фон',
+      styleBgHint: 'Изображение только на фоне, не на блоках',
+      styleBgPick: 'Выбрать фото', styleBgClear: 'Убрать',
+      styleGlass: 'Стекло', styleNoBlur: 'Убрать размытие блоков',
+      styleNoBlurHint: 'Фото фона будет видно чётче',
+      styleBgSet: 'Фон установлен', styleBgRemoved: 'Фон убран',
+      styleBgTooBig: 'Файл слишком большой (макс. 2.5 МБ)',
+      styleBgBad: 'Нужен файл изображения',
+      stylePosX: 'По горизонтали', stylePosY: 'По вертикали', styleScale: 'Размер',
+      stylePosHint: 'Пустые края заполняются размытым фото',
+      styleFitWidth: 'По ширине', styleFitHeight: 'По высоте', styleFitCover: 'На весь экран',
       toastSwapEmpty: 'Введите текст для переключения'
     },
     en: {
@@ -131,6 +142,17 @@
       ocrDone: 'Text inserted', ocrFail: 'Could not recognize text', ocrNoLib: 'OCR library failed to load',
       exportStressTitle: 'Export TXT with stress marks',
       toastExportStress: 'TXT with stress marks saved',
+      styleBtn: 'Style', styleTitle: 'Interface style', styleBg: 'Background',
+      styleBgHint: 'Image only on the page background, not on panels',
+      styleBgPick: 'Choose photo', styleBgClear: 'Remove',
+      styleGlass: 'Glass', styleNoBlur: 'Remove panel blur',
+      styleNoBlurHint: 'Background photo will look sharper',
+      styleBgSet: 'Background set', styleBgRemoved: 'Background removed',
+      styleBgTooBig: 'File too large (max 2.5 MB)',
+      styleBgBad: 'Please choose an image file',
+      stylePosX: 'Horizontal', stylePosY: 'Vertical', styleScale: 'Size',
+      stylePosHint: 'Empty edges are filled with a blurred photo',
+      styleFitWidth: 'Fit width', styleFitHeight: 'Fit height', styleFitCover: 'Fill screen',
       toastSwapEmpty: 'Enter text to switch'
     },
     lv: {
@@ -182,6 +204,17 @@
       ocrDone: 'Teksts ievietots', ocrFail: 'Neizdevās atpazīt tekstu', ocrNoLib: 'OCR bibliotēka neielādējās',
       exportStressTitle: 'Eksportēt TXT ar uzsvariem',
       toastExportStress: 'TXT ar uzsvariem saglabāts',
+      styleBtn: 'Stils', styleTitle: 'Saskarnes stils', styleBg: 'Fons',
+      styleBgHint: 'Attēls tikai fonā, ne uz blokiem',
+      styleBgPick: 'Izvēlēties foto', styleBgClear: 'Noņemt',
+      styleGlass: 'Stikls', styleNoBlur: 'Noņemt bloku aizmiglojumu',
+      styleNoBlurHint: 'Fona foto būs skaidrāks',
+      styleBgSet: 'Fons iestatīts', styleBgRemoved: 'Fons noņemts',
+      styleBgTooBig: 'Fails pārāk liels (maks. 2.5 MB)',
+      styleBgBad: 'Izvēlieties attēla failu',
+      stylePosX: 'Horizontāli', stylePosY: 'Vertikāli', styleScale: 'Izmērs',
+      stylePosHint: 'Tukšās malas aizpilda ar izplūdušu foto',
+      styleFitWidth: 'Pēc platuma', styleFitHeight: 'Pēc augstuma', styleFitCover: 'Uz visu ekrānu',
       toastSwapEmpty: 'Ievadiet tekstu, lai pārslēgtu'
     }
   };
@@ -762,9 +795,12 @@
 
   const resultEl = document.getElementById('result');
 
+  let lastResultSource = null;
   function updateResult() {
     // Убираем знаки ударения перед транслитом — в латинице они не нужны
     const sourceText = removeStressMarks(editor.innerText.replace(/\u00A0/g, ' '));
+    if (sourceText === lastResultSource) return;
+    lastResultSource = sourceText;
     if (!sourceText.trim()) {
       resultEl.textContent = '';
       return;
@@ -838,18 +874,17 @@
     fmtUnderline.classList.remove('active');
   }
 
+  let selFrame = null;
   document.addEventListener('selectionchange', () => {
-    const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
-
-    const range = sel.getRangeAt(0);
-    const withinEditor =
-      editor.contains(range.startContainer) && editor.contains(range.endContainer);
-
-    if (withinEditor && range.toString().trim()) {
-      savedRange = range.cloneRange();
+    if (selFrame) return;
+    selFrame = requestAnimationFrame(() => {
+      selFrame = null;
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+      const range = sel.getRangeAt(0);
+      if (!(editor.contains(range.startContainer) && editor.contains(range.endContainer))) return;
       refreshActiveStates();
-    }
+    });
   });
 
   document.addEventListener('mousedown', (e) => {
@@ -1217,10 +1252,13 @@
     showToast(t('toastReverted'));
   });
 
+  let translateBusy = false;
   async function translateEditorTo(langCode) {
+    if (translateBusy) return;
     const text = editor.innerText;
     if (!text.trim()) { showToast(t('toastNothingTranslate')); return; }
 
+    translateBusy = true;
     pushHistory();
     if (!isTranslated) originalHtmlBeforeTranslation = editor.innerHTML;
 
@@ -1228,8 +1266,15 @@
 
     try {
       const translated = await translateText(text, langCode);
+      if (!translated || !String(translated).trim()) throw new Error('empty');
       setEditorPlainText(translated);
       isTranslated = true;
+      // сбрасываем режим ударений — текст другой
+      stressOn = false;
+      if (stressBtn) {
+        stressBtn.classList.remove('active');
+        stressBtn.setAttribute('aria-pressed', 'false');
+      }
       revertLangBtn.classList.remove('is-hidden');
       updateResult();
       updatePageGuides();
@@ -1238,12 +1283,14 @@
       showToast(t('toastTranslated', { lang: t('lang_' + langCode) }));
     } catch (err) {
       showToast(t('toastTranslateFail'));
+    } finally {
+      translateBusy = false;
     }
   }
 
   async function translateText(text, targetLang) {
     // Длинный текст режем на куски — API стабильнее, меньше обрывов
-    const MAX = 4500;
+    const MAX = 3500;
     const chunks = [];
     if (text.length <= MAX) {
       chunks.push(text);
@@ -1255,28 +1302,40 @@
           break;
         }
         let cut = rest.lastIndexOf('\n', MAX);
-        if (cut < MAX * 0.4) cut = rest.lastIndexOf(' ', MAX);
-        if (cut < MAX * 0.4) cut = MAX;
+        if (cut < MAX * 0.35) cut = rest.lastIndexOf('. ', MAX);
+        if (cut < MAX * 0.35) cut = rest.lastIndexOf(' ', MAX);
+        if (cut < MAX * 0.35) cut = MAX;
         chunks.push(rest.slice(0, cut));
-        rest = rest.slice(cut).replace(/^\n/, '');
+        rest = rest.slice(cut).replace(/^\s+/, '');
       }
     }
 
     const parts = [];
-    for (const chunk of chunks) {
+    for (let i = 0; i < chunks.length; i++) {
+      const chunk = chunks[i];
+      if (!chunk.trim()) {
+        parts.push(chunk);
+        continue;
+      }
       const url =
         'https://translate.googleapis.com/translate_a/single' +
-        `?client=gtx&sl=auto&tl=${encodeURIComponent(targetLang)}&dt=t&q=${encodeURIComponent(chunk)}`;
+        '?client=gtx&sl=auto&tl=' + encodeURIComponent(targetLang) +
+        '&dt=t&ie=UTF-8&oe=UTF-8&q=' + encodeURIComponent(chunk);
       const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-      const timer = ctrl ? setTimeout(() => ctrl.abort(), 20000) : null;
-      const res = await fetch(url, ctrl ? { signal: ctrl.signal } : undefined);
-      if (timer) clearTimeout(timer);
+      const timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 18000) : null;
+      let res;
+      try {
+        res = await fetch(url, ctrl ? { signal: ctrl.signal } : undefined);
+      } finally {
+        if (timer) clearTimeout(timer);
+      }
       if (!res.ok) throw new Error('translate request failed');
       const data = await res.json();
       if (!Array.isArray(data) || !Array.isArray(data[0])) {
         throw new Error('unexpected response');
       }
-      parts.push(data[0].map((seg) => seg[0]).join(''));
+      const piece = data[0].map(function (seg) { return seg && seg[0] ? seg[0] : ''; }).join('');
+      parts.push(piece);
     }
     return parts.join('');
   }
@@ -1306,16 +1365,21 @@
   const PAGE_GUIDE_HEIGHT = 1150;
   const pageGuidesEl = document.getElementById('pageGuides');
 
+  let lastGuideCount = -1;
   function updatePageGuides() {
+    if (!pageGuidesEl) return;
     const total = editor.scrollHeight;
     const count = Math.max(0, Math.floor(total / PAGE_GUIDE_HEIGHT));
-    let html = '';
-    for (let i = 1; i <= count; i++) {
-      html += `<div class="page-guide-line" style="top:${i * PAGE_GUIDE_HEIGHT}px">` +
-        `<span class="page-guide-label">стр. ${i + 1}</span></div>`;
+    if (count !== lastGuideCount) {
+      lastGuideCount = count;
+      let html = '';
+      for (let i = 1; i <= count; i++) {
+        html += '<div class="page-guide-line" style="top:' + (i * PAGE_GUIDE_HEIGHT) + 'px">' +
+          '<span class="page-guide-label">стр. ' + (i + 1) + '</span></div>';
+      }
+      pageGuidesEl.innerHTML = html;
     }
-    pageGuidesEl.innerHTML = html;
-    pageGuidesEl.style.transform = `translateY(${-editor.scrollTop}px)`;
+    pageGuidesEl.style.transform = 'translateY(' + (-editor.scrollTop) + 'px)';
   }
 
   editor.addEventListener('scroll', () => {
@@ -1357,15 +1421,16 @@
   exportTxtBtn.addEventListener('click', () => {
     const text = editor.innerText;
     if (!text.trim()) { showToast(t('toastNothingExport')); return; }
-    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-    downloadBlob(blob, 'ritext.txt');
+    downloadTextFile(text, 'ritext.txt');
     showToast(t('toastSaved'));
   });
 
   // ---- PDF: рендерим отформатированный текст на белой «странице»
   //      и превращаем в картинку внутри PDF — так гарантированно
   //      сохраняется кириллица и всё применённое форматирование ----
+  let exportBusy = false;
   exportPdfBtn.addEventListener('click', async () => {
+    if (exportBusy) return;
     const text = editor.innerText;
     if (!text.trim()) {
       showToast(t('toastNothingExport'));
@@ -1376,6 +1441,7 @@
       return;
     }
 
+    exportBusy = true;
     showToast(t('toastPdfPreparing'));
 
     const liveWidth = editor.clientWidth || 780;
@@ -1384,7 +1450,7 @@
     page.style.position = 'fixed';
     page.style.top = '-10000px';
     page.style.left = '0';
-    page.style.width = `${liveWidth}px`;
+    page.style.width = liveWidth + 'px';
     page.style.padding = '48px';
     page.style.background = '#ffffff';
     page.style.color = '#111111';
@@ -1425,7 +1491,8 @@
     } catch (err) {
       showToast(t('toastPdfFail'));
     } finally {
-      page.remove();
+      exportBusy = false;
+      if (page && page.parentNode) page.remove();
     }
   });
 
@@ -2050,27 +2117,31 @@
   }
 
   let saveTimer = null;
+  let lastSavedHtml = null;
   function scheduleAutosave() {
-    setSaveStatus('saving');
     clearTimeout(saveTimer);
     saveTimer = setTimeout(() => {
       try {
         const plain = getEditorPlain().replace(/[\s\u200B\uFEFF]/g, '');
         if (!plain) {
-          localStorage.removeItem(DRAFT_KEY);
+          if (localStorage.getItem(DRAFT_KEY)) localStorage.removeItem(DRAFT_KEY);
+          lastSavedHtml = '';
           setSaveStatus('idle');
           return;
         }
-        const payload = {
-          html: editor.innerHTML,
-          ts: Date.now()
-        };
-        localStorage.setItem(DRAFT_KEY, JSON.stringify(payload));
+        const html = editor.innerHTML;
+        if (html === lastSavedHtml) {
+          setSaveStatus('saved');
+          return;
+        }
+        setSaveStatus('saving');
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({ html: html, ts: Date.now() }));
+        lastSavedHtml = html;
         setSaveStatus('saved');
       } catch (e) {
         setSaveStatus('idle');
       }
-    }, 700);
+    }, 1200);
   }
 
   function restoreDraft() {
@@ -2222,11 +2293,21 @@
       content.items.forEach((item) => {
         const str = item.str || '';
         const y = item.transform ? item.transform[5] : 0;
-        if (lastY !== null && Math.abs(y - lastY) > 6) {
+        if (lastY !== null && Math.abs(y - lastY) > 5) {
           lines.push(line.trimEnd());
           line = '';
         }
-        line += str + (str.endsWith('-') ? '' : ' ');
+        // hasEOL — явный конец строки из PDF
+        if (item.hasEOL) {
+          line += str;
+          lines.push(line.trimEnd());
+          line = '';
+          lastY = null;
+          return;
+        }
+        // не ставим лишний пробел, если следующий кусок «прилипает»
+        const needSpace = line && str && !/\s$/.test(line) && !/^[,.;:!?)\]]/.test(str) && !/-$/.test(line);
+        line += (needSpace ? ' ' : '') + str;
         lastY = y;
       });
       if (line.trim()) lines.push(line.trimEnd());
@@ -2267,13 +2348,15 @@
     return null;
   }
 
+  let ocrBusy = false;
   async function runOcrOnFile(file) {
-    if (!file) return;
+    if (!file || ocrBusy) return;
     const kind = isSupportedTextFile(file);
     if (!kind) {
       showToast(t('ocrFail'));
       return;
     }
+    ocrBusy = true;
     openModal(ocrModal);
     setOcrProgress(0.08, t('ocrWorking'));
     try {
@@ -2306,6 +2389,7 @@
       console.error(err);
       showToast(err && String(err.message || err).includes('missing') ? t('ocrNoLib') : t('ocrFail'));
     } finally {
+      ocrBusy = false;
       if (ocrProgress) ocrProgress.classList.add('is-hidden');
       if (ocrBarFill) ocrBarFill.style.width = '0%';
       if (ocrFile) ocrFile.value = '';
@@ -2346,6 +2430,383 @@
       if (!m.hidden) closeModal(m);
     });
   });
+
+
+  /* ------------------------------------------------------------------ */
+  /* 16. Стиль: фон изображения + без размытия блоков                     */
+  /* ------------------------------------------------------------------ */
+
+  const STYLE_KEY = 'ritext-style-v1';
+  const STYLE_BG_MAX = 2.5 * 1024 * 1024; // 2.5 MB — localStorage limit safety
+  const styleBtn = document.getElementById('styleBtn');
+  const stylePopover = document.getElementById('stylePopover');
+  const styleBgPick = document.getElementById('styleBgPick');
+  const styleBgClear = document.getElementById('styleBgClear');
+  const styleBgFile = document.getElementById('styleBgFile');
+  const styleBgPreview = document.getElementById('styleBgPreview');
+  const styleNoBlurBtn = document.getElementById('styleNoBlur');
+
+  let styleState = { bg: null, noBlur: false, posX: 50, posY: 50, scale: 100, fit: 'scale' };
+
+  function loadStyleState() {
+    try {
+      const raw = localStorage.getItem(STYLE_KEY);
+      if (raw) styleState = Object.assign(styleState, JSON.parse(raw));
+    } catch (e) { /* */ }
+  }
+
+  function saveStyleState() {
+    try {
+      // bg can be large; still try
+      localStorage.setItem(STYLE_KEY, JSON.stringify(styleState));
+    } catch (e) {
+      // quota — keep in memory only
+      try {
+        const slim = { bg: null, noBlur: styleState.noBlur };
+        localStorage.setItem(STYLE_KEY, JSON.stringify(slim));
+      } catch (e2) { /* */ }
+    }
+  }
+
+
+  /** Сжимает фон: меньше память/GPU, быстрее прокрутка */
+  function compressBgImage(dataUrl, mime) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const maxW = 1600;
+          const maxH = 1200;
+          let w = img.naturalWidth || img.width;
+          let h = img.naturalHeight || img.height;
+          if (!w || !h) return resolve(dataUrl);
+          const scale = Math.min(1, maxW / w, maxH / h);
+          w = Math.round(w * scale);
+          h = Math.round(h * scale);
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d', { alpha: false });
+          if (!ctx) return resolve(dataUrl);
+          ctx.drawImage(img, 0, 0, w, h);
+          // JPEG почти всегда меньше PNG для фото
+          const out = canvas.toDataURL('image/jpeg', 0.72);
+          resolve(out && out.length < dataUrl.length ? out : dataUrl);
+        } catch (e) {
+          resolve(dataUrl);
+        }
+      };
+      img.onerror = () => reject(new Error('img'));
+      img.src = dataUrl;
+    });
+  }
+
+  /** Точный размер фона в px по режиму и пропорциям фото */
+  function computeExactBgSize(fit, scale, imgW, imgH) {
+    const vw = window.innerWidth || document.documentElement.clientWidth || 1;
+    const vh = window.innerHeight || document.documentElement.clientHeight || 1;
+    const w = imgW || 0;
+    const h = imgH || 0;
+
+    // нет размеров — CSS-fallback
+    if (!w || !h) {
+      if (fit === 'width') return '100% auto';
+      if (fit === 'height') return 'auto 100%';
+      if (fit === 'cover') return 'cover';
+      return (scale || 100) + '%';
+    }
+
+    let s;
+    if (fit === 'width') {
+      // ровно по ширине экрана, высота по пропорции
+      s = vw / w;
+    } else if (fit === 'height') {
+      s = vh / h;
+    } else if (fit === 'cover') {
+      s = Math.max(vw / w, vh / h);
+    } else if (fit === 'contain') {
+      s = Math.min(vw / w, vh / h);
+    } else {
+      // ручной масштаб: 100% = «по ширине»
+      s = (vw / w) * ((scale || 100) / 100);
+    }
+    return Math.round(w * s) + 'px ' + Math.round(h * s) + 'px';
+  }
+
+  function applyStyleState() {
+    const layer = document.getElementById('userBgLayer');
+    const blurEl = document.getElementById('userBgBlur');
+    const photoEl = document.getElementById('userBgPhoto');
+    const sliders = document.getElementById('styleSliders');
+    const posX = styleState.posX != null ? styleState.posX : 50;
+    const posY = styleState.posY != null ? styleState.posY : 50;
+    const scale = styleState.scale != null ? styleState.scale : 100;
+    const pos = posX + '% ' + posY + '%';
+    const fit = styleState.fit || 'scale';
+    const exactSize = computeExactBgSize(fit, scale, styleState.imgW, styleState.imgH);
+
+    if (styleState.bg) {
+      htmlEl.classList.add('has-user-bg');
+      const url = 'url("' + styleState.bg + '")';
+      if (blurEl) {
+        blurEl.style.backgroundImage = url;
+        blurEl.style.backgroundPosition = pos;
+        // подложка всегда cover — без пустых краёв
+        blurEl.style.backgroundSize = 'cover';
+      }
+      if (photoEl) {
+        photoEl.style.backgroundImage = url;
+        photoEl.style.backgroundPosition = pos;
+        photoEl.classList.remove('is-fit-width', 'is-fit-height', 'is-fit-cover');
+        if (fit === 'width') photoEl.classList.add('is-fit-width');
+        else if (fit === 'height') photoEl.classList.add('is-fit-height');
+        else if (fit === 'cover') photoEl.classList.add('is-fit-cover');
+        photoEl.style.backgroundSize = exactSize;
+      }
+      if (layer) layer.style.backgroundImage = '';
+      if (sliders) sliders.classList.remove('is-disabled');
+      if (styleBgPreview) {
+        styleBgPreview.classList.remove('is-empty');
+        styleBgPreview.style.backgroundImage = url;
+        styleBgPreview.style.backgroundPosition = pos;
+        styleBgPreview.style.backgroundSize = exactSize;
+      }
+    } else {
+      htmlEl.classList.remove('has-user-bg');
+      if (blurEl) blurEl.style.backgroundImage = '';
+      if (photoEl) {
+        photoEl.style.backgroundImage = '';
+        photoEl.style.backgroundSize = '';
+        photoEl.style.backgroundPosition = '';
+        photoEl.classList.remove('is-fit-width', 'is-fit-height', 'is-fit-cover');
+      }
+      if (styleBgPreview) {
+        styleBgPreview.classList.add('is-empty');
+        styleBgPreview.style.backgroundImage = '';
+      }
+      if (sliders) sliders.classList.add('is-disabled');
+    }
+
+    // sync sliders UI
+    const sx = document.getElementById('stylePosX');
+    const sy = document.getElementById('stylePosY');
+    const ss = document.getElementById('styleScale');
+    if (sx) sx.value = String(posX);
+    if (sy) sy.value = String(posY);
+    if (ss) ss.value = String(scale);
+
+    htmlEl.classList.toggle('no-glass-blur', !!styleState.noBlur);
+    if (styleNoBlurBtn) {
+      styleNoBlurBtn.setAttribute('aria-checked', String(!!styleState.noBlur));
+    }
+    // fit buttons
+    document.querySelectorAll('.style-fit-btn').forEach((b) => b.classList.remove('is-active'));
+    const fitMap = { width: 'styleFitWidth', height: 'styleFitHeight', cover: 'styleFitCover' };
+    if (fitMap[fit]) {
+      const btn = document.getElementById(fitMap[fit]);
+      if (btn) btn.classList.add('is-active');
+    }
+  }
+
+  function openStylePopover() {
+    if (!stylePopover) return;
+    stylePopover.hidden = false;
+    if (styleBtn) styleBtn.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeStylePopover() {
+    if (!stylePopover) return;
+    stylePopover.hidden = true;
+    if (styleBtn) styleBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  if (styleBtn && stylePopover) {
+    styleBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (stylePopover.hidden) openStylePopover();
+      else closeStylePopover();
+    });
+    // клики внутри панели не закрывают её
+    stylePopover.addEventListener('mousedown', (e) => e.stopPropagation());
+    stylePopover.addEventListener('click', (e) => e.stopPropagation());
+    // закрытие только по клику снаружи .style-wrap
+    document.addEventListener('mousedown', (e) => {
+      if (!stylePopover || stylePopover.hidden) return;
+      const wrap = e.target && e.target.closest && e.target.closest('.style-wrap');
+      if (!wrap) closeStylePopover();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeStylePopover();
+    });
+  }
+
+  if (styleBgPick && styleBgFile) {
+    styleBgPick.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      styleBgFile.click();
+    });
+    styleBgFile.addEventListener('change', () => {
+      const file = styleBgFile.files && styleBgFile.files[0];
+      styleBgFile.value = '';
+      if (!file) return;
+      if (!file.type || !file.type.startsWith('image/')) {
+        showToast(t('styleBgBad'));
+        return;
+      }
+      if (file.size > STYLE_BG_MAX) {
+        showToast(t('styleBgTooBig'));
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const raw = String(reader.result || '');
+        compressBgImage(raw, file.type).then((dataUrl) => {
+          const finalUrl = dataUrl || raw;
+          const img = new Image();
+          img.onload = () => {
+            styleState.bg = finalUrl;
+            styleState.imgW = img.naturalWidth || img.width;
+            styleState.imgH = img.naturalHeight || img.height;
+            // широкое фото → сразу точно по ширине экрана
+            if (styleState.imgW >= styleState.imgH) {
+              styleState.fit = 'width';
+              styleState.posX = 50;
+              styleState.posY = 50;
+              styleState.scale = 100;
+            } else {
+              styleState.fit = 'height';
+              styleState.posX = 50;
+              styleState.posY = 50;
+              styleState.scale = 100;
+            }
+            applyStyleState();
+            saveStyleState();
+            showToast(t('styleBgSet'));
+          };
+          img.onerror = () => {
+            styleState.bg = finalUrl;
+            styleState.fit = 'width';
+            applyStyleState();
+            saveStyleState();
+            showToast(t('styleBgSet'));
+          };
+          img.src = finalUrl;
+        }).catch(() => {
+          styleState.bg = raw;
+          styleState.fit = 'width';
+          applyStyleState();
+          saveStyleState();
+          showToast(t('styleBgSet'));
+        });
+      };
+      reader.onerror = () => showToast(t('styleBgBad'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  if (styleBgClear) {
+    styleBgClear.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      styleState.bg = null;
+      styleState.imgW = null;
+      styleState.imgH = null;
+      applyStyleState();
+      saveStyleState();
+      showToast(t('styleBgRemoved'));
+    });
+  }
+
+  if (styleNoBlurBtn) {
+    styleNoBlurBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      styleState.noBlur = !styleState.noBlur;
+      applyStyleState();
+      saveStyleState();
+    });
+  }
+
+  function bindStyleSlider(id, key) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', () => {
+      styleState[key] = parseInt(el.value, 10);
+      applyStyleState();
+    });
+    el.addEventListener('change', () => saveStyleState());
+  }
+  bindStyleSlider('stylePosX', 'posX');
+  bindStyleSlider('stylePosY', 'posY');
+  // scale slider switches to manual scale mode
+  const scaleEl = document.getElementById('styleScale');
+  if (scaleEl) {
+    scaleEl.addEventListener('input', () => {
+      styleState.scale = parseInt(scaleEl.value, 10);
+      styleState.fit = 'scale';
+      applyStyleState();
+    });
+    scaleEl.addEventListener('change', () => saveStyleState());
+  }
+
+  function setBgFit(mode) {
+    if (!styleState.bg) {
+      showToast(t('styleBgBad'));
+      return;
+    }
+    styleState.fit = mode;
+    if (mode === 'cover' || mode === 'width' || mode === 'height') {
+      styleState.posX = 50;
+      styleState.posY = 50;
+    }
+    applyStyleState();
+    saveStyleState();
+  }
+  function bindFitBtn(id, mode) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setBgFit(mode);
+    });
+  }
+  bindFitBtn('styleFitWidth', 'width');
+  bindFitBtn('styleFitHeight', 'height');
+  bindFitBtn('styleFitCover', 'cover');
+
+  loadStyleState();
+  // defaults for older saves
+  if (styleState.posX == null) styleState.posX = 50;
+  if (styleState.posY == null) styleState.posY = 50;
+  if (styleState.scale == null) styleState.scale = 100;
+  if (!styleState.fit) styleState.fit = 'scale';
+
+  // восстановить размеры фото после перезагрузки
+  if (styleState.bg && (!styleState.imgW || !styleState.imgH)) {
+    const probe = new Image();
+    probe.onload = () => {
+      styleState.imgW = probe.naturalWidth || probe.width;
+      styleState.imgH = probe.naturalHeight || probe.height;
+      if (styleState.imgW >= styleState.imgH && styleState.fit === 'scale') {
+        styleState.fit = 'width';
+      }
+      applyStyleState();
+    };
+    probe.src = styleState.bg;
+  }
+  applyStyleState();
+
+  // при ресайзе окна пересчитываем точный размер (особенно для широких фото)
+  let styleBgResizeTimer = null;
+  window.addEventListener('resize', () => {
+    if (!styleState.bg) return;
+    clearTimeout(styleBgResizeTimer);
+    styleBgResizeTimer = setTimeout(() => applyStyleState(), 120);
+  });
+
 
   // Инициализация
   updateStats();
