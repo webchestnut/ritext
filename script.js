@@ -1919,7 +1919,12 @@
 
   // панель выбора: открытие/закрытие и позиция
   function positionTonePopover() {
-    const rect = toneBtn.getBoundingClientRect();
+    const quick = document.getElementById('quickToneBtn');
+    const anchor =
+      (quick && quick.offsetParent !== null && quick.getBoundingClientRect().width > 0)
+        ? quick
+        : toneBtn;
+    const rect = anchor.getBoundingClientRect();
     const width = tonePopover.offsetWidth || 272;
     tonePopover.style.top = `${rect.bottom + 8}px`;
     tonePopover.style.left = `${Math.max(8, Math.min(rect.left, window.innerWidth - width - 8))}px`;
@@ -1936,7 +1941,8 @@
   });
 
   document.addEventListener('mousedown', (e) => {
-    if (!e.target.closest('.tone-wrap')) setToneOpen(false);
+    if (e.target.closest('.tone-wrap') || e.target.closest('#quickToneBtn')) return;
+    setToneOpen(false);
   });
 
   document.addEventListener('keydown', (e) => {
@@ -1990,7 +1996,13 @@
   });
 
   function positionSiteLangMenu() {
-    const rect = siteLangBtn.getBoundingClientRect();
+    // На мобиле кнопка в шапке может быть в скрытом chrome — якоримся к quickLangBtn
+    const quick = document.getElementById('quickLangBtn');
+    const anchor =
+      (quick && quick.offsetParent !== null && quick.getBoundingClientRect().width > 0)
+        ? quick
+        : siteLangBtn;
+    const rect = anchor.getBoundingClientRect();
     const width = siteLangMenu.offsetWidth || 190;
     siteLangMenu.style.top = `${rect.bottom + 8}px`;
     siteLangMenu.style.left = `${Math.max(8, Math.min(rect.left, window.innerWidth - width - 8))}px`;
@@ -2007,7 +2019,8 @@
   });
 
   document.addEventListener('mousedown', (e) => {
-    if (!e.target.closest('.site-lang-wrap')) setSiteLangOpen(false);
+    if (e.target.closest('.site-lang-wrap') || e.target.closest('#quickLangBtn')) return;
+    setSiteLangOpen(false);
   });
 
   document.addEventListener('keydown', (e) => {
@@ -2634,7 +2647,8 @@
     document.addEventListener('mousedown', (e) => {
       if (!stylePopover || stylePopover.hidden) return;
       const wrap = e.target && e.target.closest && e.target.closest('.style-wrap');
-      if (!wrap) closeStylePopover();
+      const quick = e.target && e.target.closest && e.target.closest('#quickStyleBtn, #quickBgBtn');
+      if (!wrap && !quick) closeStylePopover();
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeStylePopover();
@@ -2811,6 +2825,154 @@
   // Инициализация
   updateStats();
   restoreDraft();
+
+
+
+
+  /* Quick top buttons (mobile header mid) */
+  function moveToBody(el) {
+    if (el && el.parentElement !== document.body) {
+      document.body.appendChild(el);
+    }
+  }
+
+  function setupQuickTop() {
+    const quickLang = document.getElementById('quickLangBtn');
+    const quickStyle = document.getElementById('quickStyleBtn');
+    const quickTone = document.getElementById('quickToneBtn');
+
+    if (quickLang) {
+      quickLang.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const menu = document.getElementById('siteLangMenu');
+        if (!menu) return;
+        moveToBody(menu);
+        menu.classList.add('dropdown-menu');
+        const isOpen = menu.classList.contains('open');
+        if (isOpen) {
+          menu.classList.remove('open');
+          return;
+        }
+        // close others
+        document.getElementById('tonePopover')?.classList.remove('open');
+        const sp = document.getElementById('stylePopover');
+        if (sp) sp.hidden = true;
+
+        const rect = quickLang.getBoundingClientRect();
+        menu.style.position = 'fixed';
+        menu.style.zIndex = '200';
+        menu.style.top = (rect.bottom + 8) + 'px';
+        menu.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 200)) + 'px';
+        menu.classList.add('open');
+      });
+    }
+
+    if (quickStyle) {
+      quickStyle.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const pop = document.getElementById('stylePopover');
+        if (!pop) return;
+        moveToBody(pop);
+        if (!pop.hidden) {
+          pop.hidden = true;
+          return;
+        }
+        document.getElementById('siteLangMenu')?.classList.remove('open');
+        document.getElementById('tonePopover')?.classList.remove('open');
+        pop.hidden = false;
+        pop.style.zIndex = '200';
+        pop.style.position = 'fixed';
+        pop.style.left = '12px';
+        pop.style.right = '12px';
+        const safeTop = parseInt(getComputedStyle(document.documentElement).getPropertyValue('env(safe-area-inset-top)'), 10);
+        const topPad = (Number.isFinite(safeTop) ? safeTop : 0) + 12;
+        pop.style.top = topPad + 'px';
+        pop.style.bottom = 'auto';
+        pop.style.width = 'auto';
+        pop.style.removeProperty('bottom');
+      });
+    }
+
+    if (quickTone) {
+      quickTone.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const pop = document.getElementById('tonePopover');
+        if (!pop) return;
+        moveToBody(pop);
+        const isOpen = pop.classList.contains('open');
+        if (isOpen) {
+          pop.classList.remove('open');
+          return;
+        }
+        document.getElementById('siteLangMenu')?.classList.remove('open');
+        const sp = document.getElementById('stylePopover');
+        if (sp) sp.hidden = true;
+
+        const rect = quickTone.getBoundingClientRect();
+        pop.style.position = 'fixed';
+        pop.style.zIndex = '200';
+        pop.style.top = (rect.bottom + 8) + 'px';
+        pop.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 280)) + 'px';
+        pop.classList.add('open');
+      });
+    }
+
+    // close when tapping outside
+    document.addEventListener('mousedown', (e) => {
+      if (e.target.closest('#quickLangBtn, #quickStyleBtn, #quickToneBtn, #siteLangMenu, #stylePopover, #tonePopover, .tone-wrap, .style-wrap, .site-lang-wrap')) return;
+      document.getElementById('siteLangMenu')?.classList.remove('open');
+      document.getElementById('tonePopover')?.classList.remove('open');
+      const sp = document.getElementById('stylePopover');
+      if (sp && !sp.hidden && window.matchMedia('(max-width: 900px)').matches) {
+        // only auto-close style on mobile if opened via quick
+        // keep desktop behavior via existing handlers
+      }
+    });
+
+    const quickName = document.getElementById('quickLangName');
+    const mainName = document.getElementById('siteLangName');
+    if (quickName && mainName) {
+      const sync = () => { quickName.textContent = mainName.textContent; };
+      sync();
+      new MutationObserver(sync).observe(mainName, { childList: true, characterData: true, subtree: true });
+    }
+    const quickDot = document.getElementById('quickToneDot');
+    const mainDot = document.getElementById('toneDot');
+    if (quickDot && mainDot) {
+      const syncDot = () => {
+        const bg = mainDot.style.background || getComputedStyle(mainDot).background;
+        if (bg) quickDot.style.background = bg;
+      };
+      syncDot();
+      new MutationObserver(syncDot).observe(mainDot, { attributes: true, attributeFilter: ['style', 'class'] });
+    }
+  }
+  setupQuickTop();
+
+  (function setupChromeToggle() {
+    const header = document.getElementById('appHeader');
+    const toggle = document.getElementById('chromeToggle');
+    const chrome = document.getElementById('headerChrome');
+    if (!header || !toggle || !chrome) return;
+
+    function setOpen(open) {
+      header.classList.toggle('is-chrome-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Скрыть меню' : 'Показать меню');
+    }
+
+    toggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setOpen(!header.classList.contains('is-chrome-open'));
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
 
 
   // включаем плавные переходы только после первой отрисовки

@@ -2,7 +2,7 @@
 <html lang="ru" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
 <title>ritext</title>
 
 <!-- Иконки вкладки / адресной строки / iOS -->
@@ -12,7 +12,10 @@
 <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="theme-color" content="#0a0c12">
+<meta name="theme-color" content="#0a0c12" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#e8ecf4" media="(prefers-color-scheme: light)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 
 <!-- Современные веб-шрифты для форматирования выделенного текста -->
@@ -31,12 +34,37 @@
 
 <div class="app">
 
-  <header class="app-header">
-    <div class="header-left">
+  <header class="app-header" id="appHeader">
+    <div class="header-top">
       <h1 class="logo">ritext</h1>
-      <button class="btn btn-ghost" id="expandBtn" type="button" data-i18n-aria="expandAriaOn" aria-label="Развернуть поле текста на весь экран">
-        <span class="expand-icon" id="expandIcon">⤢</span> <span id="expandLabel" data-i18n="expand">Во весь экран</span>
-      </button>
+      <div class="header-top-mid" id="headerTopMid">
+        <button class="btn btn-ghost top-quick site-lang-btn" id="quickLangBtn" type="button" aria-label="Язык сайта" title="Язык">
+          <svg class="site-lang-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M3 12h18"></path>
+            <path d="M12 3c2.6 2.5 3.9 5.5 3.9 9s-1.3 6.5-3.9 9c-2.6-2.5-3.9-5.5-3.9-9S9.4 5.5 12 3z"></path>
+          </svg>
+          <span class="site-lang-name" id="quickLangName">Русский</span>
+          <span class="caret" aria-hidden="true">▾</span>
+        </button>
+        <button class="btn btn-ghost top-quick" id="quickStyleBtn" type="button" data-i18n="styleBtn">Стиль</button>
+        <button class="btn btn-ghost top-quick" id="quickToneBtn" type="button" aria-label="Выбрать тон">
+          <span class="tone-dot" id="quickToneDot" aria-hidden="true"></span>
+          <span data-i18n="toneBtn">Выбрать тон</span>
+        </button>
+      </div>
+      <div class="header-top-actions">
+        <button class="btn btn-ghost" id="expandBtn" type="button" data-i18n-aria="expandAriaOn" aria-label="Развернуть поле текста на весь экран">
+          <span class="expand-icon" id="expandIcon">⤢</span> <span id="expandLabel" data-i18n="expand">Во весь экран</span>
+        </button>
+        <button class="btn btn-ghost chrome-toggle" id="chromeToggle" type="button" aria-expanded="false" aria-controls="headerChrome" aria-label="Меню">
+          <span class="chrome-toggle-icon" aria-hidden="true">☰</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="header-chrome" id="headerChrome">
+    <div class="header-left">
       <button class="btn btn-ghost" id="themeToggle" type="button" data-i18n-aria="themeAria" aria-label="Переключить тему">
         <span id="themeLabel" data-i18n="themeLight">Светлая тема</span>
       </button>
@@ -152,6 +180,7 @@
         </div>
       </div>
     </div>
+    </div><!-- /header-chrome -->
   </header>
 
   <main class="workspace">
@@ -186,12 +215,12 @@
 
             <div class="fmt-divider"></div>
 
-            <button class="fmt-btn" id="stressBtn" type="button" data-i18n="stressBtn" data-i18n-aria="stressAria" aria-label="Показать или скрыть ударения" aria-pressed="false">´ Ударение</button>
+            <button class="fmt-btn" id="stressBtn" type="button" data-i18n-aria="stressAria" aria-label="Ударение" aria-pressed="false" title="Ударение"><span class="ico">´</span><span class="lbl" data-i18n="stressBtn">Ударение</span></button>
           </div>
 
           <div class="panel-actions">
             <div class="lang-wrap">
-              <button class="btn btn-ghost" id="langBtn" type="button" data-i18n="langBtn">Язык ▾</button>
+              <button class="btn btn-ghost icon-btn" id="langBtn" type="button" data-i18n-aria="langBtn" aria-label="Язык" title="Язык"><span class="ico" aria-hidden="true">文</span><span class="lbl" data-i18n="langBtn">Язык ▾</span></button>
               <ul class="dropdown-menu" id="langMenu">
                 <li data-lang="ru" data-i18n="lang_ru">Русский язык</li>
                 <li data-lang="en" data-i18n="lang_en">Английский язык</li>
@@ -200,12 +229,12 @@
             </div>
             <button class="btn btn-ghost is-hidden" id="revertLangBtn" type="button" data-i18n="revertLang">Исходный язык</button>
 
-            <button class="btn btn-ghost" id="undoBtn" type="button" data-i18n="undo">↺ Обратно</button>
+            <button class="btn btn-ghost icon-btn" id="undoBtn" type="button" data-i18n-aria="undo" aria-label="Обратно" title="Обратно"><span class="ico" aria-hidden="true">↺</span><span class="lbl" data-i18n="undo">Обратно</span></button>
 
             <button class="btn btn-ghost" id="swapDirBtn" type="button" data-i18n-aria="swapDirAria" aria-label="Кириллица ↔ Латиница" title="Кириллица ↔ Латиница">⇄</button>
 
-            <button class="btn btn-ghost" id="copyInput" type="button" data-i18n="copy">Копировать</button>
-            <button class="btn btn-ghost" id="clearInput" type="button" data-i18n="clear">Удалить</button>
+            <button class="btn btn-ghost icon-btn" id="copyInput" type="button" data-i18n-aria="copy" aria-label="Копировать" title="Копировать"><svg class="ico-svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V6a2 2 0 0 1 2-2h10"/></svg><span class="lbl" data-i18n="copy">Копировать</span></button>
+            <button class="btn btn-ghost icon-btn" id="clearInput" type="button" data-i18n-aria="clear" aria-label="Удалить" title="Удалить"><span class="ico" aria-hidden="true">⌫</span><span class="lbl" data-i18n="clear">Удалить</span></button>
           </div>
         </div>
 
@@ -240,8 +269,8 @@
       <div class="panel-toolbar">
         <span class="panel-title" data-i18n="resultTitle">Транслит</span>
         <div class="panel-actions">
-          <button class="btn btn-ghost" id="clearOutput" type="button" data-i18n="clear">Удалить</button>
-          <button class="btn btn-primary" id="copyOutput" type="button" data-i18n="copy">Копировать</button>
+          <button class="btn btn-ghost icon-btn" id="clearOutput" type="button" aria-label="Удалить" title="Удалить"><span class="ico" aria-hidden="true">⌫</span><span class="lbl" data-i18n="clear">Удалить</span></button>
+          <button class="btn btn-primary icon-btn" id="copyOutput" type="button" aria-label="Копировать" title="Копировать"><svg class="ico-svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V6a2 2 0 0 1 2-2h10"/></svg><span class="lbl" data-i18n="copy">Копировать</span></button>
         </div>
       </div>
 
