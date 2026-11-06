@@ -1881,6 +1881,11 @@
     updateToneSwatches();
     setAnimating(isAnimating, persist);
 
+    const quickDot = document.getElementById('quickToneDot');
+    if (quickDot) {
+      quickDot.style.background = valid || '';
+    }
+
     if (persist) {
       try {
         localStorage.setItem(TONE_STORAGE_KEY, valid || 'none');
@@ -1902,9 +1907,16 @@
     btn.title = t(tone.key);
     if (tone.hex) btn.style.setProperty('--swatch', tone.hex);
 
-    btn.addEventListener('click', () => {
+    const pick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       applyTone(tone.hex, true);
       showToast(tone.hex ? t('toastTone', { name: t(tone.key) }) : t('toastToneOff'));
+    };
+    btn.addEventListener('click', pick);
+    btn.addEventListener('pointerup', (e) => {
+      // iOS: иногда click глотается; pointerup надёжнее
+      if (e.pointerType === 'touch') pick(e);
     });
 
     toneGrid.appendChild(btn);
@@ -1941,7 +1953,7 @@
   });
 
   document.addEventListener('mousedown', (e) => {
-    if (e.target.closest('.tone-wrap') || e.target.closest('#quickToneBtn')) return;
+    if (e.target.closest('.tone-wrap, #tonePopover, #quickToneBtn')) return;
     setToneOpen(false);
   });
 
@@ -2646,9 +2658,8 @@
     // закрытие только по клику снаружи .style-wrap
     document.addEventListener('mousedown', (e) => {
       if (!stylePopover || stylePopover.hidden) return;
-      const wrap = e.target && e.target.closest && e.target.closest('.style-wrap');
-      const quick = e.target && e.target.closest && e.target.closest('#quickStyleBtn, #quickBgBtn');
-      if (!wrap && !quick) closeStylePopover();
+      if (e.target.closest('.style-wrap, #stylePopover, #quickStyleBtn')) return;
+      closeStylePopover();
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeStylePopover();
@@ -2911,26 +2922,24 @@
         const sp = document.getElementById('stylePopover');
         if (sp) sp.hidden = true;
 
-        const rect = quickTone.getBoundingClientRect();
         pop.style.position = 'fixed';
         pop.style.zIndex = '200';
-        pop.style.top = (rect.bottom + 8) + 'px';
-        pop.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 280)) + 'px';
+        pop.style.left = '12px';
+        pop.style.right = '12px';
+        pop.style.width = 'auto';
+        pop.style.top = '12px';
+        pop.style.bottom = 'auto';
         pop.classList.add('open');
       });
     }
 
-    // close when tapping outside
+    // close when tapping outside (не закрывать при тапе внутри панелей)
     document.addEventListener('mousedown', (e) => {
       if (e.target.closest('#quickLangBtn, #quickStyleBtn, #quickToneBtn, #siteLangMenu, #stylePopover, #tonePopover, .tone-wrap, .style-wrap, .site-lang-wrap')) return;
       document.getElementById('siteLangMenu')?.classList.remove('open');
       document.getElementById('tonePopover')?.classList.remove('open');
-      const sp = document.getElementById('stylePopover');
-      if (sp && !sp.hidden && window.matchMedia('(max-width: 900px)').matches) {
-        // only auto-close style on mobile if opened via quick
-        // keep desktop behavior via existing handlers
-      }
     });
+
 
     const quickName = document.getElementById('quickLangName');
     const mainName = document.getElementById('siteLangName');
