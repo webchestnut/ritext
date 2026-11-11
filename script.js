@@ -1073,7 +1073,7 @@
 
   editor.addEventListener('input', () => {
     if (!inputFrame) {
-      inputFrame = requestAnimationFrame(() => {
+      const run = () => {
         inputFrame = null;
         frameText = editor.innerText;
         try {
@@ -1083,7 +1083,10 @@
         } finally {
           frameText = null;
         }
-      });
+      };
+      // очень длинный текст пересчитываем реже, чтобы набор не «залипал»
+      if (editor.textContent.length > 20000) inputFrame = setTimeout(run, 250);
+      else inputFrame = requestAnimationFrame(run);
     }
     if (typeof scheduleAutosave === 'function') scheduleAutosave();
     clearTimeout(typingIdleTimer);
@@ -1971,6 +1974,14 @@
     tonePopover.style.left = `${Math.max(8, Math.min(rect.left, window.innerWidth - width - 8))}px`;
   }
 
+  const toneCloseBtn = document.getElementById('toneClose');
+  if (toneCloseBtn) {
+    toneCloseBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      setToneOpen(false);
+    });
+  }
+
   function setToneOpen(open) {
     if (open) positionTonePopover();
     tonePopover.classList.toggle('open', open);
@@ -2060,7 +2071,8 @@
   });
 
   document.addEventListener('mousedown', (e) => {
-    if (e.target.closest('.site-lang-wrap') || e.target.closest('#quickLangBtn')) return;
+    // меню языка на телефоне переносится в <body>, поэтому проверяем и сам #siteLangMenu
+    if (e.target.closest('.site-lang-wrap') || e.target.closest('#quickLangBtn') || e.target.closest('#siteLangMenu')) return;
     setSiteLangOpen(false);
   });
 

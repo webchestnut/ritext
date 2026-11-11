@@ -78,7 +78,10 @@
         </button>
 
         <div class="tone-popover" id="tonePopover" role="dialog" data-i18n-aria="tonePopAria" aria-label="Выбор тона интерфейса">
-          <div class="tone-title" data-i18n="toneTitle">Тон интерфейса</div>
+          <div class="style-head tone-head">
+            <div class="tone-title" data-i18n="toneTitle">Тон интерфейса</div>
+            <button type="button" class="style-close" id="toneClose" aria-label="Закрыть" title="Закрыть">✕</button>
+          </div>
           <div class="tone-grid" id="toneGrid" role="radiogroup" data-i18n-aria="toneGridAria" aria-label="Готовые тона">
             <!-- готовые тона генерируются в script.js -->
           </div>
