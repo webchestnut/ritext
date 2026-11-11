@@ -47,7 +47,7 @@ html[data-theme="dark"] {
     0 6px 18px rgba(0, 0, 0, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.32),
     inset 0 -1px 0 rgba(0, 0, 0, 0.12);
-  --glass-blur: blur(16px) saturate(140%);
+  --glass-blur: blur(12px) saturate(125%);
   --sheen: linear-gradient(145deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.06) 28%, rgba(255,255,255,0) 52%, rgba(255,255,255,0.08) 100%);
   --btn-gloss: linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.02) 100%);
   --btn-gloss-hover: linear-gradient(180deg, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.04) 100%);
@@ -875,7 +875,7 @@ html.tone-on {
   --btn-primary-bg: var(--tone-hex);
   --btn-primary-text: var(--tone-text);
   --btn-primary-hover: var(--tone-hex-hover);
-  --glass-blur: blur(22px) saturate(180%);
+  --glass-blur: blur(14px) saturate(130%);
 }
 
 html.tone-on body::before,
@@ -1539,6 +1539,54 @@ html[data-theme="light"] .style-popover {
   color: var(--text);
   margin-bottom: 2px;
 }
+
+/* ---- Season picker cards ---- */
+.season-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.season-card {
+  appearance: none;
+  border: 1px solid var(--border-soft);
+  background: var(--btn-gloss), var(--btn-bg);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 10px 6px 9px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.18s ease, box-shadow 0.2s ease;
+  min-height: 64px;
+}
+
+.season-card:hover {
+  background: var(--btn-gloss-hover), var(--btn-bg-hover);
+  transform: translateY(-1px);
+}
+
+.season-card.is-selected {
+  border-color: rgba(10, 132, 255, 0.55);
+  background: linear-gradient(180deg, rgba(10, 132, 255, 0.22), rgba(10, 132, 255, 0.08));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(10, 132, 255, 0.2);
+}
+
+.season-card-icon {
+  font-size: 20px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
+}
+
+.season-card-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+
 
 /* Отдельный слой фона — не перекрывается theme/tone background */
 .user-bg-layer {
@@ -2641,3 +2689,899 @@ html.has-user-bg .fmt-btn {
   justify-content: center;
   gap: 4px;
 }
+
+
+/* ==========================================================================
+   Seasonal atmospheres — Autumn & Winter (dark + light)
+   ========================================================================== */
+
+.season-decor {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+html.season-autumn .season-decor,
+html.season-winter .season-decor {
+  opacity: 1;
+}
+
+html.season-autumn .season-snow,
+html.season-winter .season-leaves {
+  display: none !important;
+}
+
+html.season-winter .season-snow,
+html.season-autumn .season-leaves {
+  display: block;
+}
+
+/* ---------- Winter snowflakes ---------- */
+.season-snow {
+  position: absolute;
+  inset: 0;
+}
+
+.season-snow .flake {
+  position: absolute;
+  top: -12px;
+  left: var(--x, 50vw);
+  width: var(--sz, 4px);
+  height: var(--sz, 4px);
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fff 0%, rgba(230, 245, 255, 0.95) 40%, rgba(200, 225, 255, 0.5) 70%, transparent 100%);
+  opacity: var(--op, 0.75);
+  box-shadow:
+    0 0 6px rgba(210, 235, 255, 0.7),
+    0 0 12px rgba(160, 200, 255, 0.25);
+  animation: snowFall var(--d, 16s) linear var(--delay, 0s) infinite;
+  will-change: transform;
+}
+
+.season-snow .flake-lg {
+  filter: blur(0.6px);
+  box-shadow:
+    0 0 10px rgba(220, 240, 255, 0.55),
+    0 0 20px rgba(160, 200, 255, 0.2);
+}
+
+.season-snow .spark {
+  position: absolute;
+  left: var(--x, 50vw);
+  top: var(--y, 30vh);
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 6px 2px rgba(180, 220, 255, 0.85),
+    0 0 14px 4px rgba(120, 180, 255, 0.35);
+  animation: sparkle var(--d, 4s) ease-in-out var(--delay, 0s) infinite;
+  opacity: 0;
+}
+
+@keyframes snowFall {
+  0%   { transform: translate3d(0, -5vh, 0); }
+  100% { transform: translate3d(var(--drift, 12px), 110vh, 0); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0.6); }
+  40%      { opacity: 0.95; transform: scale(1.15); }
+  70%      { opacity: 0.35; transform: scale(0.9); }
+}
+
+/* ---------- Autumn leaves ---------- */
+.season-leaves {
+  position: absolute;
+  inset: 0;
+}
+
+.season-leaves .leaf {
+  position: absolute;
+  top: -40px;
+  left: var(--x, 40vw);
+  font-size: 18px;
+  line-height: 1;
+  opacity: 0.78;
+  transform: rotate(var(--rot, 0deg)) scale(var(--scale, 1));
+  animation: leafFall var(--d, 18s) linear var(--delay, 0s) infinite;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25));
+  will-change: transform;
+}
+
+@keyframes leafFall {
+  0% {
+    transform: translate3d(0, -5vh, 0) rotate(var(--rot, 0deg)) scale(var(--scale, 1));
+  }
+  25% {
+    transform: translate3d(calc(var(--drift, 20px) * 0.4), 25vh, 0) rotate(calc(var(--rot, 0deg) + 60deg)) scale(var(--scale, 1));
+  }
+  50% {
+    transform: translate3d(var(--drift, 20px), 55vh, 0) rotate(calc(var(--rot, 0deg) + 140deg)) scale(var(--scale, 1));
+  }
+  75% {
+    transform: translate3d(calc(var(--drift, 20px) * 0.3), 80vh, 0) rotate(calc(var(--rot, 0deg) + 220deg)) scale(var(--scale, 1));
+  }
+  100% {
+    transform: translate3d(calc(var(--drift, 20px) * -0.2), 110vh, 0) rotate(calc(var(--rot, 0deg) + 320deg)) scale(var(--scale, 1));
+  }
+}
+
+/* ===================== AUTUMN — DARK ===================== */
+html.season-autumn[data-theme="dark"] {
+  --bg: #140e0a;
+  --bg-grad-1: #2a1810;
+  --bg-grad-2: #1c120c;
+  --bg-grad-3: #24160e;
+  --panel: rgba(255, 196, 140, 0.07);
+  --panel-alt: rgba(255, 180, 120, 0.09);
+  --border: rgba(255, 190, 120, 0.22);
+  --border-soft: rgba(255, 180, 100, 0.12);
+  --rim-top: rgba(255, 210, 160, 0.38);
+  --rim-side: rgba(255, 170, 100, 0.16);
+  --rim-bottom: rgba(120, 60, 20, 0.18);
+  --text: #f8efe4;
+  --text-muted: rgba(248, 239, 228, 0.62);
+  --text-faint: rgba(248, 239, 228, 0.38);
+  --key-bg: rgba(255, 180, 100, 0.08);
+  --key-bg-hover: rgba(255, 170, 90, 0.16);
+  --key-border: rgba(255, 180, 110, 0.22);
+  --btn-bg: rgba(255, 180, 100, 0.08);
+  --btn-bg-hover: rgba(255, 170, 90, 0.16);
+  --dropdown-bg: rgba(28, 18, 12, 0.72);
+  --dropdown-border: rgba(255, 180, 100, 0.22);
+  --dropdown-hover: rgba(255, 170, 90, 0.14);
+  --toast-bg: rgba(28, 16, 10, 0.86);
+  --guide-line: rgba(255, 190, 120, 0.16);
+  --guide-label: rgba(255, 190, 120, 0.38);
+  --scrollbar-thumb: rgba(255, 180, 100, 0.2);
+  --shadow-panel:
+    0 16px 40px -16px rgba(40, 16, 4, 0.55),
+    inset 0 1px 0 rgba(255, 210, 160, 0.22);
+  --shadow-btn:
+    0 6px 18px rgba(40, 16, 4, 0.32),
+    inset 0 1px 0 rgba(255, 210, 160, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.14);
+}
+
+html.season-autumn[data-theme="dark"] body {
+  background:
+    radial-gradient(90% 70% at 15% -10%, #3a2214, transparent 55%),
+    radial-gradient(80% 55% at 95% 100%, #2a140c, transparent 50%),
+    radial-gradient(60% 45% at 50% 60%, #1e120c, transparent 60%),
+    #120c08;
+}
+
+html.season-autumn[data-theme="dark"] body::before {
+  background:
+    radial-gradient(65vmax 55vmax at 18% 12%, rgba(255, 140, 60, 0.28), transparent 68%),
+    radial-gradient(55vmax 48vmax at 88% 82%, rgba(200, 70, 30, 0.22), transparent 70%),
+    radial-gradient(45vmax 40vmax at 55% 40%, rgba(255, 180, 80, 0.12), transparent 72%);
+  opacity: 1;
+}
+
+html.season-autumn[data-theme="dark"] body::after {
+  background:
+    radial-gradient(50vmax 42vmax at 78% 18%, rgba(255, 160, 70, 0.18), transparent 68%),
+    radial-gradient(48vmax 40vmax at 12% 88%, rgba(160, 50, 20, 0.16), transparent 70%);
+  opacity: 1;
+}
+
+/* ===================== AUTUMN — LIGHT ===================== */
+html.season-autumn[data-theme="light"] {
+  --bg: #f3e8d8;
+  --bg-grad-1: #f7e6c8;
+  --bg-grad-2: #f0dcc4;
+  --bg-grad-3: #efe0d0;
+  --panel: rgba(255, 248, 236, 0.42);
+  --panel-alt: rgba(255, 240, 220, 0.48);
+  --border: rgba(180, 120, 60, 0.22);
+  --border-soft: rgba(140, 90, 40, 0.1);
+  --rim-top: rgba(255, 255, 250, 0.95);
+  --rim-side: rgba(220, 170, 110, 0.35);
+  --rim-bottom: rgba(160, 100, 50, 0.14);
+  --text: #2a1c12;
+  --text-muted: rgba(42, 28, 18, 0.58);
+  --text-faint: rgba(42, 28, 18, 0.38);
+  --key-bg: rgba(255, 236, 210, 0.55);
+  --key-bg-hover: rgba(255, 228, 190, 0.78);
+  --key-border: rgba(200, 140, 70, 0.28);
+  --btn-bg: rgba(255, 236, 210, 0.5);
+  --btn-bg-hover: rgba(255, 228, 190, 0.75);
+  --dropdown-bg: rgba(255, 248, 236, 0.82);
+  --dropdown-border: rgba(200, 140, 70, 0.28);
+  --dropdown-hover: rgba(255, 220, 170, 0.55);
+  --toast-bg: rgba(40, 24, 14, 0.86);
+  --guide-line: rgba(140, 90, 40, 0.14);
+  --guide-label: rgba(120, 70, 30, 0.4);
+  --scrollbar-thumb: rgba(140, 90, 40, 0.18);
+  --shadow-panel:
+    0 16px 40px -18px rgba(120, 60, 20, 0.16),
+    inset 0 1px 0 rgba(255, 255, 250, 0.95);
+  --shadow-btn:
+    0 8px 22px rgba(120, 60, 20, 0.12),
+    inset 0 1px 0 rgba(255, 255, 250, 0.9),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+}
+
+html.season-autumn[data-theme="light"] body {
+  background:
+    radial-gradient(100% 70% at 20% -10%, #ffe8c4, transparent 55%),
+    radial-gradient(80% 50% at 100% 100%, #f5d8b0, transparent 50%),
+    #f2e4d0;
+}
+
+html.season-autumn[data-theme="light"] body::before {
+  background:
+    radial-gradient(65vmax 55vmax at 15% 10%, rgba(255, 160, 60, 0.22), transparent 68%),
+    radial-gradient(55vmax 48vmax at 90% 85%, rgba(220, 90, 40, 0.14), transparent 70%),
+    radial-gradient(45vmax 40vmax at 50% 45%, rgba(255, 200, 100, 0.12), transparent 72%);
+  opacity: 1;
+}
+
+html.season-autumn[data-theme="light"] body::after {
+  background:
+    radial-gradient(50vmax 42vmax at 80% 15%, rgba(255, 180, 80, 0.16), transparent 68%),
+    radial-gradient(48vmax 40vmax at 10% 90%, rgba(200, 80, 40, 0.1), transparent 70%);
+  opacity: 1;
+}
+
+/* Осень + тон: тёплый оттенок усиливается, не конфликтует */
+html.season-autumn.tone-on body::before {
+  mix-blend-mode: soft-light;
+}
+
+/* ===================== WINTER — DARK ===================== */
+html.season-winter[data-theme="dark"] {
+  --bg: #070b14;
+  --bg-grad-1: #0e1628;
+  --bg-grad-2: #0a1422;
+  --bg-grad-3: #101828;
+  --panel: rgba(180, 210, 255, 0.07);
+  --panel-alt: rgba(160, 200, 255, 0.09);
+  --border: rgba(180, 210, 255, 0.2);
+  --border-soft: rgba(160, 200, 255, 0.1);
+  --rim-top: rgba(220, 235, 255, 0.4);
+  --rim-side: rgba(160, 200, 255, 0.16);
+  --rim-bottom: rgba(40, 70, 120, 0.2);
+  --text: #e8f0fa;
+  --text-muted: rgba(232, 240, 250, 0.6);
+  --text-faint: rgba(232, 240, 250, 0.36);
+  --key-bg: rgba(160, 200, 255, 0.08);
+  --key-bg-hover: rgba(160, 200, 255, 0.16);
+  --key-border: rgba(170, 205, 255, 0.22);
+  --btn-bg: rgba(160, 200, 255, 0.08);
+  --btn-bg-hover: rgba(160, 200, 255, 0.16);
+  --dropdown-bg: rgba(10, 16, 28, 0.72);
+  --dropdown-border: rgba(160, 200, 255, 0.22);
+  --dropdown-hover: rgba(160, 200, 255, 0.12);
+  --toast-bg: rgba(8, 12, 22, 0.88);
+  --guide-line: rgba(180, 210, 255, 0.14);
+  --guide-label: rgba(180, 210, 255, 0.36);
+  --scrollbar-thumb: rgba(160, 200, 255, 0.18);
+  --shadow-panel:
+    0 16px 40px -16px rgba(0, 20, 50, 0.55),
+    inset 0 1px 0 rgba(220, 235, 255, 0.22);
+  --shadow-btn:
+    0 6px 18px rgba(0, 20, 50, 0.32),
+    inset 0 1px 0 rgba(220, 235, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.14);
+}
+
+html.season-winter[data-theme="dark"] body {
+  background:
+    radial-gradient(110% 75% at 50% -18%, #1a2a48, transparent 52%),
+    radial-gradient(90% 55% at 100% 100%, #0e1a32, transparent 48%),
+    radial-gradient(70% 45% at 0% 85%, #0c182c, transparent 48%),
+    radial-gradient(50% 40% at 60% 40%, #101c34, transparent 60%),
+    #060a12;
+}
+
+html.season-winter[data-theme="dark"] body::before {
+  background:
+    radial-gradient(75vmax 62vmax at 18% 8%, rgba(130, 190, 255, 0.38), transparent 66%),
+    radial-gradient(65vmax 55vmax at 92% 88%, rgba(70, 140, 230, 0.28), transparent 68%),
+    radial-gradient(55vmax 48vmax at 48% 48%, rgba(190, 220, 255, 0.14), transparent 70%),
+    radial-gradient(40vmax 35vmax at 70% 25%, rgba(100, 170, 255, 0.16), transparent 65%);
+  opacity: 1;
+}
+
+html.season-winter[data-theme="dark"] body::after {
+  background:
+    radial-gradient(60vmax 50vmax at 78% 15%, rgba(170, 215, 255, 0.22), transparent 66%),
+    radial-gradient(55vmax 48vmax at 12% 92%, rgba(90, 150, 240, 0.18), transparent 68%),
+    radial-gradient(35vmax 30vmax at 40% 70%, rgba(200, 230, 255, 0.1), transparent 70%);
+  opacity: 1;
+}
+
+/* Морозное стекло: чуть холоднее blur-подсветка */
+html.season-winter[data-theme="dark"] .alphabet,
+html.season-winter[data-theme="dark"] .result-panel,
+html.season-winter[data-theme="dark"] .editor-panel::before,
+html.season-winter[data-theme="dark"] .tool-bar,
+html.season-winter[data-theme="dark"] .export-bar {
+  box-shadow:
+    0 16px 40px -16px rgba(0, 20, 50, 0.5),
+    inset 0 1px 0 rgba(220, 240, 255, 0.28),
+    inset 0 -1px 0 rgba(40, 80, 140, 0.12);
+}
+
+/* ===================== WINTER — LIGHT ===================== */
+html.season-winter[data-theme="light"] {
+  --bg: #e6eef8;
+  --bg-grad-1: #dce8f6;
+  --bg-grad-2: #e4ecf6;
+  --bg-grad-3: #e8f0fa;
+  --panel: rgba(255, 255, 255, 0.38);
+  --panel-alt: rgba(240, 248, 255, 0.45);
+  --border: rgba(140, 180, 230, 0.35);
+  --border-soft: rgba(80, 120, 180, 0.1);
+  --rim-top: rgba(255, 255, 255, 0.95);
+  --rim-side: rgba(180, 210, 240, 0.5);
+  --rim-bottom: rgba(120, 160, 210, 0.2);
+  --text: #101820;
+  --text-muted: rgba(16, 24, 32, 0.55);
+  --text-faint: rgba(16, 24, 32, 0.36);
+  --key-bg: rgba(240, 248, 255, 0.55);
+  --key-bg-hover: rgba(230, 242, 255, 0.82);
+  --key-border: rgba(150, 190, 235, 0.4);
+  --btn-bg: rgba(240, 248, 255, 0.5);
+  --btn-bg-hover: rgba(230, 242, 255, 0.8);
+  --dropdown-bg: rgba(250, 252, 255, 0.82);
+  --dropdown-border: rgba(150, 190, 235, 0.4);
+  --dropdown-hover: rgba(220, 235, 255, 0.7);
+  --toast-bg: rgba(16, 24, 40, 0.86);
+  --guide-line: rgba(80, 120, 180, 0.14);
+  --guide-label: rgba(60, 100, 160, 0.4);
+  --scrollbar-thumb: rgba(80, 120, 180, 0.18);
+  --shadow-panel:
+    0 16px 40px -18px rgba(40, 80, 140, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --shadow-btn:
+    0 8px 22px rgba(40, 80, 140, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.03);
+}
+
+html.season-winter[data-theme="light"] body {
+  background:
+    radial-gradient(110% 75% at 50% -15%, #f4f9ff, transparent 52%),
+    radial-gradient(90% 55% at 100% 100%, #d4e4f8, transparent 48%),
+    radial-gradient(70% 45% at 0% 85%, #dce8f6, transparent 50%),
+    #e0eaf6;
+}
+
+html.season-winter[data-theme="light"] body::before {
+  background:
+    radial-gradient(75vmax 62vmax at 16% 6%, rgba(150, 200, 255, 0.42), transparent 66%),
+    radial-gradient(65vmax 55vmax at 92% 90%, rgba(110, 170, 240, 0.26), transparent 68%),
+    radial-gradient(55vmax 48vmax at 50% 48%, rgba(210, 230, 255, 0.2), transparent 70%),
+    radial-gradient(40vmax 35vmax at 70% 22%, rgba(160, 200, 255, 0.18), transparent 65%);
+  opacity: 1;
+}
+
+html.season-winter[data-theme="light"] body::after {
+  background:
+    radial-gradient(60vmax 50vmax at 78% 14%, rgba(180, 220, 255, 0.28), transparent 66%),
+    radial-gradient(55vmax 48vmax at 10% 92%, rgba(130, 180, 245, 0.18), transparent 68%),
+    radial-gradient(35vmax 30vmax at 42% 68%, rgba(220, 240, 255, 0.14), transparent 70%);
+  opacity: 1;
+}
+
+/* Новогодний акцент: мягкое свечение логотипа зимой */
+html.season-winter .logo {
+  text-shadow:
+    0 0 18px rgba(160, 210, 255, 0.35),
+    0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+html.season-winter[data-theme="light"] .logo {
+  text-shadow:
+    0 0 16px rgba(100, 160, 230, 0.25),
+    0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Осенний логотип — тёплое золото */
+html.season-autumn .logo {
+  text-shadow:
+    0 0 16px rgba(255, 160, 60, 0.28),
+    0 1px 0 rgba(255, 220, 160, 0.12);
+}
+
+html.season-autumn[data-theme="light"] .logo {
+  text-shadow:
+    0 0 14px rgba(220, 120, 40, 0.2),
+    0 1px 0 rgba(255, 255, 250, 0.5);
+}
+
+/* Сезон + пользовательский фон: декор остаётся, градиенты слабее */
+html.has-user-bg.season-autumn body::before,
+html.has-user-bg.season-winter body::before {
+  opacity: 0.55 !important;
+}
+html.has-user-bg.season-autumn body::after,
+html.has-user-bg.season-winter body::after {
+  opacity: 0.25 !important;
+}
+
+/* Reduced motion: статичные декорации без падения */
+@media (prefers-reduced-motion: reduce) {
+  .season-snow .flake,
+  .season-snow .spark,
+  .season-leaves .leaf {
+    animation: none !important;
+  }
+  .season-snow .flake {
+    top: auto;
+    bottom: calc(var(--delay, 0s) * -3 + 20%);
+    opacity: calc(var(--op, 0.5) * 0.6);
+  }
+  .season-leaves .leaf {
+    top: auto;
+    bottom: 8%;
+    opacity: 0.35;
+  }
+  .season-snow .spark { opacity: 0.4; }
+}
+
+/* Mobile: чуть меньше частиц через opacity, чтобы не грузить GPU */
+@media (max-width: 900px) {
+  .season-snow .flake:nth-child(n+40) { display: none; }
+  .season-snow .flake-lg:nth-child(n+10) { display: none; }
+  .season-leaves .leaf:nth-child(n+12) { display: none; }
+  .season-snow .spark:nth-child(n+8) { display: none; }
+}
+
+/* ==========================================================================
+   ПРОИЗВОДИТЕЛЬНОСТЬ
+   Размытие фона (backdrop-filter) оставлено только на крупных панелях.
+   На мелких кнопках/чипах оно было лишним: десятки вложенных слоёв
+   пересчитывались на каждый кадр и тормозили страницу.
+   ========================================================================== */
+
+.btn, .btn-ghost, .panel-actions .btn, .fmt-btn, .fmt-inline .fmt-btn, .letter-key,
+.status-chip, .tool-bar, .site-lang-btn, .season-card,
+html.has-user-bg .app-header .btn, html.has-user-bg .tool-bar,
+html.has-user-bg .site-lang-btn, html.has-user-bg .fmt-inline .fmt-btn,
+html[data-theme="light"] .fmt-inline .fmt-btn {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.modal-overlay {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: rgba(4, 8, 18, 0.62);
+}
+.modal-card { -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.style-popover,
+.style-popover[hidden] { -webkit-backdrop-filter: blur(16px) !important; backdrop-filter: blur(16px) !important; }
+html .editor-panel.is-expanded::before,
+html.has-user-bg .editor-panel.is-expanded::before,
+html[data-theme="light"] .editor-panel.is-expanded::before {
+  -webkit-backdrop-filter: blur(18px) !important;
+  backdrop-filter: blur(18px) !important;
+}
+
+/* вкладка в фоне — все CSS-анимации на паузе */
+html.page-hidden *, html.page-hidden *::before, html.page-hidden *::after {
+  animation-play-state: paused !important;
+}
+
+/* осенние листья — без дорогого drop-shadow */
+.season-leaves .leaf { filter: none; }
+
+/* зимний снег рисуется одним canvas (см. snowFx в script.js) */
+.season-snow-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  pointer-events: none;
+}
+html.season-winter .season-snow-canvas { display: block; }
+
+/* ==========================================================================
+   ЗИМА / НОВЫЙ ГОД — кнопки, иконки, блоки
+   Всё работает в светлой и тёмной теме. Свой «тон» пользователя не
+   перебивается: цвета основной кнопки меняются только без выбранного тона.
+   ========================================================================== */
+
+html.season-winter {
+  --w-red: #d7263d;
+  --w-gold: #f5c451;
+  --w-icon: #c4e2ff;
+  --w-glow: rgba(150, 205, 255, 0.55);
+  --w-cap-shadow: rgba(0, 0, 0, 0);
+  --w-tree: #52d796;
+  --w-gift: #ff6b7b;
+  --w-star: #ffd166;
+  --ic-flake: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2v20M4.2 7l15.6 10M4.2 17L19.8 7M9.3 4.2L12 6.8l2.7-2.6M9.3 19.8L12 17.2l2.7 2.6'/%3E%3C/svg%3E");
+  --ic-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M12 1.5l2.7 7.8 7.8 2.7-7.8 2.7L12 22.5l-2.7-7.8L1.5 12l7.8-2.7z'/%3E%3C/svg%3E");
+  --ic-tree: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M12 1.5l5 7.5h-2.6l4.6 6.2h-3.6l3.9 5.3H4.7l3.9-5.3H5l4.6-6.2H7z'/%3E%3Crect fill='black' x='10.4' y='20.5' width='3.2' height='3' rx='.6'/%3E%3C/svg%3E");
+  --ic-gift: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='11' width='16' height='10' rx='1.4'/%3E%3Crect x='2.8' y='7' width='18.4' height='4' rx='1.4'/%3E%3Cpath d='M12 7v14M12 7C9.8 2.8 5.6 3.8 7.4 6.4 8.4 7.6 12 7 12 7zM12 7c2.2-4.2 6.4-3.2 4.6-.6C15.6 7.6 12 7 12 7z'/%3E%3C/svg%3E");
+  --ic-bell: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 16.5V11a6 6 0 0 1 12 0v5.5l2 2H4zM10 21.3h4'/%3E%3C/svg%3E");
+}
+html.season-winter[data-theme="light"] {
+  --w-icon: #2b6cb0;
+  --w-glow: rgba(90, 150, 220, 0.4);
+  --w-cap-shadow: rgba(70, 120, 190, 0.55);
+  --w-tree: #1f8a5b;
+  --w-gift: #d7263d;
+  --w-star: #d49a14;
+}
+
+/* ---------- Гирлянда сверху ---------- */
+html.season-winter .season-decor {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='132' height='34' viewBox='0 0 132 34'%3E%3Cpath d='M0 3.5Q33 22 66 3.5Q99 22 132 3.5' fill='none' stroke='%2351617c' stroke-width='1.5'/%3E%3C/svg%3E") 0 0 / 132px 34px repeat-x;
+}
+html.season-winter .season-decor::before,
+html.season-winter .season-decor::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 34px;
+  pointer-events: none;
+  background-repeat: repeat-x;
+  background-size: 132px 34px;
+  will-change: opacity;
+}
+html.season-winter .season-decor::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='132' height='34' viewBox='0 0 132 34'%3E%3Ccircle cx='16.5' cy='17.6' r='9' fill='%23ff4d5e' opacity='.28'/%3E%3Crect x='14.6' y='8.6' width='3.8' height='3.4' rx='.9' fill='%2346566f'/%3E%3Cellipse cx='16.5' cy='16.6' rx='3.4' ry='4.8' fill='%23ff4d5e'/%3E%3Cellipse cx='15.5' cy='15.0' rx='1' ry='1.6' fill='white' opacity='.55'/%3E%3Ccircle cx='49.5' cy='17.6' r='9' fill='%233ddc97' opacity='.28'/%3E%3Crect x='47.6' y='8.6' width='3.8' height='3.4' rx='.9' fill='%2346566f'/%3E%3Cellipse cx='49.5' cy='16.6' rx='3.4' ry='4.8' fill='%233ddc97'/%3E%3Cellipse cx='48.5' cy='15.0' rx='1' ry='1.6' fill='white' opacity='.55'/%3E%3Ccircle cx='99' cy='20.8' r='9' fill='%23ff4d5e' opacity='.28'/%3E%3Crect x='97.1' y='11.8' width='3.8' height='3.4' rx='.9' fill='%2346566f'/%3E%3Cellipse cx='99' cy='19.8' rx='3.4' ry='4.8' fill='%23ff4d5e'/%3E%3Cellipse cx='98' cy='18.200000000000003' rx='1' ry='1.6' fill='white' opacity='.55'/%3E%3C/svg%3E");
+  animation: garlandA 2.8s ease-in-out infinite;
+}
+html.season-winter .season-decor::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='132' height='34' viewBox='0 0 132 34'%3E%3Ccircle cx='33' cy='20' r='9' fill='%23ffd166' opacity='.28'/%3E%3Crect x='31.1' y='11' width='3.8' height='3.4' rx='.9' fill='%2346566f'/%3E%3Cellipse cx='33' cy='19' rx='3.4' ry='4.8' fill='%23ffd166'/%3E%3Cellipse cx='32' cy='17.4' rx='1' ry='1.6' fill='white' opacity='.55'/%3E%3Ccircle cx='82.5' cy='17.6' r='9' fill='%235cb8ff' opacity='.28'/%3E%3Crect x='80.6' y='8.6' width='3.8' height='3.4' rx='.9' fill='%2346566f'/%3E%3Cellipse cx='82.5' cy='16.6' rx='3.4' ry='4.8' fill='%235cb8ff'/%3E%3Cellipse cx='81.5' cy='15.0' rx='1' ry='1.6' fill='white' opacity='.55'/%3E%3Ccircle cx='115.5' cy='17.6' r='9' fill='%23ffd166' opacity='.28'/%3E%3Crect x='113.6' y='8.6' width='3.8' height='3.4' rx='.9' fill='%2346566f'/%3E%3Cellipse cx='115.5' cy='16.6' rx='3.4' ry='4.8' fill='%23ffd166'/%3E%3Cellipse cx='114.5' cy='15.0' rx='1' ry='1.6' fill='white' opacity='.55'/%3E%3C/svg%3E");
+  animation: garlandB 2.8s ease-in-out infinite;
+}
+@keyframes garlandA { 0%, 100% { opacity: 1; } 50% { opacity: 0.38; } }
+@keyframes garlandB { 0%, 100% { opacity: 0.38; } 50% { opacity: 1; } }
+
+html.season-winter .app { padding-top: 40px; }
+
+/* ---------- Логотип в новогодней шапке ---------- */
+html.season-winter .logo { position: relative; display: inline-block; padding-left: 4px; }
+html.season-winter .logo::before,
+html.season-winter .logo::after {
+  content: '';
+  position: absolute;
+  left: -7px;
+  top: -13px;
+  width: 25px;
+  height: 20px;
+  transform: rotate(-16deg);
+  transform-origin: 30% 100%;
+  pointer-events: none;
+}
+html.season-winter .logo::before {
+  background: linear-gradient(150deg, #ff6b7b 0%, #d7263d 58%, #a5152b 100%);
+  clip-path: polygon(7% 80%, 44% 18%, 66% 14%, 96% 80%);
+}
+html.season-winter .logo::after {
+  background:
+    radial-gradient(circle at 56% 14%, #fff 0 2.8px, transparent 3.2px),
+    linear-gradient(#fff, #fff) 0 100% / 100% 5px no-repeat;
+  border-radius: 3px;
+  filter: drop-shadow(0 1px 1px rgba(0, 20, 60, 0.35));
+}
+
+/* ---------- Иконки ---------- */
+html.season-winter .btn .ico,
+html.season-winter .fmt-btn .ico,
+html.season-winter .expand-icon,
+html.season-winter .chrome-toggle-icon,
+html.season-winter .ocr-drop-icon {
+  color: var(--w-icon);
+  text-shadow: 0 0 8px var(--w-glow);
+}
+html.season-winter .ico-svg,
+html.season-winter .site-lang-icon {
+  color: var(--w-icon);
+  filter: drop-shadow(0 0 3px var(--w-glow));
+}
+html.season-winter:not(.tone-on) .btn-primary .ico-svg { color: #fff; filter: none; }
+html.season-winter .season-card-icon { filter: drop-shadow(0 0 5px var(--w-glow)); }
+
+/* маленькие зимние значки перед подписями */
+html.season-winter #themeToggle::before,
+html.season-winter #animateBtn::before,
+html.season-winter #styleBtn::before,
+html.season-winter #quickStyleBtn::before,
+html.season-winter .export-label::before,
+html.season-winter .panel-title::before {
+  content: '';
+  display: inline-block;
+  width: 1.05em;
+  height: 1.05em;
+  margin-right: 0.42em;
+  vertical-align: -0.17em;
+  background: var(--c, currentColor);
+  -webkit-mask: var(--m) center / contain no-repeat;
+  mask: var(--m) center / contain no-repeat;
+}
+html.season-winter #themeToggle::before { --m: var(--ic-flake); --c: var(--w-icon); }
+html.season-winter #animateBtn::before { --m: var(--ic-star); --c: var(--w-star); }
+html.season-winter #animateBtn[aria-pressed="true"]::before { --c: currentColor; }
+html.season-winter #styleBtn::before,
+html.season-winter #quickStyleBtn::before { --m: var(--ic-tree); --c: var(--w-tree); }
+html.season-winter .export-label::before { --m: var(--ic-gift); --c: var(--w-gift); }
+html.season-winter .panel-title::before { --m: var(--ic-bell); --c: var(--w-star); }
+
+/* ---------- Кнопки ---------- */
+html.season-winter .btn:not(.btn-primary),
+html.season-winter .fmt-inline .fmt-btn {
+  border-color: rgba(190, 225, 255, 0.34);
+}
+html.season-winter[data-theme="light"] .btn:not(.btn-primary),
+html.season-winter[data-theme="light"] .fmt-inline .fmt-btn {
+  border-color: rgba(110, 160, 220, 0.4);
+}
+html.season-winter .btn-ghost:hover,
+html.season-winter .fmt-btn:hover {
+  border-color: rgba(255, 214, 130, 0.8);
+  box-shadow:
+    0 0 0 1px rgba(255, 214, 130, 0.32),
+    0 8px 20px -6px rgba(255, 190, 80, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* главная кнопка и «включённые» кнопки — леденцовая полоска */
+html.season-winter:not(.tone-on) .btn-primary,
+html.season-winter:not(.tone-on) .fmt-btn.active {
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.17) 0 5px, rgba(255, 255, 255, 0) 5px 10px),
+    linear-gradient(180deg, #ff6b7b 0%, #d7263d 55%, #b3162d 100%);
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(90, 0, 15, 0.45);
+  border-color: rgba(255, 224, 150, 0.75);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 8px 20px -6px rgba(215, 38, 61, 0.55);
+}
+html.season-winter:not(.tone-on) .btn-primary:hover {
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0 5px, rgba(255, 255, 255, 0) 5px 10px),
+    linear-gradient(180deg, #ff8290 0%, #e03048 55%, #c01c34 100%);
+}
+/* «Анимировать» включена — золотая кнопка */
+html.season-winter:not(.tone-on) .btn[aria-pressed="true"],
+html.season-winter:not(.tone-on) .btn[aria-pressed="true"]:hover {
+  background: linear-gradient(180deg, #ffe9a8 0%, #f5c451 55%, #e0a420 100%);
+  color: #3a2300;
+  border-color: rgba(255, 244, 200, 0.85);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 8px 22px -6px rgba(245, 196, 81, 0.7);
+}
+
+/* ---------- Буквы алфавита — как ёлочные шары ---------- */
+html.season-winter .letter-key {
+  --k: 255, 255, 255;
+  box-shadow:
+    inset 0 -2px 0 rgba(var(--k), 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 2px 8px rgba(0, 0, 0, 0.12);
+}
+html.season-winter .letter-key:nth-child(4n + 1) { --k: 255, 90, 110; }
+html.season-winter .letter-key:nth-child(4n + 2) { --k: 255, 209, 102; }
+html.season-winter .letter-key:nth-child(4n + 3) { --k: 61, 220, 151; }
+html.season-winter .letter-key:nth-child(4n) { --k: 92, 184, 255; }
+html.season-winter .letter-key:hover {
+  border-color: rgba(var(--k), 0.85);
+  box-shadow:
+    inset 0 -2px 0 rgba(var(--k), 0.95),
+    0 0 0 1px rgba(var(--k), 0.4),
+    0 6px 16px rgba(var(--k), 0.3);
+}
+
+/* ---------- Блоки: снежная шапка сверху ---------- */
+html.season-winter .alphabet { position: relative; }
+html.season-winter .alphabet::after,
+html.season-winter .result-panel::after,
+html.season-winter .editor-panel::after,
+html.season-winter .modal-card::after,
+html.season-winter .tone-popover::after,
+html.season-winter .style-popover::after {
+  content: '';
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: -1px;
+  height: 9px;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 9px 6px at 50% 0, #fff 0 92%, transparent 100%) 0 0 / 22px 8px repeat-x,
+    radial-gradient(ellipse 6px 4px at 50% 0, #fff 0 92%, transparent 100%) 11px 0 / 30px 6px repeat-x,
+    linear-gradient(#fff, #fff) 0 0 / 100% 2px no-repeat;
+  filter: drop-shadow(0 1px 1px var(--w-cap-shadow));
+  opacity: 0.96;
+}
+html.season-winter .modal-card { position: relative; }
+html.season-winter .tone-popover::after,
+html.season-winter .style-popover::after { left: 14px; right: 14px; }
+
+/* выпадающие меню, подсказки, зоны загрузки */
+html.season-winter .dropdown-menu,
+html.season-winter .tone-popover,
+html.season-winter .style-popover,
+html.season-winter .modal-card { border-color: rgba(190, 225, 255, 0.4); }
+html.season-winter[data-theme="light"] .dropdown-menu,
+html.season-winter[data-theme="light"] .tone-popover,
+html.season-winter[data-theme="light"] .style-popover,
+html.season-winter[data-theme="light"] .modal-card { border-color: rgba(110, 160, 220, 0.45); }
+html.season-winter .dropdown-menu li.is-current::after { color: var(--w-star); opacity: 1; }
+html.season-winter .toast { border-color: rgba(255, 214, 130, 0.55); }
+html.season-winter .ocr-drop { border-color: rgba(190, 225, 255, 0.45); }
+html.season-winter .ocr-drop:hover,
+html.season-winter .ocr-drop.is-dragover { border-color: rgba(255, 214, 130, 0.85); }
+html.season-winter .status-chip { border-color: rgba(190, 225, 255, 0.22); }
+html.season-winter .season-card.is-selected {
+  border-color: rgba(255, 214, 130, 0.8);
+  background: linear-gradient(180deg, rgba(255, 214, 130, 0.22), rgba(255, 214, 130, 0.06));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 1px rgba(255, 214, 130, 0.25);
+}
+
+/* мобильная шапка: гирлянда чуть ниже */
+@media (max-width: 720px) {
+  html.season-winter .app { padding-top: 38px; }
+}
+
+/* светлая тема: гирлянда чуть насыщеннее, чтобы лампочки читались */
+html.season-winter[data-theme="light"] .season-decor::before,
+html.season-winter[data-theme="light"] .season-decor::after {
+  filter: saturate(1.6) contrast(1.08);
+}
+
+/* ==========================================================================
+   ШАПКА: всегда одна ровная линия
+   ПК (от 901px): логотип, кнопки и инструменты — в одну строку без переноса.
+   Когда места мало, шапка постепенно «сжимается»: сначала пропадают подписи
+   у OCR / QR / Экспорт и текст «Во весь экран», затем кнопки становятся
+   иконками. Телефон/планшет (до 900px): строка «логотип + меню» и ровный
+   ряд из трёх одинаковых кнопок.
+   ========================================================================== */
+
+@media (min-width: 901px) {
+  .app-header {
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .header-left {
+    flex: 0 1 auto;
+    flex-wrap: nowrap;
+    gap: 8px;
+    min-width: 0;
+  }
+  .header-right { flex: 0 0 auto; margin-left: auto; }
+  .header-tools { flex-wrap: nowrap; gap: 8px; }
+  .app-header .btn,
+  .app-header .tool-label { white-space: nowrap; }
+  .app-header .btn { min-height: 38px; display: inline-flex; align-items: center; justify-content: center; }
+  .tool-bar .btn { min-height: 32px; }
+  #expandBtn { margin-left: 4px; }
+}
+
+/* 1) тесновато: убираем подписи у групп и «Во весь экран» -> иконка */
+@media (min-width: 901px) and (max-width: 1620px) {
+  .header-tools .tool-label:not(.export-label) { display: none; }
+  #expandLabel { display: none; }
+  #expandBtn { padding: 8px 12px; }
+  .app-header .btn { padding-left: 13px; padding-right: 13px; }
+  .tool-bar, .tool-bar-sm { padding-left: 6px; }
+}
+
+/* 2) ещё теснее: основные кнопки — только иконки */
+@media (min-width: 901px) and (max-width: 1420px) {
+  #themeToggle, #animateBtn, #styleBtn { font-size: 0; padding: 8px 12px; }
+  #themeToggle > span, #animateBtn > span { display: none; }
+  #toneBtn > span:not(.tone-dot) { display: none; }
+  html.season-winter #themeToggle::before,
+  html.season-winter #animateBtn::before,
+  html.season-winter #styleBtn::before {
+    width: 18px; height: 18px; margin: 0; vertical-align: middle;
+  }
+  .export-label { display: none; }
+}
+
+/* 3) совсем узкий ПК/планшет: компактные капсулы */
+@media (min-width: 901px) and (max-width: 1140px) {
+  .app-header { gap: 6px; }
+  .header-left, .header-tools { gap: 6px; }
+  .app-header .btn { padding-left: 10px; padding-right: 10px; font-size: 12.5px; }
+  #themeToggle, #animateBtn, #styleBtn { padding: 8px 10px; }
+  .header-tools .site-lang-name, .header-tools .site-lang-btn .caret { display: none; }
+  .tool-bar-sm .btn { min-width: 0; padding: 6px 9px; }
+  .tool-bar .btn { padding: 6px 9px; }
+  .logo { font-size: 18px; }
+}
+
+/* Телефон / планшет: ровные одинаковые кнопки в ряд */
+@media (max-width: 900px) {
+  .header-top-mid .top-quick {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    height: 38px;
+    min-height: 38px;
+    padding: 0 8px;
+    line-height: 1;
+  }
+  .header-top-actions .btn { min-height: 38px; }
+}
+@media (max-width: 420px) {
+  .header-top-mid { gap: 5px; }
+  .header-top-mid .top-quick { font-size: 12px; gap: 4px; padding: 0 6px; }
+}
+
+/* узкий ПК/планшет: блоки друг под другом, чтобы алфавит не сжимался */
+@media (min-width: 901px) and (max-width: 1100px) {
+  .workspace { grid-template-columns: minmax(0, 1fr); }
+  .result-panel { min-height: 280px; }
+}
+
+/* снег над алфавитом — по всей длине прокрутки, а не только на первом экране */
+html.season-winter .alphabet::after {
+  left: 18px;
+  right: auto;
+  width: calc(var(--cap-w, 100%) - 36px);
+}
+
+/* название чуть крупнее; шапка Деда Мороза масштабируется вместе с ним */
+html.season-winter .logo { font-size: 23px; }
+html.season-winter .logo::before,
+html.season-winter .logo::after {
+  left: -0.35em;
+  top: -0.65em;
+  width: 1.25em;
+  height: 1em;
+}
+html.season-winter .logo::after {
+  background:
+    radial-gradient(circle at 56% 14%, #fff 0 0.14em, transparent 0.16em),
+    linear-gradient(#fff, #fff) 0 100% / 100% 0.25em no-repeat;
+}
+@media (max-width: 900px) {
+  .header-top .logo,
+  html.season-winter .header-top .logo { font-size: 27px; }
+}
+
+/* заголовок меню «Стиль» с кнопкой-крестиком */
+.style-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 12px;
+}
+.style-head .style-title { margin: 0; }
+.style-close {
+  appearance: none;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--key-border);
+  background: var(--btn-gloss), var(--btn-bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+}
+.style-close:hover {
+  background: var(--btn-gloss-hover), var(--btn-bg-hover);
+  border-color: rgba(255, 214, 130, 0.8);
+}
+.style-close:active { transform: scale(0.92); }
+.style-close:focus-visible { outline: 2px solid rgba(255, 255, 255, 0.45); outline-offset: 2px; }

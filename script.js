@@ -52,7 +52,7 @@
       fmtSizeDown: 'Уменьшить размер', fmtSizeUp: 'Увеличить размер',
       fontDefault: 'Обычный текст',
       langBtn: 'Язык ▾', lang_ru: 'Русский язык', lang_en: 'Английский язык', lang_lv: 'Латышский язык',
-      revertLang: 'Исходный язык', undo: '↺ Обратно', copy: 'Копировать', clear: 'Удалить',
+      revertLang: 'Исходный язык', undo: 'Обратно', copy: 'Копировать', clear: 'Удалить',
       editorPlaceholder: 'Начните печатать здесь…', resultTitle: 'Транслит',
       resultPlaceholder: 'Здесь появится транслит…',
       toastSelectFirst: 'Сначала выделите текст', toastNothingUndo: 'Нечего отменять', toastUndone: 'Отменено',
@@ -65,7 +65,7 @@
       toastDocxFail: 'Не удалось создать DOCX', toastDocxOffline: 'Экспорт DOCX недоступен offline',
       toastTone: 'Тон: {name}', toastToneOff: 'Тон отключён', toastToneCustom: 'Тон: свой цвет',
       toastSiteLang: 'Язык сайта: {name}',
-      stressBtn: '´ Ударение', stressAria: 'Показать или скрыть ударения',
+      stressBtn: 'Ударение', stressAria: 'Показать или скрыть ударения',
       stressOn: 'Ударения включены', stressOff: 'Ударения выключены',
       stressEmpty: 'Введите текст для расстановки ударений',
       swapDirAria: 'Кириллица ↔ Латиница', swapToLat: 'Кириллица → Латиница', swapToCyr: 'Латиница → Кириллица',
@@ -91,6 +91,10 @@
       stylePosX: 'По горизонтали', stylePosY: 'По вертикали', styleScale: 'Размер',
       stylePosHint: 'Пустые края заполняются размытым фото',
       styleFitWidth: 'По ширине', styleFitHeight: 'По высоте', styleFitCover: 'На весь экран',
+      styleSeason: 'Сезон', styleSeasonHint: 'Атмосфера осени или зимы поверх темы',
+      styleSeasonAria: 'Сезон интерфейса',
+      seasonNone: 'Обычный', seasonAutumn: 'Осень', seasonWinter: 'Зима',
+      toastSeasonNone: 'Обычный стиль', toastSeasonAutumn: 'Осенний стиль', toastSeasonWinter: 'Зимний стиль',
       toastSwapEmpty: 'Введите текст для переключения'
     },
     en: {
@@ -114,7 +118,7 @@
       fmtSizeDown: 'Decrease size', fmtSizeUp: 'Increase size',
       fontDefault: 'Default text',
       langBtn: 'Language ▾', lang_ru: 'Russian', lang_en: 'English', lang_lv: 'Latvian',
-      revertLang: 'Original language', undo: '↺ Undo', copy: 'Copy', clear: 'Clear',
+      revertLang: 'Original language', undo: 'Undo', copy: 'Copy', clear: 'Clear',
       editorPlaceholder: 'Start typing here…', resultTitle: 'Translit',
       resultPlaceholder: 'Transliteration will appear here…',
       toastSelectFirst: 'Select some text first', toastNothingUndo: 'Nothing to undo', toastUndone: 'Undone',
@@ -127,7 +131,7 @@
       toastDocxFail: 'Could not create DOCX', toastDocxOffline: 'DOCX export is unavailable offline',
       toastTone: 'Tone: {name}', toastToneOff: 'Tone turned off', toastToneCustom: 'Tone: custom color',
       toastSiteLang: 'Site language: {name}',
-      stressBtn: '´ Stress', stressAria: 'Show or hide stress marks',
+      stressBtn: 'Stress', stressAria: 'Show or hide stress marks',
       stressOn: 'Stress marks on', stressOff: 'Stress marks off',
       stressEmpty: 'Enter text to place stress marks',
       swapDirAria: 'Cyrillic ↔ Latin', swapToLat: 'Cyrillic → Latin', swapToCyr: 'Latin → Cyrillic',
@@ -153,6 +157,10 @@
       stylePosX: 'Horizontal', stylePosY: 'Vertical', styleScale: 'Size',
       stylePosHint: 'Empty edges are filled with a blurred photo',
       styleFitWidth: 'Fit width', styleFitHeight: 'Fit height', styleFitCover: 'Fill screen',
+      styleSeason: 'Season', styleSeasonHint: 'Autumn or winter atmosphere over the theme',
+      styleSeasonAria: 'Interface season',
+      seasonNone: 'Default', seasonAutumn: 'Autumn', seasonWinter: 'Winter',
+      toastSeasonNone: 'Default style', toastSeasonAutumn: 'Autumn style', toastSeasonWinter: 'Winter style',
       toastSwapEmpty: 'Enter text to switch'
     },
     lv: {
@@ -176,7 +184,7 @@
       fmtSizeDown: 'Samazināt izmēru', fmtSizeUp: 'Palielināt izmēru',
       fontDefault: 'Parasts teksts',
       langBtn: 'Valoda ▾', lang_ru: 'Krievu valoda', lang_en: 'Angļu valoda', lang_lv: 'Latviešu valoda',
-      revertLang: 'Oriģinālvaloda', undo: '↺ Atpakaļ', copy: 'Kopēt', clear: 'Dzēst',
+      revertLang: 'Oriģinālvaloda', undo: 'Atpakaļ', copy: 'Kopēt', clear: 'Dzēst',
       editorPlaceholder: 'Sāciet rakstīt šeit…', resultTitle: 'Translits',
       resultPlaceholder: 'Šeit parādīsies translits…',
       toastSelectFirst: 'Vispirms atlasiet tekstu', toastNothingUndo: 'Nav ko atcelt', toastUndone: 'Atcelts',
@@ -189,7 +197,7 @@
       toastDocxFail: 'Neizdevās izveidot DOCX', toastDocxOffline: 'DOCX eksports nav pieejams bezsaistē',
       toastTone: 'Tonis: {name}', toastToneOff: 'Tonis izslēgts', toastToneCustom: 'Tonis: sava krāsa',
       toastSiteLang: 'Vietnes valoda: {name}',
-      stressBtn: '´ Uzsvars', stressAria: 'Rādīt vai paslēpt uzsvarus',
+      stressBtn: 'Uzsvars', stressAria: 'Rādīt vai paslēpt uzsvarus',
       stressOn: 'Uzsvari ieslēgti', stressOff: 'Uzsvari izslēgti',
       stressEmpty: 'Ievadiet tekstu, lai ieliktu uzsvarus',
       swapDirAria: 'Kirilica ↔ Latīņu', swapToLat: 'Kirilica → Latīņu', swapToCyr: 'Latīņu → Kirilica',
@@ -215,6 +223,10 @@
       stylePosX: 'Horizontāli', stylePosY: 'Vertikāli', styleScale: 'Izmērs',
       stylePosHint: 'Tukšās malas aizpilda ar izplūdušu foto',
       styleFitWidth: 'Pēc platuma', styleFitHeight: 'Pēc augstuma', styleFitCover: 'Uz visu ekrānu',
+      styleSeason: 'Sezona', styleSeasonHint: 'Rudens vai ziemas atmosfēra virs tēmas',
+      styleSeasonAria: 'Saskarnes sezona',
+      seasonNone: 'Parasts', seasonAutumn: 'Rudens', seasonWinter: 'Ziema',
+      toastSeasonNone: 'Parastais stils', toastSeasonAutumn: 'Rudens stils', toastSeasonWinter: 'Ziemas stils',
       toastSwapEmpty: 'Ievadiet tekstu, lai pārslēgtu'
     }
   };
@@ -762,6 +774,15 @@
     alphabetEl.appendChild(btn);
   });
 
+  // Снежная «шапка» над алфавитом должна покрывать всю прокручиваемую ширину (телефон)
+  function syncAlphabetCap() {
+    alphabetEl.style.setProperty('--cap-w', alphabetEl.scrollWidth + 'px');
+  }
+  syncAlphabetCap();
+  window.addEventListener('load', syncAlphabetCap);
+  window.addEventListener('resize', () => { clearTimeout(syncAlphabetCap._t); syncAlphabetCap._t = setTimeout(syncAlphabetCap, 150); });
+  if (window.ResizeObserver) new ResizeObserver(syncAlphabetCap).observe(alphabetEl);
+
   function insertTextAtCursor(text) {
     editor.focus();
 
@@ -795,10 +816,13 @@
 
   const resultEl = document.getElementById('result');
 
+  // Текст редактора читаем один раз за кадр ввода (innerText вызывает пересчёт вёрстки)
+  let frameText = null;
   let lastResultSource = null;
   function updateResult() {
     // Убираем знаки ударения перед транслитом — в латинице они не нужны
-    const sourceText = removeStressMarks(editor.innerText.replace(/\u00A0/g, ' '));
+    const rawText = frameText != null ? frameText : editor.innerText;
+    const sourceText = removeStressMarks(rawText.replace(/\u00A0/g, ' '));
     if (sourceText === lastResultSource) return;
     lastResultSource = sourceText;
     if (!sourceText.trim()) {
@@ -1051,9 +1075,14 @@
     if (!inputFrame) {
       inputFrame = requestAnimationFrame(() => {
         inputFrame = null;
-        updateResult();
-        updatePageGuides();
-        if (typeof updateStats === 'function') updateStats();
+        frameText = editor.innerText;
+        try {
+          updateResult();
+          updatePageGuides();
+          if (typeof updateStats === 'function') updateStats();
+        } finally {
+          frameText = null;
+        }
       });
     }
     if (typeof scheduleAutosave === 'function') scheduleAutosave();
@@ -2110,7 +2139,7 @@
   const statusSaveEl = document.getElementById('statusSave');
 
   function getEditorPlain() {
-    return (editor.innerText || '').replace(/\u00A0/g, ' ');
+    return ((frameText != null ? frameText : editor.innerText) || '').replace(/\u00A0/g, ' ');
   }
 
   function updateStats() {
@@ -2471,7 +2500,7 @@
   const styleBgPreview = document.getElementById('styleBgPreview');
   const styleNoBlurBtn = document.getElementById('styleNoBlur');
 
-  let styleState = { bg: null, noBlur: false, posX: 50, posY: 50, scale: 100, fit: 'scale' };
+  let styleState = { bg: null, noBlur: false, posX: 50, posY: 50, scale: 100, fit: 'scale', season: 'winter' };
 
   function loadStyleState() {
     try {
@@ -2487,7 +2516,7 @@
     } catch (e) {
       // quota — keep in memory only
       try {
-        const slim = { bg: null, noBlur: styleState.noBlur };
+        const slim = { bg: null, noBlur: styleState.noBlur, season: styleState.season || 'none' };
         localStorage.setItem(STYLE_KEY, JSON.stringify(slim));
       } catch (e2) { /* */ }
     }
@@ -2631,6 +2660,9 @@
       const btn = document.getElementById(fitMap[fit]);
       if (btn) btn.classList.add('is-active');
     }
+
+    // сезон
+    applySeasonClass(styleState.season || 'none');
   }
 
   function openStylePopover() {
@@ -2652,6 +2684,13 @@
       if (stylePopover.hidden) openStylePopover();
       else closeStylePopover();
     });
+    const styleCloseBtn = document.getElementById('styleClose');
+    if (styleCloseBtn) {
+      styleCloseBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeStylePopover();
+      });
+    }
     // клики внутри панели не закрывают её
     stylePopover.addEventListener('mousedown', (e) => e.stopPropagation());
     stylePopover.addEventListener('click', (e) => e.stopPropagation());
@@ -2802,12 +2841,330 @@
   bindFitBtn('styleFitHeight', 'height');
   bindFitBtn('styleFitCover', 'cover');
 
+
+  /* ---- Сезоны: осень / зима ---- */
+  const SEASON_CLASSES = ['season-autumn', 'season-winter'];
+
+  /* ---- Зимний снегопад: один <canvas> вместо сотни анимированных элементов ---- */
+  const snowFx = (function () {
+    let canvas = null, ctx = null, raf = 0, running = false;
+    let w = 0, h = 0, dpr = 1, last = 0;
+    let flakes = [], sparks = [], sprites = null;
+    let maxFlakes = 0, slowCount = 0, frameCount = 0, resizeTimer = 0;
+    const mqReduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+    const TAU = Math.PI * 2;
+
+    function mk(size, draw) {
+      const c = document.createElement('canvas');
+      c.width = c.height = Math.ceil(size * dpr);
+      const g = c.getContext('2d');
+      g.scale(dpr, dpr);
+      draw(g, size);
+      c._s = size;
+      return c;
+    }
+
+    function buildSprites() {
+      // в светлой теме снежинки голубоватые, иначе их не видно на светлом фоне
+      const light = document.documentElement.getAttribute('data-theme') === 'light';
+      const core = light ? '120,170,235' : '255,255,255';
+      const mid = light ? '140,185,240' : '236,247,255';
+      const edge = light ? '150,195,245' : '200,228,255';
+      const soft = (size) => mk(size, (g, s) => {
+        const r = s / 2;
+        const gr = g.createRadialGradient(r, r, 0, r, r, r);
+        gr.addColorStop(0, 'rgba(' + core + ',1)');
+        gr.addColorStop(0.4, 'rgba(' + mid + ',0.92)');
+        gr.addColorStop(0.75, 'rgba(' + edge + ',0.32)');
+        gr.addColorStop(1, 'rgba(' + edge + ',0)');
+        g.fillStyle = gr;
+        g.beginPath(); g.arc(r, r, r, 0, TAU); g.fill();
+      });
+      const crystal = (size) => mk(size, (g, s) => {
+        const r = s / 2;
+        g.translate(r, r);
+        g.strokeStyle = light ? 'rgba(90,145,215,0.95)' : 'rgba(255,255,255,0.95)';
+        g.lineCap = 'round';
+        g.lineWidth = Math.max(1, s / 11);
+        for (let i = 0; i < 6; i++) {
+          g.rotate(Math.PI / 3);
+          g.beginPath();
+          g.moveTo(0, 0); g.lineTo(0, -r * 0.9);
+          g.moveTo(0, -r * 0.5); g.lineTo(r * 0.27, -r * 0.75);
+          g.moveTo(0, -r * 0.5); g.lineTo(-r * 0.27, -r * 0.75);
+          g.stroke();
+        }
+      });
+      const star = (size) => mk(size, (g, s) => {
+        const r = s / 2;
+        g.translate(r, r);
+        const gr = g.createRadialGradient(0, 0, 0, 0, 0, r);
+        gr.addColorStop(0, 'rgba(255,240,190,0.55)');
+        gr.addColorStop(1, 'rgba(255,240,190,0)');
+        g.fillStyle = gr;
+        g.beginPath(); g.arc(0, 0, r, 0, TAU); g.fill();
+        g.fillStyle = 'rgba(255,248,215,1)';
+        g.beginPath();
+        g.moveTo(0, -r * 0.95);
+        g.quadraticCurveTo(0, 0, r * 0.95, 0);
+        g.quadraticCurveTo(0, 0, 0, r * 0.95);
+        g.quadraticCurveTo(0, 0, -r * 0.95, 0);
+        g.quadraticCurveTo(0, 0, 0, -r * 0.95);
+        g.fill();
+      });
+      sprites = { soft: [soft(6), soft(10), soft(16)], crystal: [crystal(14), crystal(20)], star: star(16) };
+    }
+
+    function spawn(f, initial) {
+      const r = Math.random();
+      f.rot = false;
+      if (r < 0.14) { f.kind = 'crystal'; f.idx = Math.random() < 0.5 ? 0 : 1; f.rot = true; }
+      else if (r < 0.4) { f.kind = 'soft'; f.idx = 2; }
+      else if (r < 0.75) { f.kind = 'soft'; f.idx = 1; }
+      else { f.kind = 'soft'; f.idx = 0; }
+      f.s = sprites[f.kind][f.idx]._s * (0.8 + Math.random() * 0.45);
+      f.x = Math.random() * w;
+      f.y = initial ? Math.random() * h : -f.s - Math.random() * h * 0.15;
+      f.vy = 20 + f.s * 2.1 + Math.random() * 20;
+      f.amp = 6 + Math.random() * 22;
+      f.sf = 0.35 + Math.random() * 0.7;
+      f.ph = Math.random() * TAU;
+      f.a = f.rot ? 0.55 + Math.random() * 0.3 : 0.45 + Math.random() * 0.5;
+      f.ang = Math.random() * TAU;
+      f.va = (Math.random() - 0.5) * 0.9;
+      return f;
+    }
+
+    function targetCount() {
+      let n = Math.round((w * h) / 24000);
+      n = Math.max(22, Math.min(70, n));
+      if (w < 720) n = Math.round(n * 0.6);
+      if (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) n = Math.round(n * 0.75);
+      return n;
+    }
+
+    function fit() {
+      w = window.innerWidth;
+      h = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      canvas.width = Math.ceil(w * dpr);
+      canvas.height = Math.ceil(h * dpr);
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      buildSprites();
+      maxFlakes = targetCount();
+      flakes = [];
+      for (let i = 0; i < maxFlakes; i++) flakes.push(spawn({}, true));
+      sparks = [];
+      const sc = w < 720 ? 5 : 10;
+      for (let i = 0; i < sc; i++) {
+        sparks.push({ x: Math.random() * w, y: Math.random() * h * 0.7, ph: Math.random() * TAU, sp: 1.1 + Math.random() * 1.4, s: 9 + Math.random() * 8 });
+      }
+    }
+
+    function drawStatic() {
+      if (!ctx) return;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+      for (const f of flakes) {
+        ctx.globalAlpha = f.a * 0.6;
+        ctx.drawImage(sprites[f.kind][f.idx], f.x - f.s / 2, f.y - f.s / 2, f.s, f.s);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function frame(ts) {
+      if (!running) return;
+      raf = requestAnimationFrame(frame);
+      const raw = ts - last;
+      if (raw < 28) return; // для снега хватает ~30 кадров/с — вдвое меньше работы
+      last = ts;
+      if (raw > 250) return; // возврат из фона — пропускаем скачок
+      const dt = Math.min(raw, 50) / 1000;
+
+      // авто-снижение нагрузки на слабых устройствах
+      frameCount++;
+      if (raw > 55) slowCount++;
+      if (frameCount >= 120) {
+        if (slowCount > 30 && flakes.length > 14) flakes.length = Math.max(14, Math.floor(flakes.length * 0.7));
+        frameCount = 0; slowCount = 0;
+      }
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+
+      const rotated = [];
+      for (let i = 0; i < flakes.length; i++) {
+        const f = flakes[i];
+        f.y += f.vy * dt;
+        f.ph += f.sf * dt;
+        if (f.y - f.s > h) { spawn(f, false); }
+        const x = f.x + Math.sin(f.ph) * f.amp;
+        if (f.rot) { f.ang += f.va * dt; rotated.push(f, x); continue; }
+        ctx.globalAlpha = f.a;
+        ctx.drawImage(sprites[f.kind][f.idx], x - f.s / 2, f.y - f.s / 2, f.s, f.s);
+      }
+      for (let i = 0; i < rotated.length; i += 2) {
+        const f = rotated[i], x = rotated[i + 1];
+        const c = Math.cos(f.ang) * dpr, sn = Math.sin(f.ang) * dpr;
+        ctx.setTransform(c, sn, -sn, c, x * dpr, f.y * dpr);
+        ctx.globalAlpha = f.a;
+        ctx.drawImage(sprites[f.kind][f.idx], -f.s / 2, -f.s / 2, f.s, f.s);
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      for (let i = 0; i < sparks.length; i++) {
+        const sk = sparks[i];
+        sk.ph += sk.sp * dt;
+        if (sk.ph > TAU) {
+          sk.ph -= TAU;
+          sk.x = Math.random() * w;
+          sk.y = Math.random() * h * 0.7;
+        }
+        const a = Math.sin(sk.ph);
+        if (a <= 0.02) continue;
+        const sz = sk.s * (0.55 + 0.5 * a);
+        ctx.globalAlpha = a * a;
+        ctx.drawImage(sprites.star, sk.x - sz / 2, sk.y - sz / 2, sz, sz);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function ensure() {
+      if (canvas) return true;
+      const root = document.getElementById('seasonDecor');
+      if (!root) return false;
+      canvas = document.createElement('canvas');
+      canvas.className = 'season-snow-canvas';
+      canvas.setAttribute('aria-hidden', 'true');
+      root.appendChild(canvas);
+      ctx = canvas.getContext('2d');
+      fit();
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          if (!canvas) return;
+          fit();
+          if (!running) drawStatic();
+        }, 200);
+      });
+      return true;
+    }
+
+    function start() {
+      if (!ensure()) return;
+      if (mqReduce && mqReduce.matches) { drawStatic(); return; }
+      if (running || document.hidden) return;
+      running = true;
+      last = performance.now();
+      raf = requestAnimationFrame(frame);
+    }
+
+    function stop() {
+      running = false;
+      cancelAnimationFrame(raf);
+      if (ctx) ctx.clearRect(0, 0, w, h);
+    }
+
+    function pause() {
+      running = false;
+      cancelAnimationFrame(raf);
+    }
+
+    function recolor() {
+      if (!canvas) return;
+      buildSprites();
+      if (!running) drawStatic();
+    }
+
+    return { start, stop, pause, recolor, isReady: () => !!canvas };
+  })();
+
+  function buildSeasonDecor() {
+    const root = document.getElementById('seasonDecor');
+    if (!root || root.dataset.ready === '1') return;
+    root.dataset.ready = '1';
+  }
+
+  // Листья (осень) создаём только когда они нужны — в зиме их нет вообще
+  function buildLeaves() {
+    const root = document.getElementById('seasonDecor');
+    if (!root || root.querySelector('.season-leaves')) return;
+    const leaves = document.createElement('div');
+    leaves.className = 'season-leaves';
+    const leafChars = ['🍂', '🍁', '🍃'];
+    for (let i = 0; i < 10; i++) {
+      const L = document.createElement('span');
+      L.className = 'leaf';
+      L.textContent = leafChars[i % leafChars.length];
+      L.style.setProperty('--x', (Math.random() * 100).toFixed(2) + 'vw');
+      L.style.setProperty('--d', (12 + Math.random() * 16).toFixed(1) + 's');
+      L.style.setProperty('--delay', (-Math.random() * 18).toFixed(1) + 's');
+      L.style.setProperty('--rot', (Math.random() * 360).toFixed(0) + 'deg');
+      L.style.setProperty('--scale', (0.55 + Math.random() * 0.7).toFixed(2));
+      L.style.setProperty('--drift', ((Math.random() * 80) - 40).toFixed(0) + 'px');
+      leaves.appendChild(L);
+    }
+    root.appendChild(leaves);
+  }
+
+  function applySeasonClass(season) {
+    const s = (season === 'autumn' || season === 'winter') ? season : 'none';
+    styleState.season = s;
+    htmlEl.classList.remove(...SEASON_CLASSES);
+    if (s === 'autumn') htmlEl.classList.add('season-autumn');
+    if (s === 'winter') htmlEl.classList.add('season-winter');
+
+    document.querySelectorAll('.season-card').forEach((btn) => {
+      const active = btn.getAttribute('data-season') === s;
+      btn.classList.toggle('is-selected', active);
+      btn.setAttribute('aria-checked', String(active));
+    });
+
+    if (s === 'autumn' || s === 'winter') buildSeasonDecor();
+    if (s === 'winter') snowFx.start(); else snowFx.stop();
+    if (s === 'autumn') buildLeaves();
+  }
+
+  function setSeason(season, persist, toast) {
+    applySeasonClass(season);
+    if (persist !== false) saveStyleState();
+    if (toast) {
+      const key = season === 'autumn' ? 'toastSeasonAutumn'
+        : season === 'winter' ? 'toastSeasonWinter'
+        : 'toastSeasonNone';
+      showToast(t(key));
+    }
+  }
+
+  new MutationObserver(() => snowFx.recolor())
+    .observe(htmlEl, { attributes: true, attributeFilter: ['data-theme'] });
+
+  document.addEventListener('visibilitychange', () => {
+    htmlEl.classList.toggle('page-hidden', document.hidden);
+    if (document.hidden) snowFx.pause();
+    else if (htmlEl.classList.contains('season-winter')) snowFx.start();
+  });
+
+  const seasonGrid = document.getElementById('seasonGrid');
+  if (seasonGrid) {
+    seasonGrid.addEventListener('click', (e) => {
+      const btn = e.target.closest('.season-card');
+      if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setSeason(btn.getAttribute('data-season') || 'none', true, true);
+    });
+  }
+
   loadStyleState();
   // defaults for older saves
   if (styleState.posX == null) styleState.posX = 50;
   if (styleState.posY == null) styleState.posY = 50;
   if (styleState.scale == null) styleState.scale = 100;
   if (!styleState.fit) styleState.fit = 'scale';
+  if (!styleState.season) styleState.season = 'winter';
 
   // восстановить размеры фото после перезагрузки
   if (styleState.bg && (!styleState.imgW || !styleState.imgH)) {

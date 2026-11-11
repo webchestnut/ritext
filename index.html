@@ -32,6 +32,9 @@
   <div class="user-bg-photo" id="userBgPhoto"></div>
 </div>
 
+<!-- Сезонный декор: снег / листья (генерируется в script.js) -->
+<div class="season-decor" id="seasonDecor" aria-hidden="true"></div>
+
 <div class="app">
 
   <header class="app-header" id="appHeader">
@@ -95,7 +98,29 @@
       <div class="style-wrap">
         <button class="btn btn-ghost" id="styleBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="stylePopover" data-i18n="styleBtn">Стиль</button>
         <div class="style-popover" id="stylePopover" role="dialog" hidden>
-          <div class="style-title" data-i18n="styleTitle">Стиль интерфейса</div>
+          <div class="style-head">
+            <div class="style-title" data-i18n="styleTitle">Стиль интерфейса</div>
+            <button type="button" class="style-close" id="styleClose" aria-label="Закрыть" title="Закрыть">✕</button>
+          </div>
+
+          <div class="style-section">
+            <div class="style-section-label" data-i18n="styleSeason">Сезон</div>
+            <p class="style-hint" data-i18n="styleSeasonHint">Атмосфера осени или зимы поверх темы</p>
+            <div class="season-grid" id="seasonGrid" role="radiogroup" data-i18n-aria="styleSeasonAria" aria-label="Сезон интерфейса">
+              <button type="button" class="season-card" data-season="none" id="seasonNone">
+                <span class="season-card-icon" aria-hidden="true">◇</span>
+                <span class="season-card-label" data-i18n="seasonNone">Обычный</span>
+              </button>
+              <button type="button" class="season-card" data-season="autumn" id="seasonAutumn">
+                <span class="season-card-icon" aria-hidden="true">🍂</span>
+                <span class="season-card-label" data-i18n="seasonAutumn">Осень</span>
+              </button>
+              <button type="button" class="season-card is-selected" data-season="winter" id="seasonWinter">
+                <span class="season-card-icon" aria-hidden="true">❄</span>
+                <span class="season-card-label" data-i18n="seasonWinter">Зима</span>
+              </button>
+            </div>
+          </div>
 
           <div class="style-section">
             <div class="style-section-label" data-i18n="styleBg">Фон</div>
