@@ -822,6 +822,24 @@
   const resultEl = document.getElementById('result');
 
   /* ---- Стикеры-смайлики: готовые картинки из папки emoji/ ---- */
+  // Папка со стикерами. Работает при любой из двух раскладок на GitHub: emoji/a01.webp
+  // или emoji/emoji/a01.webp (если папка загрузилась вложенной) — недостающий вариант
+  // подбирается автоматически при первой же ошибке загрузки картинки.
+  let STICKER_DIR = 'emoji/emoji/';
+  document.addEventListener('error', (e) => {
+    const img = e.target;
+    if (!img || img.nodeName !== 'IMG' || img.dataset.dirTried) return;
+    const m = /(?:^|\/)(emoji\/(?:emoji\/)?)([ab]\d\d\.webp)(?:[?#].*)?$/.exec(img.getAttribute('src') || '');
+    if (!m) return;
+    img.dataset.dirTried = '1';
+    STICKER_DIR = m[1] === 'emoji/emoji/' ? 'emoji/' : 'emoji/emoji/';
+    img.src = STICKER_DIR + m[2];
+  }, true);
+  // иконка кнопки могла начать грузиться раньше, чем появился обработчик
+  document.querySelectorAll('img.emoji-ico').forEach((im) => {
+    if (im.complete && im.naturalWidth === 0) im.dispatchEvent(new Event('error'));
+  });
+
   const STICKER_SETS = [
     { key: 'a', cover: 'a01', items: [["a01", "🥰"], ["a02", "😉"], ["a03", "🤩"], ["a04", "😘"], ["a05", "😂"], ["a06", "🥰"], ["a07", "😊"], ["a08", "😎"], ["a09", "😴"], ["a10", "🥺"], ["a11", "😜"], ["a12", "😠"], ["a13", "🥺"], ["a14", "😭"], ["a15", "😊"], ["a16", "😝"], ["a17", "🤔"], ["a18", "🎧"], ["a19", "😒"], ["a20", "🥺"], ["a21", "🥰"], ["a22", "😋"], ["a23", "😌"], ["a24", "🤓"], ["a25", "😉"], ["a26", "😔"], ["a27", "😆"], ["a28", "🤓"], ["a29", "😎"], ["a30", "😉"], ["a31", "😐"], ["a32", "😭"], ["a33", "😊"], ["a34", "😌"], ["a35", "😉"], ["a36", "😍"], ["a37", "🐱"], ["a38", "🐸"], ["a39", "🐧"], ["a40", "🐶"], ["a41", "🐰"], ["a42", "🐻"], ["a43", "✨"], ["a44", "❤️"], ["a45", "💗"], ["a46", "🌈"], ["a47", "🌙"], ["a48", "☀️"], ["a49", "🌸"], ["a50", "🍀"], ["a51", "🎀"], ["a52", "💬"], ["a53", "✈️"], ["a54", "💌"], ["a55", "🧋"]] },
     { key: 'b', cover: 'b01', items: [["b01", "🥰"], ["b02", "😘"], ["b03", "🥺"], ["b04", "😴"], ["b05", "😍"], ["b06", "🙈"], ["b07", "😜"], ["b08", "🎧"], ["b09", "🥰"], ["b10", "😉"], ["b11", "😏"], ["b12", "😋"], ["b13", "😏"], ["b14", "🥺"], ["b15", "😘"], ["b16", "🤭"], ["b17", "😎"], ["b18", "🙄"], ["b19", "🥰"], ["b20", "😌"], ["b21", "😳"], ["b22", "😜"], ["b23", "🥰"], ["b24", "😘"], ["b25", "🥺"], ["b26", "😴"], ["b27", "😮"], ["b28", "😊"], ["b29", "🙈"], ["b30", "😜"], ["b31", "🤔"], ["b32", "😋"], ["b33", "😘"], ["b34", "😆"], ["b35", "🥺"], ["b36", "😊"], ["b37", "🤭"], ["b38", "😘"], ["b39", "😳"], ["b40", "😜"], ["b41", "🥰"], ["b42", "😔"], ["b44", "😍"], ["b45", "😑"], ["b46", "🥺"], ["b47", "😉"], ["b48", "😤"], ["b49", "😏"], ["b50", "😋"], ["b51", "🤭"], ["b52", "😳"], ["b53", "🥰"], ["b54", "😎"]] }
@@ -854,7 +872,7 @@
     const def = STICKER_MAP[id];
     const img = document.createElement('img');
     img.className = 'emo-i';
-    img.src = 'emoji/' + id + '.webp';
+    img.src = STICKER_DIR + id + '.webp';
     img.alt = def.ch;
     img.draggable = false;
     if (withId) img.dataset.sid = id;
@@ -1186,7 +1204,7 @@
       const id = ch.slice(8);
       if (!STICKER_MAP[id]) return null;
       const img = document.createElement('img');
-      img.src = 'emoji/' + id + '.webp';
+      img.src = STICKER_DIR + id + '.webp';
       img.alt = STICKER_MAP[id].ch;
       img.loading = 'lazy';
       img.decoding = 'async';
@@ -1212,7 +1230,7 @@
       b.className = 'emoji-tab' + (i === emojiTab ? ' active' : '');
       if (tab.sticker) {
         const img = document.createElement('img');
-        img.src = 'emoji/' + tab.sticker + '.webp';
+        img.src = STICKER_DIR + tab.sticker + '.webp';
         img.alt = '';
         img.width = 24;
         img.height = 24;
@@ -1291,21 +1309,32 @@
     if (img && img.nodeName === 'IMG' && !img.complete) img.addEventListener('load', reapply, { once: true });
   }
 
+  function placeEmojiPopover() {
+    const rect = fmtEmojiBtn.getBoundingClientRect();
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const w = Math.min(330, vw - 16);
+    emojiPopover.style.width = w + 'px';
+    emojiPopover.style.left = Math.max(8, Math.min(rect.left - 8, vw - w - 8)) + 'px';
+    emojiPopover.style.top = (rect.bottom + 6) + 'px';
+    // не помещается снизу — открываем над кнопкой; если и сверху нет места — ограничиваем высоту
+    const h = emojiPopover.offsetHeight;
+    if (rect.bottom + 6 + h > vh - 8 && rect.top - 6 - h > 8) {
+      emojiPopover.style.top = (rect.top - 6 - h) + 'px';
+      emojiPopover.style.maxHeight = '';
+    } else if (rect.bottom + 6 + h > vh - 8) {
+      emojiPopover.style.maxHeight = Math.max(160, vh - rect.bottom - 16) + 'px';
+      emojiPopover.style.overflowY = 'auto';
+    } else {
+      emojiPopover.style.maxHeight = '';
+    }
+  }
+
   function setEmojiOpen(open) {
     if (open) {
       fontMenu.classList.remove('open');
       renderEmojiPicker();
-      const rect = fmtEmojiBtn.getBoundingClientRect();
-      const w = Math.min(330, window.innerWidth - 16);
-      emojiPopover.style.width = w + 'px';
-      emojiPopover.style.left = Math.max(8, Math.min(rect.left - 8, window.innerWidth - w - 8)) + 'px';
-      emojiPopover.style.top = (rect.bottom + 6) + 'px';
-      // не помещается снизу — открываем над кнопкой
       emojiPopover.classList.add('open');
-      const h = emojiPopover.offsetHeight;
-      if (rect.bottom + 6 + h > window.innerHeight - 8 && rect.top - 6 - h > 8) {
-        emojiPopover.style.top = (rect.top - 6 - h) + 'px';
-      }
+      placeEmojiPopover();
     } else {
       emojiPopover.classList.remove('open');
     }
@@ -1341,16 +1370,24 @@
       if (next) { next.click(); const t2 = emojiTabsEl.querySelectorAll('.emoji-tab')[tabs.indexOf(next)]; if (t2) t2.focus(); }
     }
   });
-  window.addEventListener('scroll', (e) => {
-    if (emojiPopover.classList.contains('open') && !emojiPopover.contains(e.target)) setEmojiOpen(false);
-  }, true);
+  // прокрутка (в том числе автоматическая, после нажатия на телефоне) не закрывает меню,
+  // а переставляет его под кнопку
+  let emojiPosRaf = 0;
+  function schedulePlaceEmoji() {
+    if (!emojiPopover.classList.contains('open') || emojiPosRaf) return;
+    emojiPosRaf = requestAnimationFrame(() => {
+      emojiPosRaf = 0;
+      if (emojiPopover.classList.contains('open')) placeEmojiPopover();
+    });
+  }
+  window.addEventListener('scroll', schedulePlaceEmoji, { capture: true, passive: true });
 
   // Заранее подгружаем первые стикеры, когда пользователь только подносит курсор к кнопке
   let emojiWarmed = false;
   function warmEmoji() {
     if (emojiWarmed) return;
     emojiWarmed = true;
-    STICKER_SETS[0].items.slice(0, 30).forEach((it) => { const im = new Image(); im.decoding = 'async'; im.src = 'emoji/' + it[0] + '.webp'; });
+    STICKER_SETS[0].items.slice(0, 30).forEach((it) => { const im = new Image(); im.decoding = 'async'; im.src = STICKER_DIR + it[0] + '.webp'; });
   }
   ['pointerenter', 'focus', 'touchstart'].forEach((ev) => fmtEmojiBtn.addEventListener(ev, warmEmoji, { passive: true, once: true }));
 
@@ -1365,7 +1402,8 @@
       e.stopImmediatePropagation(); // Esc закрывает только меню смайликов (не выходит из полноэкранного режима)
     }
   });
-  window.addEventListener('resize', () => { if (emojiPopover.classList.contains('open')) setEmojiOpen(false); });
+  window.addEventListener('resize', schedulePlaceEmoji, { passive: true });
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', schedulePlaceEmoji, { passive: true });
 
 
   /* Панель редактора на компьютере — всегда одна строка: при нехватке места
@@ -2728,6 +2766,7 @@
       }
       editor.innerHTML = data.html;
       migrateLegacyStickers(editor); // стикеры из прошлых версий → обычные картинки
+      editor.querySelectorAll('img.emo-i').forEach((im) => { const sid = im.dataset.sid; if (sid && STICKER_MAP[sid]) im.src = STICKER_DIR + sid + '.webp'; });
       updateResult();
       updatePageGuides();
       updateStats();
