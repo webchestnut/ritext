@@ -48,7 +48,7 @@
       exportLabel: 'Экспорт', exportAria: 'Экспорт документа',
       alphabetAria: 'Русский алфавит', insertLetter: 'Вставить букву {letter}',
       closeFull: 'Закрыть полноэкранный режим',
-      fmtBold: 'Жирный', fmtItalic: 'Курсив', fmtUnderline: 'Подчёркивание', fmtFont: 'Шрифт',
+      fmtBold: 'Жирный', fmtItalic: 'Курсив', fmtUnderline: 'Подчёркивание', fmtFont: 'Шрифт', fmtEmoji: 'Смайлики',
       fmtSizeDown: 'Уменьшить размер', fmtSizeUp: 'Увеличить размер',
       fontDefault: 'Обычный текст',
       langBtn: 'Язык ▾', lang_ru: 'Русский язык', lang_en: 'Английский язык', lang_lv: 'Латышский язык',
@@ -114,7 +114,7 @@
       exportLabel: 'Export', exportAria: 'Export document',
       alphabetAria: 'Russian alphabet', insertLetter: 'Insert letter {letter}',
       closeFull: 'Close full screen mode',
-      fmtBold: 'Bold', fmtItalic: 'Italic', fmtUnderline: 'Underline', fmtFont: 'Font',
+      fmtBold: 'Bold', fmtItalic: 'Italic', fmtUnderline: 'Underline', fmtFont: 'Font', fmtEmoji: 'Emoji',
       fmtSizeDown: 'Decrease size', fmtSizeUp: 'Increase size',
       fontDefault: 'Default text',
       langBtn: 'Language ▾', lang_ru: 'Russian', lang_en: 'English', lang_lv: 'Latvian',
@@ -180,7 +180,7 @@
       exportLabel: 'Eksports', exportAria: 'Dokumenta eksports',
       alphabetAria: 'Krievu alfabēts', insertLetter: 'Ievietot burtu {letter}',
       closeFull: 'Aizvērt pilnekrāna režīmu',
-      fmtBold: 'Treknraksts', fmtItalic: 'Kursīvs', fmtUnderline: 'Pasvītrojums', fmtFont: 'Fonts',
+      fmtBold: 'Treknraksts', fmtItalic: 'Kursīvs', fmtUnderline: 'Pasvītrojums', fmtFont: 'Fonts', fmtEmoji: 'Emocijzīmes',
       fmtSizeDown: 'Samazināt izmēru', fmtSizeUp: 'Palielināt izmēru',
       fontDefault: 'Parasts teksts',
       langBtn: 'Valoda ▾', lang_ru: 'Krievu valoda', lang_en: 'Angļu valoda', lang_lv: 'Latviešu valoda',
@@ -798,9 +798,14 @@
       range.collapse(false);
     }
 
-    const textNode = document.createTextNode(text);
+    const textNode = (typeof text === 'string') ? document.createTextNode(text) : text;
     range.insertNode(textNode);
+    // insertNode режет текстовый узел и оставляет пустые «хвосты» — они сбивают курсор рядом со стикером
+    [textNode.previousSibling, textNode.nextSibling].forEach((n) => {
+      if (n && n.nodeType === 3 && n.nodeValue === '') n.remove();
+    });
 
+    void editor.offsetHeight; // сначала пересчитать вёрстку — иначе Chrome ставит курсор перед только что вставленной картинкой
     range.setStartAfter(textNode);
     range.setEndAfter(textNode);
     sel.removeAllRanges();
@@ -816,25 +821,131 @@
 
   const resultEl = document.getElementById('result');
 
+  /* ---- Стикеры-смайлики: готовые картинки из папки emoji/ ---- */
+  const STICKER_SETS = [
+    { key: 'a', cover: 'a01', items: [["a01", "🥰"], ["a02", "😉"], ["a03", "🤩"], ["a04", "😘"], ["a05", "😂"], ["a06", "🥰"], ["a07", "😊"], ["a08", "😎"], ["a09", "😴"], ["a10", "🥺"], ["a11", "😜"], ["a12", "😠"], ["a13", "🥺"], ["a14", "😭"], ["a15", "😊"], ["a16", "😝"], ["a17", "🤔"], ["a18", "🎧"], ["a19", "😒"], ["a20", "🥺"], ["a21", "🥰"], ["a22", "😋"], ["a23", "😌"], ["a24", "🤓"], ["a25", "😉"], ["a26", "😔"], ["a27", "😆"], ["a28", "🤓"], ["a29", "😎"], ["a30", "😉"], ["a31", "😐"], ["a32", "😭"], ["a33", "😊"], ["a34", "😌"], ["a35", "😉"], ["a36", "😍"], ["a37", "🐱"], ["a38", "🐸"], ["a39", "🐧"], ["a40", "🐶"], ["a41", "🐰"], ["a42", "🐻"], ["a43", "✨"], ["a44", "❤️"], ["a45", "💗"], ["a46", "🌈"], ["a47", "🌙"], ["a48", "☀️"], ["a49", "🌸"], ["a50", "🍀"], ["a51", "🎀"], ["a52", "💬"], ["a53", "✈️"], ["a54", "💌"], ["a55", "🧋"]] },
+    { key: 'b', cover: 'b01', items: [["b01", "🥰"], ["b02", "😘"], ["b03", "🥺"], ["b04", "😴"], ["b05", "😍"], ["b06", "🙈"], ["b07", "😜"], ["b08", "🎧"], ["b09", "🥰"], ["b10", "😉"], ["b11", "😏"], ["b12", "😋"], ["b13", "😏"], ["b14", "🥺"], ["b15", "😘"], ["b16", "🤭"], ["b17", "😎"], ["b18", "🙄"], ["b19", "🥰"], ["b20", "😌"], ["b21", "😳"], ["b22", "😜"], ["b23", "🥰"], ["b24", "😘"], ["b25", "🥺"], ["b26", "😴"], ["b27", "😮"], ["b28", "😊"], ["b29", "🙈"], ["b30", "😜"], ["b31", "🤔"], ["b32", "😋"], ["b33", "😘"], ["b34", "😆"], ["b35", "🥺"], ["b36", "😊"], ["b37", "🤭"], ["b38", "😘"], ["b39", "😳"], ["b40", "😜"], ["b41", "🥰"], ["b42", "😔"], ["b44", "😍"], ["b45", "😑"], ["b46", "🥺"], ["b47", "😉"], ["b48", "😤"], ["b49", "😏"], ["b50", "😋"], ["b51", "🤭"], ["b52", "😳"], ["b53", "🥰"], ["b54", "😎"]] }
+  ];
+  const STICKERS = [];
+  const STICKER_MAP = {};
+  STICKER_SETS.forEach((set) => set.items.forEach((it) => {
+    const st = { id: it[0], ch: it[1] };
+    STICKERS.push(st);
+    STICKER_MAP[st.id] = st;
+  }));
+
+
+  /* В тексте каждый стикер — обычная картинка <img class="emo-i">. Для транслита, счётчиков и
+     экспорта он превращается в один «служебный» символ (область U+E000…), а при копировании и
+     сохранении — в похожий обычный смайлик. Благодаря этому стикер ведёт себя как буква:
+     ставится в любое место, удаляется Backspace/Delete и выделяется вместе с текстом. */
+  STICKERS.forEach((st, i) => { st.pua = String.fromCharCode(0xE000 + i); });
+  const STICKER_BY_PUA = {};
+  STICKERS.forEach((st) => { STICKER_BY_PUA[st.pua] = st; });
+  const PUA_TEST = /[\uE000-\uE0FF]/;
+  const PUA_SPLIT = /([\uE000-\uE0FF])/;
+  const PUA_ALL = /[\uE000-\uE0FF]/g;
+
+  function toPlainOut(str) {
+    return PUA_TEST.test(str) ? str.replace(PUA_ALL, (c) => (STICKER_BY_PUA[c] ? STICKER_BY_PUA[c].ch : '')) : str;
+  }
+
+  function makeStickerImg(id, withId) {
+    const def = STICKER_MAP[id];
+    const img = document.createElement('img');
+    img.className = 'emo-i';
+    img.src = 'emoji/' + id + '.webp';
+    img.alt = def.ch;
+    img.draggable = false;
+    if (withId) img.dataset.sid = id;
+    return img;
+  }
+  function makeStickerNode(id) { return makeStickerImg(id, true); }
+
+  try { document.execCommand('enableObjectResizing', false, false); document.execCommand('enableInlineTableEditing', false, false); } catch (err) { /* не критично */ }
+
+  // Текст редактора с учётом стикеров (innerText сам картинки не видит)
+  function editorRawText() {
+    const imgs = editor.querySelectorAll('img.emo-i');
+    if (!imgs.length) return editor.innerText;
+    // Рядом с каждой картинкой временно ставим служебный символ. Картинку не трогаем,
+    // поэтому курсор и выделение остаются на своих местах.
+    const temps = [];
+    imgs.forEach((img) => {
+      const st = STICKER_MAP[img.dataset.sid];
+      const t = document.createTextNode(st ? st.pua : '');
+      img.after(t);
+      temps.push(t);
+    });
+    let txt;
+    try { txt = editor.innerText; } finally { temps.forEach((t) => t.remove()); }
+    return txt;
+  }
+
+  // Служебные символы в текстовых узлах → картинки-стикеры (после замены текста целиком)
+  function hydrateStickers(root) {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const targets = [];
+    let n;
+    while ((n = walker.nextNode())) if (PUA_TEST.test(n.nodeValue)) targets.push(n);
+    targets.forEach((node) => {
+      const parts = node.nodeValue.split(PUA_SPLIT);
+      const frag = document.createDocumentFragment();
+      parts.forEach((part) => {
+        if (!part) return;
+        const st = STICKER_BY_PUA[part];
+        if (st) frag.appendChild(makeStickerImg(st.id, true));
+        else if (!PUA_TEST.test(part)) frag.appendChild(document.createTextNode(part));
+      });
+      node.replaceWith(frag);
+    });
+  }
+
+  // Черновики из прошлой версии: <span class="emo …"> → <img class="emo-i">
+  function migrateLegacyStickers(root) {
+    root.querySelectorAll('span.emo').forEach((sp) => {
+      const id = [...sp.classList].find((c) => STICKER_MAP[c]);
+      if (id) sp.replaceWith(makeStickerImg(id, true));
+      else sp.replaceWith(document.createTextNode(sp.textContent));
+    });
+  }
+
+  // Блок «Транслит»: стикеры показываем теми же картинками
+  let lastResultText = '';
+  function renderResult(str) {
+    lastResultText = str;
+    if (!PUA_TEST.test(str)) { resultEl.textContent = str; return; }
+    const frag = document.createDocumentFragment();
+    str.split(PUA_SPLIT).forEach((part) => {
+      if (!part) return;
+      const st = STICKER_BY_PUA[part];
+      if (st) frag.appendChild(makeStickerImg(st.id, false));
+      else if (!PUA_TEST.test(part)) frag.appendChild(document.createTextNode(part));
+    });
+    resultEl.textContent = '';
+    resultEl.appendChild(frag);
+  }
+
+
   // Текст редактора читаем один раз за кадр ввода (innerText вызывает пересчёт вёрстки)
   let frameText = null;
   let lastResultSource = null;
   function updateResult() {
     // Убираем знаки ударения перед транслитом — в латинице они не нужны
-    const rawText = frameText != null ? frameText : editor.innerText;
+    const rawText = frameText != null ? frameText : editorRawText();
     const sourceText = removeStressMarks(rawText.replace(/\u00A0/g, ' '));
     if (sourceText === lastResultSource) return;
     lastResultSource = sourceText;
     if (!sourceText.trim()) {
-      resultEl.textContent = '';
+      renderResult('');
       return;
     }
     // Всегда показываем «другую» сторону:
     // кириллица в редакторе → латиница справа; латиница в редакторе → кириллица справа
     if (isMostlyCyrillic(sourceText)) {
-      resultEl.textContent = transliterate(sourceText);
+      renderResult(transliterate(sourceText));
     } else {
-      resultEl.textContent = latinToCyrillic(sourceText);
+      renderResult(latinToCyrillic(sourceText));
     }
   }
 
@@ -1016,6 +1127,7 @@
   fmtFontBtn.addEventListener('click', () => {
     const isOpen = fontMenu.classList.contains('open');
     if (isOpen) { fontMenu.classList.remove('open'); return; }
+    if (typeof setEmojiOpen === 'function') setEmojiOpen(false);
     if (!hasUsableSelection()) { showToast(t('toastSelectFirst')); return; }
     const rect = fmtFontBtn.getBoundingClientRect();
     fontMenu.style.top = `${rect.bottom + 6}px`;
@@ -1031,6 +1143,255 @@
     if (!hasUsableSelection()) { showToast(t('toastSelectFirst')); return; }
     adjustFontSize(2);
   });
+
+
+  /* ------------------------------------------------------------------ */
+  /* 4a. Смайлики: вставка в позицию курсора, размер = размер текста     */
+  /* ------------------------------------------------------------------ */
+
+  const EMOJI_CATEGORIES = [
+    { icon: '😀', list: '😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😋 😛 😜 🤪 😝 🤗 🤭 🤔 🤨 😐 😶 😏 😒 🙄 😬 😔 😪 😴 😷 🤒 🤕 🤢 🥵 🥶 🥴 😵 🤯 🤠 🥳 😎 🤓 🧐 😕 😟 🙁 😮 😲 😳 🥺 😨 😰 😢 😭 😱 😖 😞 😓 😩 🥱 😤 😡 😠 🤬 😈 💀' },
+    { icon: '👍', list: '👍 👎 👌 ✌️ 🤞 🤟 🤘 🤙 👈 👉 👆 👇 ☝️ 👋 🤚 ✋ 🖖 👏 🙌 🤝 🙏 💪 👀 🧠 ❤️ 🧡 💛 💚 💙 💜 🖤 🤍 🤎 💔 💕 💞 💓 💗 💖 💘 💝 👶 👦 👧 👨 👩 👴 👵 🙋 🤷 🙆 🙅 💃 🕺' },
+    { icon: '🎄', list: '🎄 🎅 🤶 🦌 ❄️ ⛄ ☃️ 🎁 🎀 🎉 🎊 🎆 🎇 ✨ 🌟 ⭐ 🔔 🕯️ 🍾 🥂 🍷 🍪 🥛 🧦 🧣 🧤 🔥 🧊 🏔️ ⛷️ 🏂 🛷 ⛸️ 🎿 🌲 🍊 🥜 🍬 🍭 🎶 💫' },
+    { icon: '🐶', list: '🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐸 🐵 🐔 🐧 🐦 🦆 🦉 🦄 🐝 🦋 🐢 🐍 🐙 🐬 🐳 🦈 🌸 🌼 🌻 🌹 🌷 🌲 🌳 🍀 🍁 🍂 🌈 ☀️ 🌙 ☁️ ⛅ ⚡ 🌊' },
+    { icon: '🍎', list: '🍎 🍊 🍋 🍌 🍉 🍇 🍓 🍒 🍑 🍍 🥝 🍅 🥑 🥕 🌽 🥔 🍞 🧀 🍳 🥞 🍔 🍟 🍕 🌭 🌮 🍣 🍦 🍩 🍪 🎂 🍰 🍫 🍬 🍭 ☕ 🍵 🥤 🍺 🍷 🍾' },
+    { icon: '⚽', list: '⚽ 🏀 🏈 ⚾ 🎾 🏐 🎮 🎯 🎲 🎵 🎶 🎤 🎧 📱 💻 📷 💡 📚 ✏️ 📌 🔑 🏠 🚗 ✈️ 🚀 ⏰ 💰 🎁 🏆 🥇' },
+    { icon: '✅', list: '✅ ❌ ✔️ ❗ ❓ 💯 🔥 💥 💫 ⚡ ➕ ➖ ➡️ ⬅️ ⬆️ ⬇️ 🔴 🟠 🟡 🟢 🔵 🟣 ⚫ ⚪ 🔺 🔻 ©️ ®️ ™️ ♥️ ♦️ ♠️ ♣️' }
+  ];
+  const EMOJI_RECENT_KEY = 'ritext-recent-emoji';
+
+  const fmtEmojiBtn = document.getElementById('fmtEmojiBtn');
+  const emojiPopover = document.getElementById('emojiPopover');
+  const emojiTabsEl = document.getElementById('emojiTabs');
+  const emojiGridEl = document.getElementById('emojiGrid');
+  let emojiRecent = [];
+  try { emojiRecent = JSON.parse(localStorage.getItem(EMOJI_RECENT_KEY) || '[]').slice(0, 24); } catch (err) { emojiRecent = []; }
+  // выбрасываем записи, которых больше нет (например, из старых версий)
+  emojiRecent = emojiRecent.filter((x) => typeof x === 'string' && (!x.startsWith('sticker:') || STICKER_MAP[x.slice(8)]));
+  let emojiTab = 0;
+
+  function emojiTabs() {
+    const tabs = STICKER_SETS.map((set) => ({ sticker: set.cover, items: set.items.map((it) => 'sticker:' + it[0]), big: true }));
+    if (emojiRecent.length) tabs.push({ icon: '🕘', items: emojiRecent, big: emojiRecent.some((x) => x.startsWith('sticker:')) });
+    EMOJI_CATEGORIES.forEach((c) => tabs.push({ icon: c.icon, items: c.list.split(' ') }));
+    return tabs;
+  }
+
+  function makePickerItem(ch) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'emoji-item';
+    b.dataset.e = ch;
+    if (ch.startsWith('sticker:')) {
+      const id = ch.slice(8);
+      if (!STICKER_MAP[id]) return null;
+      const img = document.createElement('img');
+      img.src = 'emoji/' + id + '.webp';
+      img.alt = STICKER_MAP[id].ch;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.width = 44;
+      img.height = 44;
+      img.draggable = false;
+      b.appendChild(img);
+      b.setAttribute('aria-label', STICKER_MAP[id].ch);
+    } else {
+      b.textContent = ch;
+      b.setAttribute('aria-label', ch);
+    }
+    return b;
+  }
+
+  function renderEmojiPicker() {
+    const tabs = emojiTabs();
+    if (emojiTab >= tabs.length) emojiTab = 0;
+    emojiTabsEl.textContent = '';
+    tabs.forEach((tab, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'emoji-tab' + (i === emojiTab ? ' active' : '');
+      if (tab.sticker) {
+        const img = document.createElement('img');
+        img.src = 'emoji/' + tab.sticker + '.webp';
+        img.alt = '';
+        img.width = 24;
+        img.height = 24;
+        img.draggable = false;
+        b.appendChild(img);
+      } else {
+        b.textContent = tab.icon;
+      }
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', String(i === emojiTab));
+      b.addEventListener('mousedown', (e) => e.preventDefault());
+      b.addEventListener('click', () => { emojiTab = i; renderEmojiPicker(); emojiGridEl.scrollTop = 0; });
+      emojiTabsEl.appendChild(b);
+    });
+    emojiGridEl.textContent = '';
+    emojiGridEl.classList.toggle('is-stickers', !!tabs[emojiTab].big);
+    const frag = document.createDocumentFragment();
+    tabs[emojiTab].items.forEach((ch) => {
+      const b = makePickerItem(ch);
+      if (b) frag.appendChild(b);
+    });
+    emojiGridEl.appendChild(frag);
+    emojiGridEl.classList.remove('is-swap');
+    void emojiGridEl.offsetWidth;
+    emojiGridEl.classList.add('is-swap');
+  }
+
+  // один обработчик на всю сетку (быстрее, чем по слушателю на каждый смайл)
+  emojiGridEl.addEventListener('mousedown', (e) => e.preventDefault());
+  emojiGridEl.addEventListener('click', (e) => {
+    const item = e.target.closest('.emoji-item');
+    if (item) insertEmoji(item.dataset.e);
+  });
+  emojiPopover.addEventListener('mousedown', (e) => e.preventDefault());
+
+  function rememberEmoji(ch) {
+    emojiRecent = [ch].concat(emojiRecent.filter((x) => x !== ch)).slice(0, 24);
+    try { localStorage.setItem(EMOJI_RECENT_KEY, JSON.stringify(emojiRecent)); } catch (err) { /* не критично */ }
+  }
+
+  function insertEmoji(ch) {
+    // вернуть курсор туда, где он был в тексте, если фокус ушёл на кнопку
+    const sel = window.getSelection();
+    const inEditor = sel && sel.rangeCount && editor.contains(sel.anchorNode);
+    if (!inEditor && savedRange && editor.contains(savedRange.startContainer)) restoreSavedSelection();
+    pushHistory();
+    isTypingBurst = false;
+    // стикер — неизменяемый узел с размером в em, обычный смайлик — текст;
+    // и то и другое берёт размер у соседнего текста
+    const toInsert = ch.startsWith('sticker:') ? makeStickerNode(ch.slice(8)) : ch;
+    insertTextAtCursor(toInsert);
+    if (typeof toInsert !== 'string') {
+      toInsert.classList.add('is-new');
+      toInsert.addEventListener('animationend', () => toInsert.classList.remove('is-new'), { once: true });
+    }
+    savedRange = null; // устаревший сохранённый курсор мешал бы кнопкам форматирования
+    if (typeof ch === 'string' && ch.startsWith('sticker:')) refreshCaretAfterSticker();
+    editor.dispatchEvent(new Event('input', { bubbles: true })); // статистика, автосохранение, транслит
+    rememberEmoji(ch);
+  }
+
+  // Chrome запоминает позицию курсора до того, как картинка отрисована, и потом печатает
+  // «перед» ней. Поэтому после загрузки/отрисовки стикера заново выставляем тот же курсор.
+  function refreshCaretAfterSticker() {
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !sel.isCollapsed || !editor.contains(sel.anchorNode)) return;
+    const node = sel.anchorNode, off = sel.anchorOffset;
+    const reapply = () => {
+      const s2 = window.getSelection();
+      if (!s2.rangeCount || !s2.isCollapsed || s2.anchorNode !== node || s2.anchorOffset !== off) return; // курсор уже ушёл — не трогаем
+      try { s2.setBaseAndExtent(node, off, node, off); } catch (err) { /* ignore */ }
+    };
+    requestAnimationFrame(reapply);
+    setTimeout(reapply, 120);
+    const img = node.nodeType === 1 ? node.childNodes[off - 1] : null;
+    if (img && img.nodeName === 'IMG' && !img.complete) img.addEventListener('load', reapply, { once: true });
+  }
+
+  function setEmojiOpen(open) {
+    if (open) {
+      fontMenu.classList.remove('open');
+      renderEmojiPicker();
+      const rect = fmtEmojiBtn.getBoundingClientRect();
+      const w = Math.min(330, window.innerWidth - 16);
+      emojiPopover.style.width = w + 'px';
+      emojiPopover.style.left = Math.max(8, Math.min(rect.left - 8, window.innerWidth - w - 8)) + 'px';
+      emojiPopover.style.top = (rect.bottom + 6) + 'px';
+      // не помещается снизу — открываем над кнопкой
+      emojiPopover.classList.add('open');
+      const h = emojiPopover.offsetHeight;
+      if (rect.bottom + 6 + h > window.innerHeight - 8 && rect.top - 6 - h > 8) {
+        emojiPopover.style.top = (rect.top - 6 - h) + 'px';
+      }
+    } else {
+      emojiPopover.classList.remove('open');
+    }
+    fmtEmojiBtn.setAttribute('aria-expanded', String(open));
+    if (typeof snowFx !== 'undefined') {
+      if (open) snowFx.pause();
+      else if (htmlEl.classList.contains('season-winter') && !document.hidden) snowFx.start();
+    }
+  }
+
+  // стрелки внутри меню: по сетке и по вкладкам; Esc — закрыть и вернуть курсор в текст
+  emojiPopover.addEventListener('keydown', (e) => {
+    const k = e.key;
+    if (k === 'Escape') { e.stopPropagation(); setEmojiOpen(false); editor.focus(); return; }
+    const item = e.target.closest('.emoji-item');
+    const tab = e.target.closest('.emoji-tab');
+    if (item) {
+      const items = Array.from(emojiGridEl.querySelectorAll('.emoji-item'));
+      const i = items.indexOf(item);
+      const cols = getComputedStyle(emojiGridEl).gridTemplateColumns.split(' ').length || 1;
+      const step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -cols, ArrowDown: cols }[k];
+      if (step === undefined) return;
+      e.preventDefault();
+      const next = items[Math.max(0, Math.min(items.length - 1, i + step))];
+      if (next) { next.focus(); next.scrollIntoView({ block: 'nearest' }); }
+    } else if (tab) {
+      const tabs = Array.from(emojiTabsEl.querySelectorAll('.emoji-tab'));
+      const i = tabs.indexOf(tab);
+      const step = { ArrowLeft: -1, ArrowRight: 1 }[k];
+      if (step === undefined) return;
+      e.preventDefault();
+      const next = tabs[Math.max(0, Math.min(tabs.length - 1, i + step))];
+      if (next) { next.click(); const t2 = emojiTabsEl.querySelectorAll('.emoji-tab')[tabs.indexOf(next)]; if (t2) t2.focus(); }
+    }
+  });
+  window.addEventListener('scroll', (e) => {
+    if (emojiPopover.classList.contains('open') && !emojiPopover.contains(e.target)) setEmojiOpen(false);
+  }, true);
+
+  // Заранее подгружаем первые стикеры, когда пользователь только подносит курсор к кнопке
+  let emojiWarmed = false;
+  function warmEmoji() {
+    if (emojiWarmed) return;
+    emojiWarmed = true;
+    STICKER_SETS[0].items.slice(0, 30).forEach((it) => { const im = new Image(); im.decoding = 'async'; im.src = 'emoji/' + it[0] + '.webp'; });
+  }
+  ['pointerenter', 'focus', 'touchstart'].forEach((ev) => fmtEmojiBtn.addEventListener(ev, warmEmoji, { passive: true, once: true }));
+
+  fmtEmojiBtn.addEventListener('mousedown', (e) => e.preventDefault());
+  fmtEmojiBtn.addEventListener('click', () => setEmojiOpen(!emojiPopover.classList.contains('open')));
+  document.addEventListener('mousedown', (e) => {
+    if (emojiPopover.classList.contains('open') && !e.target.closest('.fmt-emoji-wrap')) setEmojiOpen(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && emojiPopover.classList.contains('open')) {
+      setEmojiOpen(false);
+      e.stopImmediatePropagation(); // Esc закрывает только меню смайликов (не выходит из полноэкранного режима)
+    }
+  });
+  window.addEventListener('resize', () => { if (emojiPopover.classList.contains('open')) setEmojiOpen(false); });
+
+
+  /* Панель редактора на компьютере — всегда одна строка: при нехватке места
+     сворачиваем подписи кнопок в иконки (сначала справа, потом «Ударение») */
+  const editorPanelEl = document.getElementById('editorPanel');
+  const editorToolbarEl = editorPanelEl.querySelector('.panel-toolbar');
+  let toolbarFitFrame = 0;
+  function fitEditorToolbar() {
+    toolbarFitFrame = 0;
+    editorPanelEl.classList.remove('tb-c1', 'tb-c2');
+    if (window.innerWidth <= 900) return;
+    const over = () => editorToolbarEl.scrollWidth > editorToolbarEl.clientWidth + 1;
+    if (!over()) return;
+    editorPanelEl.classList.add('tb-c1');
+    if (!over()) return;
+    editorPanelEl.classList.add('tb-c2');
+  }
+  function scheduleToolbarFit() {
+    if (!toolbarFitFrame) toolbarFitFrame = requestAnimationFrame(fitEditorToolbar);
+  }
+  if (window.ResizeObserver) new ResizeObserver(scheduleToolbarFit).observe(editorPanelEl);
+  window.addEventListener('resize', scheduleToolbarFit);
+  window.addEventListener('load', scheduleToolbarFit);
+  // подписи меняются вместе с языком сайта
+  new MutationObserver(scheduleToolbarFit).observe(editorToolbarEl, { childList: true, characterData: true, subtree: true });
+  scheduleToolbarFit();
 
   /* ------------------------------------------------------------------ */
   /* 5. История изменений и кнопка «Обратно»                              */
@@ -1053,6 +1414,8 @@
     updateResult();
     updatePageGuides();
     refreshActiveStates();
+    if (typeof updateStats === 'function') updateStats();
+    if (typeof scheduleAutosave === 'function') scheduleAutosave();
     showToast(t('toastUndone'));
   }
 
@@ -1061,6 +1424,102 @@
 
   // фиксируем состояние ДО начала новой «пачки» правок при обычном наборе
   // текста — так «Обратно» откатывает разумными кусками, а не по букве
+
+  /* Backspace / Delete рядом со стикером: удаляем его сами, а не полагаемся на браузер —
+     так стикер стирается как обычная буква одинаково во всех браузерах (и с экранной клавиатуры).
+     Через границу строки не заходим: на стыке строк Backspace должен склеивать строки. */
+  const INLINE_WRAPPERS = new Set(['SPAN', 'B', 'I', 'U', 'STRONG', 'EM', 'FONT', 'A', 'S', 'SUB', 'SUP']);
+  function isEmptyTextNode(n) { return n.nodeType === 3 && n.nodeValue === ''; }
+  function siblingSkippingEmpty(node, backward) {
+    let n = backward ? node.previousSibling : node.nextSibling;
+    while (n && isEmptyTextNode(n)) n = backward ? n.previousSibling : n.nextSibling;
+    return n;
+  }
+  function childSkippingEmpty(el, index, backward) {
+    let n = backward ? el.childNodes[index - 1] : el.childNodes[index];
+    while (n && isEmptyTextNode(n)) n = backward ? n.previousSibling : n.nextSibling;
+    return n;
+  }
+  function neighborSticker(container, offset, backward) {
+    let c = container, o = offset, node = null;
+    for (;;) {
+      if (c.nodeType === 3) {
+        if (backward ? o > 0 : o < c.nodeValue.length) return null; // рядом обычная буква
+        node = siblingSkippingEmpty(c, backward);
+      } else {
+        node = childSkippingEmpty(c, o, backward);
+      }
+      if (node) break;
+      // соседей нет — выходим наверх, но только через «строчные» обёртки (span, b, i …)
+      const parent = c.parentNode;
+      if (!parent || c === editor || parent === editor.parentNode) return null;
+      if (c.nodeType === 1 && !INLINE_WRAPPERS.has(c.nodeName)) return null; // граница строки/блока
+      const idx = Array.prototype.indexOf.call(parent.childNodes, c);
+      c = parent;
+      o = backward ? idx : idx + 1;
+      if (c === editor) {
+        node = childSkippingEmpty(c, o, backward);
+        break;
+      }
+    }
+    // заходим внутрь обёрток (span с размером шрифта и т.п.)
+    while (node && node.nodeType === 1 && INLINE_WRAPPERS.has(node.nodeName) && node.firstChild) {
+      let inner = backward ? node.lastChild : node.firstChild;
+      while (inner && isEmptyTextNode(inner)) inner = backward ? inner.previousSibling : inner.nextSibling;
+      if (!inner) break;
+      node = inner;
+    }
+    return node && node.nodeName === 'IMG' && node.classList.contains('emo-i') ? node : null;
+  }
+
+  function deleteStickerNearCaret(backward) {
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !sel.isCollapsed || !editor.contains(sel.anchorNode)) return false;
+    const r = sel.getRangeAt(0);
+    const target = neighborSticker(r.startContainer, r.startOffset, backward);
+    if (!target) return false;
+    pushHistory();
+    isTypingBurst = false;
+    const parent = target.parentNode;
+    const idx = Array.prototype.indexOf.call(parent.childNodes, target);
+    parent.removeChild(target);
+    const nr = document.createRange();
+    nr.setStart(parent, idx);
+    nr.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(nr);
+    editor.dispatchEvent(new Event('input', { bubbles: true }));
+    return true;
+  }
+
+  // клик/тап по стикеру выделяет его целиком — дальше Backspace или Delete стирает именно его
+  editor.addEventListener('click', (e) => {
+    const img = e.target;
+    if (!img || img.nodeName !== 'IMG' || !img.classList.contains('emo-i') || !editor.contains(img)) return;
+    const sel = window.getSelection();
+    const r = document.createRange();
+    r.selectNode(img);
+    sel.removeAllRanges();
+    sel.addRange(r);
+    editor.focus();
+  });
+
+  // современные браузеры: beforeinput (работает и с экранной клавиатуры)
+  editor.addEventListener('beforeinput', (e) => {
+    if (e.inputType !== 'deleteContentBackward' && e.inputType !== 'deleteContentForward') return;
+    if (deleteStickerNearCaret(e.inputType === 'deleteContentBackward')) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+  });
+  // запасной вариант для браузеров без beforeinput
+  if (!('onbeforeinput' in editor)) {
+    editor.addEventListener('keydown', (e) => {
+      if ((e.key !== 'Backspace' && e.key !== 'Delete') || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+      if (deleteStickerNearCaret(e.key === 'Backspace')) e.preventDefault();
+    });
+  }
+
   editor.addEventListener('beforeinput', () => {
     if (!isTypingBurst) {
       pushHistory();
@@ -1075,7 +1534,7 @@
     if (!inputFrame) {
       const run = () => {
         inputFrame = null;
-        frameText = editor.innerText;
+        frameText = editorRawText();
         try {
           updateResult();
           updatePageGuides();
@@ -1138,16 +1597,28 @@
   });
 
   copyInputBtn.addEventListener('click', async () => {
-    const text = editor.innerText;
-    if (!text.trim()) { showToast(t('toastNothingCopy')); return; }
+    const text = toPlainOut(editorRawText());
+    if (!text.trim()) { showToast(t('toastNothingCopy')); flashBtn(copyInputBtn, 'is-error', 500); return; }
     await copyPlainText(text);
+    flashBtn(copyInputBtn, 'is-done', 1300);
   });
 
   copyOutputBtn.addEventListener('click', async () => {
-    const text = resultEl.textContent;
-    if (!text) { showToast(t('toastNothingCopy')); return; }
+    const text = toPlainOut(lastResultText);
+    if (!text) { showToast(t('toastNothingCopy')); flashBtn(copyOutputBtn, 'is-error', 500); return; }
     await copyPlainText(text);
+    flashBtn(copyOutputBtn, 'is-done', 1300);
   });
+
+  // Короткая обратная связь на кнопке: «скопировано» (is-done), «ошибка» (is-error)
+  function flashBtn(btn, cls, ms) {
+    if (!btn) return;
+    btn.classList.remove(cls);
+    void btn.offsetWidth; // перезапуск анимации
+    btn.classList.add(cls);
+    clearTimeout(btn['_flash' + cls]);
+    btn['_flash' + cls] = setTimeout(() => btn.classList.remove(cls), ms || 1200);
+  }
 
   async function copyPlainText(text) {
     try {
@@ -1176,7 +1647,7 @@
   if (stressBtn) {
     stressBtn.addEventListener('mousedown', (e) => e.preventDefault());
     stressBtn.addEventListener('click', () => {
-      const plain = editor.innerText.replace(/\u00A0/g, ' ').trim();
+      const plain = editorRawText().replace(/\u00A0/g, ' ').trim();
       if (!plain) {
         showToast(t('stressEmpty'));
         return;
@@ -1212,7 +1683,7 @@
   if (swapDirBtn) {
     swapDirBtn.addEventListener('mousedown', (e) => e.preventDefault());
     swapDirBtn.addEventListener('click', () => {
-      const plain = editor.innerText.replace(/\u00A0/g, ' ');
+      const plain = editorRawText().replace(/\u00A0/g, ' ');
       if (!plain.trim()) {
         showToast(t('toastSwapEmpty'));
         return;
@@ -1237,6 +1708,7 @@
       }
 
       editor.innerText = result;
+      hydrateStickers(editor);
       updateResult();
       updatePageGuides();
       editor.focus();
@@ -1287,10 +1759,11 @@
   let translateBusy = false;
   async function translateEditorTo(langCode) {
     if (translateBusy) return;
-    const text = editor.innerText;
+    const text = toPlainOut(editorRawText());
     if (!text.trim()) { showToast(t('toastNothingTranslate')); return; }
 
     translateBusy = true;
+    langBtn.classList.add('is-busy');
     pushHistory();
     if (!isTranslated) originalHtmlBeforeTranslation = editor.innerHTML;
 
@@ -1315,8 +1788,10 @@
       showToast(t('toastTranslated', { lang: t('lang_' + langCode) }));
     } catch (err) {
       showToast(t('toastTranslateFail'));
+      flashBtn(langBtn, 'is-error', 500);
     } finally {
       translateBusy = false;
+      langBtn.classList.remove('is-busy');
     }
   }
 
@@ -1451,7 +1926,7 @@
   }
 
   exportTxtBtn.addEventListener('click', () => {
-    const text = editor.innerText;
+    const text = toPlainOut(editorRawText());
     if (!text.trim()) { showToast(t('toastNothingExport')); return; }
     downloadTextFile(text, 'ritext.txt');
     showToast(t('toastSaved'));
@@ -1461,9 +1936,28 @@
   //      и превращаем в картинку внутри PDF — так гарантированно
   //      сохраняется кириллица и всё применённое форматирование ----
   let exportBusy = false;
+  // Для PDF: стикеры превращаем в встроенные картинки; если браузер не даёт (открыто с диска —
+  // холст «заражается»), подставляем обычный смайлик, чтобы экспорт не ломался.
+  async function inlineStickersForExport(root) {
+    const imgs = Array.from(root.querySelectorAll('img.emo-i'));
+    await Promise.all(imgs.map(async (img) => {
+      try {
+        const probe = new Image();
+        probe.src = img.src;
+        await probe.decode();
+        const c = document.createElement('canvas');
+        c.width = probe.naturalWidth; c.height = probe.naturalHeight;
+        c.getContext('2d').drawImage(probe, 0, 0);
+        img.src = c.toDataURL('image/png'); // бросит SecurityError, если холст «заражён»
+      } catch (err) {
+        img.replaceWith(document.createTextNode(img.alt || ''));
+      }
+    }));
+  }
+
   exportPdfBtn.addEventListener('click', async () => {
     if (exportBusy) return;
-    const text = editor.innerText;
+    const text = editorRawText();
     if (!text.trim()) {
       showToast(t('toastNothingExport'));
       return;
@@ -1493,6 +1987,7 @@
     page.style.wordWrap = 'break-word';
     page.innerHTML = editor.innerHTML || '';
     document.body.appendChild(page);
+    await inlineStickersForExport(page);
 
     try {
       const canvas = await html2canvas(page, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
@@ -1596,7 +2091,7 @@
 
   // ---- DOCX: минимальный, но валидный .docx (это просто zip с XML) ----
   exportDocxBtn.addEventListener('click', async () => {
-    const text = editor.innerText;
+    const text = toPlainOut(editorRawText());
     if (!text.trim()) { showToast(t('toastNothingExport')); return; }
     if (typeof JSZip === 'undefined') {
       showToast(t('toastDocxOffline'));
@@ -1686,6 +2181,7 @@
     editorPanel.classList.toggle('is-expanded', state);
     closeExpandBtn.classList.toggle('is-hidden', !state);
     expandIcon.textContent = state ? '⤡' : '⤢';
+    expandIcon.dataset.on = state ? '1' : '0';
     expandLabel.dataset.i18n = state ? 'collapse' : 'expand';
     expandLabel.textContent = t(expandLabel.dataset.i18n);
     expandBtn.dataset.i18nAria = state ? 'expandAriaOff' : 'expandAriaOn';
@@ -1698,7 +2194,11 @@
   closeExpandBtn.addEventListener('click', () => setExpanded(false));
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && isExpanded) setExpanded(false);
+    if (e.key === 'Escape' && isExpanded) {
+      const ep = document.getElementById('emojiPopover');
+      if (ep && ep.classList.contains('open')) return; // первым закрывается меню смайликов
+      setExpanded(false);
+    }
   });
 
   /* ------------------------------------------------------------------ */
@@ -2151,7 +2651,7 @@
   const statusSaveEl = document.getElementById('statusSave');
 
   function getEditorPlain() {
-    return ((frameText != null ? frameText : editor.innerText) || '').replace(/\u00A0/g, ' ');
+    return ((frameText != null ? frameText : editorRawText()) || '').replace(/\u00A0/g, ' ');
   }
 
   function updateStats() {
@@ -2222,11 +2722,12 @@
       const tmp = document.createElement('div');
       tmp.innerHTML = data.html;
       const draftText = (tmp.innerText || '').replace(/[\s\u200B\uFEFF]/g, '');
-      if (!draftText) {
+      if (!draftText && !tmp.querySelector('img.emo-i, span.emo')) {
         localStorage.removeItem(DRAFT_KEY);
         return;
       }
       editor.innerHTML = data.html;
+      migrateLegacyStickers(editor); // стикеры из прошлых версий → обычные картинки
       updateResult();
       updatePageGuides();
       updateStats();
@@ -2240,7 +2741,7 @@
   const exportTxtStressBtn = document.getElementById('exportTxtStress');
   if (exportTxtStressBtn) {
     exportTxtStressBtn.addEventListener('click', () => {
-      const plain = getEditorPlain();
+      const plain = toPlainOut(getEditorPlain());
       if (!plain.trim()) {
         showToast(t('toastNothingExport'));
         return;
@@ -2512,7 +3013,7 @@
   const styleBgPreview = document.getElementById('styleBgPreview');
   const styleNoBlurBtn = document.getElementById('styleNoBlur');
 
-  let styleState = { bg: null, noBlur: false, posX: 50, posY: 50, scale: 100, fit: 'scale', season: 'winter' };
+  let styleState = { bg: null, noBlur: false, posX: 50, posY: 50, scale: 100, fit: 'scale', season: 'none' };
 
   function loadStyleState() {
     try {
@@ -2949,7 +3450,7 @@
 
     function targetCount() {
       let n = Math.round((w * h) / 24000);
-      n = Math.max(22, Math.min(70, n));
+      n = Math.max(16, Math.min(34, Math.round(n * 0.5)));
       if (w < 720) n = Math.round(n * 0.6);
       if (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) n = Math.round(n * 0.75);
       return n;
@@ -2969,7 +3470,7 @@
       flakes = [];
       for (let i = 0; i < maxFlakes; i++) flakes.push(spawn({}, true));
       sparks = [];
-      const sc = w < 720 ? 5 : 10;
+      const sc = w < 720 ? 0 : 3;
       for (let i = 0; i < sc; i++) {
         sparks.push({ x: Math.random() * w, y: Math.random() * h * 0.7, ph: Math.random() * TAU, sp: 1.1 + Math.random() * 1.4, s: 9 + Math.random() * 8 });
       }

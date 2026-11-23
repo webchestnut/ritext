@@ -24,8 +24,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Unbounded:wght@400;500;600&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600&family=Sora:wght@400;500;600&family=Fraunces:opsz,wght@9..144,400;9..144,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="liquid-glass.css">
 </head>
 <body>
+
+<!-- Фон Liquid Glass: мягкий свет, виньетка, зерно (стили в liquid-glass.css) -->
+<div class="ambient" aria-hidden="true"><i></i><i></i><i></i></div>
 
 <div class="user-bg-layer" id="userBgLayer" aria-hidden="true">
   <div class="user-bg-blur" id="userBgBlur"></div>
@@ -243,6 +247,16 @@
 
             <div class="fmt-divider"></div>
 
+            <div class="fmt-emoji-wrap">
+              <button class="fmt-btn" id="fmtEmojiBtn" type="button" data-i18n-aria="fmtEmoji" data-i18n-title="fmtEmoji" aria-label="Смайлики" title="Смайлики" aria-haspopup="true" aria-expanded="false"><img class="emoji-ico" src="emoji/a01.webp" alt="" width="24" height="24" draggable="false"></button>
+              <div class="dropdown-menu emoji-popover" id="emojiPopover" role="dialog" data-i18n-aria="fmtEmoji" aria-label="Смайлики">
+                <div class="emoji-tabs" id="emojiTabs" role="tablist"></div>
+                <div class="emoji-grid" id="emojiGrid"></div>
+              </div>
+            </div>
+
+            <div class="fmt-divider"></div>
+
             <button class="fmt-btn" id="stressBtn" type="button" data-i18n-aria="stressAria" aria-label="Ударение" aria-pressed="false" title="Ударение"><span class="ico">´</span><span class="lbl" data-i18n="stressBtn">Ударение</span></button>
           </div>
 
@@ -259,7 +273,7 @@
 
             <button class="btn btn-ghost icon-btn" id="undoBtn" type="button" data-i18n-aria="undo" aria-label="Обратно" title="Обратно"><span class="ico" aria-hidden="true">↺</span><span class="lbl" data-i18n="undo">Обратно</span></button>
 
-            <button class="btn btn-ghost" id="swapDirBtn" type="button" data-i18n-aria="swapDirAria" aria-label="Кириллица ↔ Латиница" title="Кириллица ↔ Латиница">⇄</button>
+            <button class="btn btn-ghost" id="swapDirBtn" type="button" data-i18n-aria="swapDirAria" aria-label="Кириллица ↔ Латиница" title="Кириллица ↔ Латиница"><span class="ico" aria-hidden="true">⇄</span></button>
 
             <button class="btn btn-ghost icon-btn" id="copyInput" type="button" data-i18n-aria="copy" aria-label="Копировать" title="Копировать"><svg class="ico-svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V6a2 2 0 0 1 2-2h10"/></svg><span class="lbl" data-i18n="copy">Копировать</span></button>
             <button class="btn btn-ghost icon-btn" id="clearInput" type="button" data-i18n-aria="clear" aria-label="Удалить" title="Удалить"><span class="ico" aria-hidden="true">⌫</span><span class="lbl" data-i18n="clear">Удалить</span></button>
@@ -356,5 +370,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="script.js"></script>
+<script src="liquid-glass.js"></script>
 </body>
 </html>

@@ -1,0 +1,954 @@
+/* ==========================================================================
+   ritext — Premium Liquid Glass · design system v2
+   Подключается ПОСЛЕ style.css и только улучшает визуальный слой:
+   токены, материалы, фон, глубина, кнопки, поля, меню, иконки, анимации.
+   Логика сайта не затрагивается.
+
+   Содержание
+   1. Токены (типографика, радиусы, движение, z-index, палитры)
+   2. Фон: ambient-свет, виньетка, тонкое зерно
+   3. Материалы стекла (основное / лёгкое / плотное / плавающее / кнопочное)
+   4. (убрано ради скорости)
+   5. Панели и редактор
+   6. Кнопки (primary / secondary / ghost / icon / tool / active / disabled)
+   7. Клавиши алфавита
+   8. Меню, всплывающие панели, окна, подсказки, уведомления
+   9. Иконки
+   10. Состояния: копирование, обработка, ошибка
+   11. Прокрутка, выделение, фокус
+   12. Адаптивность, производительность, reduced-motion
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. ТОКЕНЫ
+   ========================================================================== */
+
+:root {
+  /* Типографика: системный стек — SF Pro на macOS/iOS, Segoe UI Variable на Windows */
+  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+             "Segoe UI Variable Text", "Segoe UI", "Helvetica Neue", Inter, Manrope,
+             Roboto, "Noto Sans", Arial, sans-serif;
+
+  /* Шкала радиусов */
+  --r-xs: 10px;
+  --r-sm: 14px;
+  --r-md: 20px;
+  --r-lg: 28px;
+  --r-pill: 999px;
+  --radius-key: 12px;
+  --radius-md: 22px;
+  --radius-lg: 30px;
+
+  /* Движение */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-apple: cubic-bezier(0.32, 0.72, 0, 1);   /* «шторка» iOS: быстрый старт, мягкая остановка */
+  --ease-spring: cubic-bezier(0.34, 1.45, 0.64, 1); /* едва заметная пружинка для маленьких элементов */
+  --dur-fast: 0.12s;
+  --dur-base: 0.2s;
+  --dur-slow: 0.32s;
+
+  /* Слои (z-index) */
+  --z-ambient: -2;
+  --z-panel: 1;
+  --z-float: 40;
+  --z-popover: 600;
+  --z-modal: 900;
+  --z-tooltip: 1000;
+  --z-toast: 1100;
+}
+
+/* ---------- Тёмная палитра (графит) ---------- */
+html[data-theme="dark"] {
+  --text: #f5f6f9;
+  --text-muted: rgba(245, 246, 249, 0.68);
+  --text-faint: rgba(245, 246, 249, 0.42);
+
+  --border: rgba(255, 255, 255, 0.20);
+  --border-soft: rgba(255, 255, 255, 0.085);
+  --rim-top: rgba(255, 255, 255, 0.46);
+  --rim-side: rgba(255, 255, 255, 0.14);
+  --rim-bottom: rgba(255, 255, 255, 0.055);
+
+  /* Материал основного стекла: прозрачный графит + блики */
+  --panel: rgba(14, 16, 22, 0.40);
+  --panel-alt: rgba(14, 16, 22, 0.32);
+  --sheen:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0) 14%),
+    linear-gradient(118deg, rgba(255, 255, 255, 0) 16%, rgba(255, 255, 255, 0.05) 29%, rgba(255, 255, 255, 0) 42%),
+    linear-gradient(155deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.015) 42%, rgba(255, 255, 255, 0) 62%, rgba(255, 255, 255, 0.04));
+
+  --key-bg: rgba(255, 255, 255, 0.055);
+  --key-bg-hover: rgba(255, 255, 255, 0.12);
+  --key-border: rgba(255, 255, 255, 0.13);
+  --btn-bg: rgba(255, 255, 255, 0.06);
+  --btn-bg-hover: rgba(255, 255, 255, 0.13);
+  --btn-primary-bg: #f2f3f7;
+  --btn-primary-text: #0b0d12;
+  --btn-primary-hover: #ffffff;
+  --btn-gloss: linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.05) 48%, rgba(255, 255, 255, 0.015) 100%);
+  --btn-gloss-hover: linear-gradient(180deg, rgba(255, 255, 255, 0.30) 0%, rgba(255, 255, 255, 0.09) 52%, rgba(255, 255, 255, 0.03) 100%);
+
+  /* Плавающее стекло (меню, окна, подсказки) */
+  --dropdown-bg: rgba(20, 22, 30, 0.74);
+  --dropdown-border: rgba(255, 255, 255, 0.16);
+  --dropdown-hover: rgba(255, 255, 255, 0.09);
+  --toast-bg: rgba(18, 20, 28, 0.80);
+  --scrollbar-thumb: rgba(255, 255, 255, 0.16);
+
+  --shadow-panel:
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.035),
+    inset 0 22px 38px -30px rgba(255, 255, 255, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.28),
+    0 14px 34px -14px rgba(0, 0, 0, 0.52),
+    0 40px 90px -46px rgba(0, 0, 0, 0.66);
+  --shadow-float:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05),
+    0 2px 4px rgba(0, 0, 0, 0.30),
+    0 22px 50px -12px rgba(0, 0, 0, 0.62),
+    0 50px 100px -40px rgba(0, 0, 0, 0.6);
+  --shadow-btn:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    0 1px 2px rgba(0, 0, 0, 0.34),
+    0 6px 12px -8px rgba(0, 0, 0, 0.5);
+
+  --glass-blur: blur(14px) saturate(140%);
+
+  /* Свет на фоне */
+  --amb-1: rgba(150, 172, 232, 0.30);
+  --amb-2: rgba(104, 128, 196, 0.26);
+  --amb-3: rgba(235, 240, 255, 0.085);
+  --vignette: rgba(0, 0, 0, 0.46);
+  --light-core: rgba(255, 255, 255, 0.10);
+  --light-mid: rgba(255, 255, 255, 0.035);
+}
+
+/* ---------- Светлая палитра (матовое молочное стекло) ---------- */
+html[data-theme="light"] {
+  --text: #10131a;
+  --text-muted: rgba(16, 19, 26, 0.62);
+  --text-faint: rgba(16, 19, 26, 0.40);
+
+  --border: rgba(255, 255, 255, 0.70);
+  --border-soft: rgba(20, 30, 60, 0.08);
+  --rim-top: rgba(255, 255, 255, 0.95);
+  --rim-side: rgba(255, 255, 255, 0.55);
+  --rim-bottom: rgba(255, 255, 255, 0.30);
+
+  --panel: rgba(255, 255, 255, 0.44);
+  --panel-alt: rgba(255, 255, 255, 0.34);
+  --sheen:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.70) 0%, rgba(255, 255, 255, 0) 16%),
+    linear-gradient(118deg, rgba(255, 255, 255, 0) 16%, rgba(255, 255, 255, 0.35) 29%, rgba(255, 255, 255, 0) 42%),
+    linear-gradient(155deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.06) 45%, rgba(255, 255, 255, 0) 62%, rgba(255, 255, 255, 0.18));
+
+  --key-bg: rgba(255, 255, 255, 0.50);
+  --key-bg-hover: rgba(255, 255, 255, 0.80);
+  --key-border: rgba(255, 255, 255, 0.80);
+  --btn-bg: rgba(255, 255, 255, 0.46);
+  --btn-bg-hover: rgba(255, 255, 255, 0.78);
+  --btn-primary-bg: #14161d;
+  --btn-primary-text: #ffffff;
+  --btn-primary-hover: #262a35;
+  --btn-gloss: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.25) 50%, rgba(255, 255, 255, 0.05) 100%);
+  --btn-gloss-hover: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.40) 55%, rgba(255, 255, 255, 0.10) 100%);
+
+  --dropdown-bg: rgba(255, 255, 255, 0.70);
+  --dropdown-border: rgba(255, 255, 255, 0.85);
+  --dropdown-hover: rgba(255, 255, 255, 0.85);
+  --scrollbar-thumb: rgba(20, 30, 60, 0.18);
+
+  --shadow-panel:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(60, 80, 130, 0.07),
+    0 1px 2px rgba(40, 60, 110, 0.08),
+    0 14px 34px -16px rgba(40, 60, 110, 0.22),
+    0 36px 80px -44px rgba(40, 60, 110, 0.26);
+  --shadow-float:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 2px 4px rgba(40, 60, 110, 0.10),
+    0 22px 50px -14px rgba(40, 60, 110, 0.30);
+  --shadow-btn:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 1px 2px rgba(40, 60, 110, 0.14),
+    0 6px 12px -8px rgba(40, 60, 110, 0.26);
+
+  --glass-blur: blur(16px) saturate(150%);
+
+  --amb-1: rgba(170, 196, 245, 0.55);
+  --amb-2: rgba(205, 190, 240, 0.40);
+  --amb-3: rgba(255, 255, 255, 0.70);
+  --vignette: rgba(70, 90, 140, 0.10);
+  --light-core: rgba(255, 255, 255, 0.85);
+  --light-mid: rgba(255, 255, 255, 0.30);
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  letter-spacing: -0.003em;
+  -webkit-text-size-adjust: 100%;
+}
+
+button, input, select, textarea { font-family: inherit; }
+
+
+/* ==========================================================================
+   2. ФОН — глубокий графит + мягкий свет + виньетка + текстура
+   ========================================================================== */
+
+html[data-theme="dark"] body {
+  background:
+    radial-gradient(120% 80% at 50% -25%, #1a1d27 0%, rgba(26, 29, 39, 0) 58%),
+    radial-gradient(90% 60% at 100% 105%, #14161e 0%, rgba(20, 22, 30, 0) 55%),
+    linear-gradient(180deg, #0c0e13 0%, #07080b 100%);
+}
+html[data-theme="light"] body {
+  background:
+    radial-gradient(120% 80% at 50% -20%, #f6f8fd 0%, rgba(246, 248, 253, 0) 58%),
+    radial-gradient(90% 60% at 100% 105%, #e7ecf8 0%, rgba(231, 236, 248, 0) 55%),
+    linear-gradient(180deg, #e9edf6 0%, #dfe5f1 100%);
+}
+
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-ambient);
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+.ambient i {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.ambient i:nth-child(1) {
+  width: 72vmax; height: 72vmax; left: -20vmax; top: -30vmax;
+  background: radial-gradient(closest-side, var(--amb-1), transparent 72%);
+}
+.ambient i:nth-child(2) {
+  width: 62vmax; height: 62vmax; right: -22vmax; bottom: -28vmax;
+  background: radial-gradient(closest-side, var(--amb-2), transparent 72%);
+}
+.ambient i:nth-child(3) {
+  width: 44vmax; height: 44vmax; left: 38%; top: 46%;
+  background: radial-gradient(closest-side, var(--amb-3), transparent 70%);
+}
+/* виньетка: свет к центру, углы чуть глубже */
+.ambient::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(130% 100% at 50% 38%, transparent 52%, var(--vignette) 100%);
+}
+
+/* Фон неподвижен: под размытыми панелями движущийся слой заставлял бы браузер
+   пересчитывать размытие на каждом кадре. Плавное движение света включается
+   кнопкой «Анимировать» вместе с выбранным тоном (она уже есть в интерфейсе). */
+
+/* с выбранным тоном или своей фотографией — тон/фото сами создают атмосферу */
+html.tone-on .ambient,
+html.has-user-bg .ambient { display: none; }
+
+
+/* ==========================================================================
+   3. МАТЕРИАЛЫ СТЕКЛА
+   ========================================================================== */
+
+/* 3.1 Основное стекло (большие панели) */
+.alphabet,
+.result-panel,
+.editor-panel::before {
+  background: var(--sheen), var(--panel);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-panel);
+  border-color: var(--rim-top) var(--rim-side) var(--rim-bottom) var(--rim-side);
+  transition: border-color var(--dur-slow) var(--ease-out);
+}
+
+/* 3.2 Лёгкое стекло (капсулы инструментов, чипы) — без размытия, только слои */
+.tool-bar,
+.export-bar,
+.status-chip {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02) 60%),
+    rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.10),
+    0 4px 14px -8px rgba(0, 0, 0, 0.45);
+}
+html[data-theme="light"] .tool-bar,
+html[data-theme="light"] .export-bar,
+html[data-theme="light"] .status-chip {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.30) 70%), rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.85);
+  box-shadow: inset 0 1px 0 #fff, inset 0 -1px 0 rgba(60, 80, 130, 0.06), 0 4px 14px -8px rgba(40, 60, 110, 0.22);
+}
+
+/* 3.3 Плотное стекло: меню, окна, подсказки, уведомления */
+.dropdown-menu,
+.tone-popover,
+.style-popover,
+.modal-card,
+.toast {
+  background: var(--sheen), var(--dropdown-bg);
+  -webkit-backdrop-filter: blur(16px) saturate(145%);
+  backdrop-filter: blur(16px) saturate(145%);
+  border: 1px solid;
+  border-color: var(--rim-top) var(--rim-side) var(--rim-bottom) var(--rim-side);
+  box-shadow: var(--shadow-float);
+}
+.modal-overlay {
+  background: radial-gradient(120% 100% at 50% 40%, rgba(8, 10, 16, 0.50), rgba(4, 5, 9, 0.72));
+}
+html[data-theme="light"] .modal-overlay {
+  background: radial-gradient(120% 100% at 50% 40%, rgba(220, 228, 244, 0.45), rgba(190, 200, 224, 0.62));
+}
+
+/* 3.4 Фокус-состояние главной панели: рамка чуть выразительнее, поверхность «глубже» */
+.editor-panel:focus-within::before {
+  border-color: rgba(255, 255, 255, 0.58) rgba(255, 255, 255, 0.24) rgba(255, 255, 255, 0.10) rgba(255, 255, 255, 0.24);
+  box-shadow:
+    var(--shadow-panel),
+    inset 0 28px 70px -40px rgba(255, 255, 255, 0.10),
+    0 0 0 4px rgba(255, 255, 255, 0.032);
+}
+html[data-theme="light"] .editor-panel:focus-within::before {
+  border-color: #fff rgba(255, 255, 255, 0.9) rgba(255, 255, 255, 0.6) rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-panel), 0 0 0 4px rgba(90, 120, 190, 0.10);
+}
+
+/* 3.5 Тонкая линия между шапкой панели и содержимым */
+.panel-toolbar {
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg, rgba(255, 255, 255, 0), var(--border-soft) 12%, var(--border) 50%, var(--border-soft) 88%, rgba(255, 255, 255, 0)) 1;
+}
+html[data-theme="dark"] .panel-toolbar {
+  border-image: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.10) 14%, rgba(255, 255, 255, 0.16) 50%, rgba(255, 255, 255, 0.10) 86%, rgba(255, 255, 255, 0)) 1;
+}
+
+
+/* ==========================================================================
+   5. ПАНЕЛИ, РЕДАКТОР, ТИПОГРАФИКА
+   ========================================================================== */
+
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  text-shadow: none;
+}
+html[data-theme="dark"] .logo {
+  background: linear-gradient(180deg, #ffffff 20%, rgba(255, 255, 255, 0.66));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.panel-title {
+  font-size: 11.5px;
+  font-weight: 650;
+  letter-spacing: 0.09em;
+}
+
+.editor,
+.result {
+  font-size: 17px;
+  line-height: 1.7;
+  letter-spacing: -0.006em;
+}
+.editor { caret-color: var(--text); }
+.editor:empty::before,
+.result:empty::before {
+  color: var(--text-faint);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.result { color: var(--text-muted); transition: color var(--dur-base) var(--ease-out); }
+
+.tool-label {
+  font-size: 10.5px;
+  letter-spacing: 0.09em;
+  opacity: 0.85;
+}
+
+.status-chip {
+  font-size: 12px;
+  color: var(--text-muted);
+  gap: 6px;
+}
+.status-chip strong { color: var(--text); font-weight: 650; font-variant-numeric: tabular-nums; }
+
+
+
+/* ==========================================================================
+   6. КНОПКИ — единая система
+   ========================================================================== */
+
+/* Secondary / Ghost / Tool: стеклянная капсула с верхним бликом */
+.btn,
+.fmt-inline .fmt-btn {
+  background: var(--btn-gloss), var(--btn-bg);
+  border: 1px solid var(--key-border);
+  box-shadow: var(--shadow-btn);
+  letter-spacing: -0.005em;
+  transition:
+    background-color var(--dur-base) var(--ease-apple),
+    border-color var(--dur-base) var(--ease-apple),
+    color var(--dur-fast) var(--ease-apple),
+    transform var(--dur-base) var(--ease-apple);
+}
+.btn { font-size: 13.5px; font-weight: 560; }
+
+.btn:hover,
+.fmt-inline .fmt-btn:hover {
+  background: var(--btn-gloss-hover), var(--btn-bg-hover);
+  border-color: rgba(255, 255, 255, 0.30);
+  box-shadow: var(--shadow-btn), inset 0 0 18px rgba(255, 255, 255, 0.05);
+  transform: translateY(-0.5px);
+}
+html[data-theme="light"] .btn:hover,
+html[data-theme="light"] .fmt-inline .fmt-btn:hover {
+  border-color: #fff;
+  box-shadow: var(--shadow-btn), inset 0 0 18px rgba(255, 255, 255, 0.6);
+}
+
+/* Нажатие: аккуратный «вдох» без сильного масштаба */
+.btn:active,
+.fmt-btn:active {
+  transform: translateY(0.5px) scale(0.985);
+  transition-duration: 0.06s;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.22), 0 1px 1px rgba(0, 0, 0, 0.12);
+}
+
+/* Primary: светлое матовое стекло с мягким свечением */
+.btn.btn-primary {
+  background: linear-gradient(180deg, #ffffff 0%, var(--btn-primary-bg) 100%);
+  color: var(--btn-primary-text);
+  border: 1px solid transparent;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 1px 2px rgba(0, 0, 0, 0.32),
+    0 8px 18px -10px rgba(0, 0, 0, 0.55);
+}
+.btn.btn-primary:hover {
+  background: linear-gradient(180deg, #ffffff 0%, var(--btn-primary-hover) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 1px 2px rgba(0, 0, 0, 0.32),
+    0 10px 22px -10px rgba(0, 0, 0, 0.6);
+}
+html[data-theme="light"] .btn.btn-primary {
+  background: linear-gradient(180deg, #2b303c 0%, var(--btn-primary-bg) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24), 0 1px 2px rgba(20, 30, 60, 0.3), 0 10px 20px -10px rgba(20, 30, 60, 0.5);
+}
+html[data-theme="light"] .btn.btn-primary:hover {
+  background: linear-gradient(180deg, #343a49 0%, var(--btn-primary-hover) 100%);
+}
+
+/* Active (выбранный инструмент): светлое «включённое» стекло — хорошо видно и без цвета */
+html:not(.tone-on) .btn[aria-pressed="true"],
+html:not(.tone-on) .btn[aria-pressed="true"]:hover,
+html:not(.tone-on) .fmt-btn.active,
+html:not(.tone-on) .fmt-inline .fmt-btn.active {
+  background: linear-gradient(180deg, #ffffff 0%, #dde1ea 100%);
+  color: #0b0d12;
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 -1px 0 rgba(0, 0, 0, 0.10),
+    0 0 0 3px rgba(255, 255, 255, 0.10),
+    0 8px 22px -10px rgba(255, 255, 255, 0.45);
+}
+html[data-theme="light"]:not(.tone-on) .btn[aria-pressed="true"],
+html[data-theme="light"]:not(.tone-on) .fmt-btn.active,
+html[data-theme="light"]:not(.tone-on) .fmt-inline .fmt-btn.active {
+  background: linear-gradient(180deg, #2b303c 0%, #14161d 100%);
+  color: #fff;
+  border-color: rgba(20, 22, 30, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 0 0 3px rgba(20, 30, 60, 0.08), 0 8px 22px -10px rgba(20, 30, 60, 0.5);
+}
+
+/* Disabled */
+.btn[disabled],
+.btn[aria-disabled="true"],
+.fmt-btn[disabled] {
+  opacity: 0.42;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  filter: saturate(0.6);
+}
+
+/* Фокус с клавиатуры — аккуратное кольцо, а не стандартный outline */
+.btn:focus-visible,
+.fmt-btn:focus-visible,
+.letter-key:focus-visible,
+.season-card:focus-visible,
+.emoji-item:focus-visible,
+.emoji-tab:focus-visible {
+  outline: 1.5px solid rgba(255, 255, 255, 0.78);
+  outline-offset: 2px;
+}
+html[data-theme="light"] .btn:focus-visible,
+html[data-theme="light"] .fmt-btn:focus-visible,
+html[data-theme="light"] .letter-key:focus-visible { outline-color: rgba(30, 50, 110, 0.7); }
+
+/* Круглые кнопки-иконки */
+#expandBtn, #chromeToggle { min-width: 38px; padding-left: 12px; padding-right: 12px; }
+#swapDirBtn { padding-left: 14px; padding-right: 14px; }
+
+
+/* ==========================================================================
+   7. КЛАВИШИ АЛФАВИТА — «кейкапы» стекла
+   ========================================================================== */
+
+.letter-key {
+  background: var(--btn-gloss), var(--key-bg);
+  border: 1px solid var(--key-border);
+  font-weight: 560;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24), 0 2px 4px -1px rgba(0, 0, 0, 0.34);
+  transition:
+    background-color var(--dur-base) var(--ease-apple),
+    border-color var(--dur-base) var(--ease-apple),
+    transform var(--dur-base) var(--ease-apple);
+}
+.letter-key:hover {
+  background: var(--btn-gloss-hover), var(--key-bg-hover);
+  border-color: rgba(255, 255, 255, 0.34);
+  transform: translateY(-1px);
+}
+.letter-key:active {
+  transform: translateY(0.5px) scale(0.97);
+  transition-duration: 0.06s;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+html[data-theme="light"] .letter-key {
+  box-shadow: inset 0 1px 0 #fff, inset 0 -2px 3px -1px rgba(60, 80, 130, 0.10), 0 2px 5px -1px rgba(40, 60, 110, 0.20);
+}
+
+
+/* ==========================================================================
+   8. МЕНЮ, ОКНА, ПОДСКАЗКИ, УВЕДОМЛЕНИЯ
+   ========================================================================== */
+
+/* Единая анимация открытия: мягкое появление + лёгкий подъём */
+.dropdown-menu,
+.tone-popover {
+  transform: translateY(-6px) scale(0.975);
+  transform-origin: top left;
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out),
+    visibility 0s linear var(--dur-base);
+}
+.dropdown-menu.open,
+.tone-popover.open {
+  transform: none;
+  transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-slow) var(--ease-out), visibility 0s;
+}
+
+.dropdown-menu li {
+  border-radius: var(--r-xs);
+  font-size: 14px;
+  transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.dropdown-menu li:hover,
+.dropdown-menu li:focus-visible { background: var(--dropdown-hover); transform: none; }
+
+.modal-card { border-radius: 26px; animation-duration: 0.45s; }
+.toast { z-index: var(--z-toast); border-radius: var(--r-pill); }
+
+.tone-popover { z-index: calc(var(--z-popover) + 50); }
+.style-popover { z-index: calc(var(--z-float) + 40); }
+
+/* Подсказка (создаётся в liquid-glass.js) */
+.lg-tooltip {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: var(--z-tooltip);
+  max-width: 260px;
+  padding: 7px 11px;
+  border-radius: var(--r-sm);
+  font-size: 12.5px;
+  font-weight: 540;
+  line-height: 1.3;
+  color: var(--text);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(0, 4px, 0) scale(0.97);
+  transition: opacity 0.14s ease-out, transform 0.18s var(--ease-apple);
+  background: var(--sheen), rgba(24, 26, 34, 0.92);
+  border: 1px solid;
+  border-color: var(--rim-top) var(--rim-side) var(--rim-bottom) var(--rim-side);
+  box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.55);
+}
+html[data-theme="light"] .lg-tooltip { background: var(--sheen), rgba(255, 255, 255, 0.94); }
+.lg-tooltip.is-on { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+.lg-tooltip.is-below { transform-origin: top center; }
+
+
+/* ==========================================================================
+   9. ИКОНКИ — единый тонкий линейный стиль (маски; текст-глифы скрыты)
+   ========================================================================== */
+
+:root {
+  --i-expand:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 4h5v5M9 20H4v-5M20 4l-6.5 6.5M4 20l6.5-6.5'/%3E%3C/svg%3E");
+  --i-collapse: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 9h-5V4M4 15h5v5M15 9l6-6M9 15l-6 6'/%3E%3C/svg%3E");
+  --i-menu:     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'%3E%3Cpath d='M5 8h14M5 12h14M5 16h14'/%3E%3C/svg%3E");
+  --i-translate:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5h9M8.5 3v2M5.5 5c.6 3.4 2.6 6.2 5.6 8M11.5 5c-.6 3.4-3 6.4-7 8.4M13 21l4.2-9.5L21.4 21M14.4 17.8h5.6'/%3E%3C/svg%3E");
+  --i-undo:     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 7.5V3M3.5 7.5H8M4 8a8.5 8.5 0 1 1-.6 6.4'/%3E%3C/svg%3E");
+  --i-swap:     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 8h15M15 4l4 4-4 4M20 16H5M9 12l-4 4 4 4'/%3E%3C/svg%3E");
+  --i-delete:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 5H9l-6 7 6 7h11a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1zM16.5 9.5l-5 5M11.5 9.5l5 5'/%3E%3C/svg%3E");
+  --i-accent:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 4.2l3.2 2.4M14.5 13.2a4 4 0 1 0 0 5.6M14.5 12.2v7.6'/%3E%3C/svg%3E");
+  --i-close:    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'%3E%3Cpath d='M6.5 6.5l11 11M17.5 6.5l-11 11'/%3E%3C/svg%3E");
+}
+
+/* общий каркас значка: маска + currentColor; сам текст-глиф скрыт */
+.ico,
+.expand-icon,
+.chrome-toggle-icon,
+.fmt-close,
+#swapDirBtn .ico {
+  position: relative;
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+  font-size: 0 !important;
+  line-height: 0;
+  vertical-align: -0.22em;
+  flex-shrink: 0;
+  color: inherit;
+}
+.ico::before,
+.expand-icon::before,
+.chrome-toggle-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  -webkit-mask: var(--ic) center / contain no-repeat;
+  mask: var(--ic) center / contain no-repeat;
+  opacity: 0.92;
+}
+#undoBtn .ico   { --ic: var(--i-undo); }
+#langBtn .ico   { --ic: var(--i-translate); }
+#stressBtn .ico { --ic: var(--i-accent); }
+#clearInput .ico,
+#clearOutput .ico { --ic: var(--i-delete); }
+#swapDirBtn .ico  { --ic: var(--i-swap); }
+.expand-icon { --ic: var(--i-expand); }
+.expand-icon[data-on="1"] { --ic: var(--i-collapse); }
+.chrome-toggle-icon { --ic: var(--i-menu); }
+
+/* крестик полноэкранного режима */
+#closeExpandBtn {
+  position: relative;
+  width: 32px;
+  font-size: 0;
+}
+#closeExpandBtn::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  background: currentColor;
+  -webkit-mask: var(--i-close) center / contain no-repeat;
+  mask: var(--i-close) center / contain no-repeat;
+}
+
+/* ✕ в меню «Стиль» / «Тон» и ✓ в меню — тоже тонкие линии */
+.style-close { font-size: 0; position: relative; }
+.style-close::before {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  background: currentColor;
+  -webkit-mask: var(--i-close) center / contain no-repeat;
+  mask: var(--i-close) center / contain no-repeat;
+}
+.ico-svg { stroke-width: 1.7; }
+.site-lang-icon { stroke-width: 1.7; }
+
+
+/* ==========================================================================
+   10. СОСТОЯНИЯ: копирование · обработка · ошибка
+   ========================================================================== */
+
+@keyframes doneIcon {
+  0%   { transform: scale(0.6); opacity: 0; }
+  60%  { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes shimmer {
+  from { transform: translateX(-120%); }
+  to   { transform: translateX(120%); }
+}
+@keyframes errorNudge {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  60% { transform: translateX(2.5px); }
+}
+
+.btn.is-done .ico-svg { display: none; }
+.btn.is-done::before {
+  content: '';
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / contain no-repeat;
+  animation: doneIcon 0.4s var(--ease-out);
+  margin-right: 4px;
+}
+
+.btn.is-busy { position: relative; overflow: hidden; pointer-events: none; }
+.btn.is-busy::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.28) 50%, transparent 80%);
+  animation: shimmer 1.15s var(--ease-inout) infinite;
+}
+.btn.is-error {
+  animation: errorNudge 0.42s var(--ease-inout);
+  border-color: rgba(255, 130, 130, 0.65);
+  box-shadow: var(--shadow-btn), 0 0 0 3px rgba(255, 110, 110, 0.14);
+}
+
+
+/* ==========================================================================
+   11. ПРОКРУТКА, ВЫДЕЛЕНИЕ
+   ========================================================================== */
+
+::selection { background: rgba(160, 190, 255, 0.32); color: inherit; }
+html[data-theme="light"] ::selection { background: rgba(70, 110, 220, 0.24); }
+
+.editor, .result-wrap, .dropdown-menu { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent; }
+.editor::-webkit-scrollbar, .result-wrap::-webkit-scrollbar { width: 10px; }
+.editor::-webkit-scrollbar-thumb, .result-wrap::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 10px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+.editor::-webkit-scrollbar-track, .result-wrap::-webkit-scrollbar-track { background: transparent; }
+
+
+/* ==========================================================================
+   12. АДАПТИВНОСТЬ · ПРОИЗВОДИТЕЛЬНОСТЬ · REDUCED MOTION
+   ========================================================================== */
+
+/* Телефон/планшет: легче размытие, без «света курсора», фон компактнее */
+@media (max-width: 900px) {
+  html[data-theme="dark"],
+  html[data-theme="light"] { --glass-blur: blur(10px) saturate(130%); }
+  .ambient i:nth-child(1) { width: 90vmax; height: 90vmax; }
+  .ambient i:nth-child(2) { width: 80vmax; height: 80vmax; }
+  .ambient i:nth-child(3) { display: none; }
+  .logo { font-size: 24px; }
+}
+@media (hover: none) {
+  .btn:hover, .letter-key:hover, .fmt-inline .fmt-btn:hover { transform: none; }
+}
+
+/* «Убрать размытие блоков» */
+html.no-glass-blur .dropdown-menu,
+html.no-glass-blur .tone-popover,
+html.no-glass-blur .style-popover,
+html.no-glass-blur .modal-card,
+html.no-glass-blur .lg-tooltip {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* Пока вкладка в фоне — ничего не анимируем */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* ---- выравнивание значка и подписи ---- */
+#swapDirBtn,
+#stressBtn,
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+#swapDirBtn { height: 32px; min-width: 40px; padding: 0 12px; }
+#stressBtn .ico,
+.icon-btn .ico { vertical-align: 0; }
+.fmt-inline .fmt-btn#stressBtn { padding: 0 12px 0 10px; }
+
+
+/* ---- значки основных кнопок шапки (всегда видны; в узкой шапке остаются вместо подписи) ---- */
+:root {
+  --i-theme:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8.5'/%3E%3Cpath d='M12 3.5a8.5 8.5 0 0 0 0 17z' fill='black'/%3E%3C/svg%3E");
+  --i-sparkle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 3.5l1.9 5.2L18 10.6l-5.1 1.9L11 17.7l-1.9-5.2L4 10.6l5.1-1.9z'/%3E%3Cpath d='M18.5 15.5l.8 2.1 2.1.8-2.1.8-.8 2.1-.8-2.1-2.1-.8 2.1-.8z'/%3E%3C/svg%3E");
+  --i-palette: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3a9 9 0 1 0 0 18c1.1 0 1.8-.8 1.8-1.7 0-.5-.2-.9-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1 .8-1.7 1.8-1.7H17a4 4 0 0 0 4-4C21 6.6 16.9 3 12 3z'/%3E%3Cpath d='M7.5 11.5h.01M10 7.5h.01M14 7.5h.01'/%3E%3C/svg%3E");
+}
+#themeToggle::before,
+#animateBtn::before,
+#styleBtn::before,
+#quickStyleBtn::before {
+  content: '';
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+  margin-right: 7px;
+  vertical-align: -0.24em;
+  background: currentColor;
+  -webkit-mask: var(--m) center / contain no-repeat;
+  mask: var(--m) center / contain no-repeat;
+  opacity: 0.92;
+}
+#themeToggle::before { --m: var(--i-theme); }
+#animateBtn::before { --m: var(--i-sparkle); }
+#styleBtn::before,
+#quickStyleBtn::before { --m: var(--i-palette); }
+/* в компактной шапке (font-size:0 у кнопки) значок остаётся без отступа */
+@media (min-width: 901px) and (max-width: 1420px) {
+  #themeToggle::before, #animateBtn::before, #styleBtn::before { margin-right: 0; }
+}
+
+/* ---- выбранные карточки/ползунки — нейтральные, без синего ---- */
+.season-card.is-selected {
+  border-color: rgba(255, 255, 255, 0.62);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.08)), var(--btn-bg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 0 3px rgba(255, 255, 255, 0.06), 0 8px 22px -12px rgba(255, 255, 255, 0.35);
+}
+html[data-theme="light"] .season-card.is-selected {
+  border-color: rgba(20, 24, 40, 0.55);
+  background: linear-gradient(180deg, #fff, rgba(255, 255, 255, 0.7));
+}
+input[type="range"] { accent-color: rgba(238, 241, 248, 0.95); }
+html[data-theme="light"] input[type="range"] { accent-color: #23283a; }
+
+
+/* «Копировать» и другие primary-кнопки: без светлой обводки в любом режиме */
+.btn.btn-primary,
+.btn.btn-primary:hover,
+.btn.btn-primary:active,
+.btn.btn-primary:focus,
+html.season-winter .btn.btn-primary,
+html.season-autumn .btn.btn-primary,
+html.tone-on .btn.btn-primary {
+  border-color: transparent !important;
+}
+.btn.btn-primary:focus-visible { outline-color: rgba(255, 255, 255, 0.55); }
+
+
+/* ==========================================================================
+   13. ДВИЖЕНИЕ В СТИЛЕ APPLE — короткое, плавное, лёгкое
+   Анимируются только transform и opacity (их считает видеокарта, без перерисовки
+   размытия). Открытие — «пружинистая шторка», закрытие — быстрее, чем открытие.
+   ========================================================================== */
+
+@keyframes lgRise  { from { opacity: 0; transform: translate3d(0, 8px, 0); } to { opacity: 1; transform: none; } }
+@keyframes lgFade  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes lgPop   { from { opacity: 0; transform: translate3d(0, -6px, 0) scale(0.94); } to { opacity: 1; transform: none; } }
+@keyframes lgSheet { from { opacity: 0; transform: translate3d(0, 14px, 0) scale(0.955); } to { opacity: 1; transform: none; } }
+@keyframes lgSwap  { from { opacity: 0; transform: translate3d(0, 5px, 0); } to { opacity: 1; transform: none; } }
+@keyframes lgPopIn { 0% { transform: scale(0.5); opacity: 0; } 62% { transform: scale(1.14); opacity: 1; } 100% { transform: scale(1); } }
+
+/* Появление страницы: быстро и один раз (раньше было 0,75 с с масштабом) */
+.app-header, .alphabet, .editor-panel, .result-panel {
+  animation: lgRise 0.4s var(--ease-apple) backwards;
+}
+.alphabet { animation-delay: 0.03s; }
+.editor-panel { animation-delay: 0.07s; }
+.result-panel { animation-delay: 0.11s; }
+
+/* Меню и всплывающие панели: открытие 0,26 с, закрытие 0,14 с */
+.dropdown-menu,
+.tone-popover,
+.dropdown-menu.emoji-popover {
+  opacity: 0;
+  transform: translate3d(0, -4px, 0) scale(0.95);
+  transform-origin: top left;
+  transition: opacity 0.14s ease-out, transform 0.14s ease-out, visibility 0s linear 0.14s;
+}
+.dropdown-menu.open,
+.tone-popover.open,
+.dropdown-menu.emoji-popover.open {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.2s var(--ease-apple), transform 0.28s var(--ease-apple), visibility 0s;
+}
+.style-popover:not([hidden]) { animation: lgPop 0.28s var(--ease-apple); transform-origin: top center; }
+
+/* Окна: фон проявляется, карточка «выезжает» */
+.modal-overlay { animation: lgFade 0.18s ease-out; }
+.modal-card { animation: lgSheet 0.34s var(--ease-apple); }
+
+/* Уведомление */
+.toast { transition: opacity 0.2s ease-out, transform 0.34s var(--ease-apple); }
+
+/* Нажатие кнопок — быстрый «вдох», возврат с лёгкой пружинкой */
+.btn, .fmt-btn, .letter-key, .season-card, .emoji-tab, .emoji-item {
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active, .fmt-btn:active { transform: scale(0.965); transition-duration: 0.08s; }
+.letter-key:active { transform: scale(0.94); transition-duration: 0.07s; }
+.btn:not(:active), .fmt-btn:not(:active), .letter-key:not(:active) { transition-timing-function: var(--ease-apple); }
+
+/* Выбор смайлика: плавная смена вкладки и «пружинка» у вставленного стикера */
+.emoji-grid.is-swap { animation: lgSwap 0.2s var(--ease-apple); }
+.emoji-item { transition: background-color 0.12s ease-out, transform 0.16s var(--ease-spring); }
+.emoji-item:hover { transform: scale(1.12); }
+.emoji-item:active { transform: scale(0.94); transition-duration: 0.06s; }
+img.emo-i.is-new { animation: lgPopIn 0.28s var(--ease-spring); }
+
+/* Карточки сезонов / цвета тона — отзывчивый hover */
+.season-card { transition: background-color 0.18s var(--ease-apple), border-color 0.18s var(--ease-apple), transform 0.22s var(--ease-apple); }
+.season-card:hover { transform: translateY(-1px); }
+.season-card:active { transform: scale(0.97); }
+
+/* Подсказка и «Готово»: галочка пружинит */
+.btn.is-done::before { animation: doneIcon 0.32s var(--ease-spring); }
+
+
+/* ==========================================================================
+   14. ЛЁГКОСТЬ: тяжёлые украшения в сезонах упрощены
+   ========================================================================== */
+
+/* гирлянда не мигает: две полноширинные анимируемые полосы — лишняя нагрузка */
+html.season-winter .season-decor::before,
+html.season-winter .season-decor::after {
+  animation: none !important;
+  will-change: auto !important;
+}
+html.season-winter .season-decor::after { opacity: 0.55; }
+html.season-autumn .season-leaves .leaf { will-change: auto; }
+
+/* «Анимировать»: движущийся фон — только по запросу, и не дольше, чем нужно */
+html.page-hidden body::before,
+html.page-hidden body::after { animation-play-state: paused !important; }
+
+/* Primary в режиме «тон»: плотная кнопка цвета тона, без прозрачной обводки */
+html.tone-on .btn.btn-primary,
+html.tone-on .btn.btn-primary:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 62%), var(--tone-hex, #6ea8ff) !important;
+  color: var(--tone-text, #0c0e14) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 18px -10px var(--tone-hex, #6ea8ff);
+}
+html.tone-on .btn.btn-primary:hover { filter: brightness(1.06); }
